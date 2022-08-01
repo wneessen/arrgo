@@ -11,7 +11,6 @@ import (
 	"time"
 )
 
-// ODQzODM3MjEwNTIwNTg0MjIz.GtI21P.pz_rm10f7y_8SiGdvHFR5X4lenRoFnfEqwTFaU
 func main() {
 	cf := "arrgo.toml"
 	if cfe := os.Getenv("ARRGO_CONFIG"); cfe != "" {
