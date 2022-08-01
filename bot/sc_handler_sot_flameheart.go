@@ -43,14 +43,38 @@ func (b *Bot) SlashCmdSoTFlameheart(s *discordgo.Session, i *discordgo.Interacti
 		`I'll show you no mercy!`,
 		`Tremble at the might of Flameheart!`,
 	}
-	r := discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: strings.ToUpper(q[rand.Intn(len(q))]),
+
+	// Initalize the deferred message
+	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{Content: ""},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to defer /flameheart request: %w", err)
+	}
+
+	// Prepare the embed message
+	ef := []*discordgo.MessageEmbedField{
+		{
+			Value:  strings.ToUpper(q[rand.Intn(len(q))]),
+			Name:   "Captain Flameheart yells at you!",
+			Inline: false,
 		},
 	}
-	if err := s.InteractionRespond(i.Interaction, &r); err != nil {
-		return fmt.Errorf("failed to respond to /flameheart request: %w", err)
+	e := []*discordgo.MessageEmbed{
+		{
+			Type: discordgo.EmbedTypeRich,
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL: `https://github.com/wneessen/arrgo/raw/main/assets/flameheart.png`,
+			},
+			Fields: ef,
+		},
 	}
+
+	// Edit the deferred message
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+		return fmt.Errorf("failed to edit /flameheart request: %w", err)
+	}
+
 	return nil
 }
