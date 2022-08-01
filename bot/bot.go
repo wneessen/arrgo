@@ -1,11 +1,12 @@
 package bot
 
 import (
+	"crypto/rand"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/rs/zerolog"
 	"github.com/wneessen/arrgo/config"
-	"math/rand"
+	"math/big"
 	"os"
 	"os/signal"
 	"syscall"
@@ -147,7 +148,12 @@ func (b *Bot) RegisterSlashCommands() error {
 		}
 		if n || c {
 			go func(s *discordgo.ApplicationCommand, e bool) {
-				rn := rand.Int31n(2000) + 1000
+				rn, err := b.randNum(2000)
+				if err != nil {
+					ll.Error().Msgf("failed to generate random number: %s", err)
+					return
+				}
+				rn += 1000
 				rd, _ := time.ParseDuration(fmt.Sprintf("%dms", rn))
 				ll.Debug().Msgf("[%s] delaying registration/update for %f seconds", s.Name, rd.Seconds())
 				time.Sleep(rd)
@@ -173,4 +179,24 @@ func (b *Bot) RegisterSlashCommands() error {
 		}
 	}
 	return nil
+}
+
+// randNum returns a random number with a maximum value of n
+func (b *Bot) randNum(n int) (int, error) {
+	if n <= 0 {
+		return 0, fmt.Errorf("provided number is <= 0: %d", n)
+	}
+	mbi := big.NewInt(int64(n))
+	if !mbi.IsUint64() {
+		return 0, fmt.Errorf("big.NewInt() generation returned negative value: %d", mbi)
+	}
+	rn64, err := rand.Int(rand.Reader, mbi)
+	if err != nil {
+		return 0, err
+	}
+	rn := int(rn64.Int64())
+	if rn < 0 {
+		return 0, fmt.Errorf("generated random number does not fit as int64: %d", rn64)
+	}
+	return rn, nil
 }

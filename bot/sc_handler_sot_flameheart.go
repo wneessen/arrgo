@@ -3,7 +3,6 @@ package bot
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
-	"math/rand"
 	"strings"
 )
 
@@ -54,10 +53,14 @@ func (b *Bot) SlashCmdSoTFlameheart(s *discordgo.Session, i *discordgo.Interacti
 	}
 
 	// Prepare the embed message
+	rn, err := b.randNum(len(q))
+	if err != nil {
+		return fmt.Errorf("failed to generate random number: %w", err)
+	}
 	ef := []*discordgo.MessageEmbedField{
 		{
-			Value:  strings.ToUpper(q[rand.Intn(len(q))]),
-			Name:   "Captain Flameheart yells at you!",
+			Value:  fmt.Sprintf(`«*%s*»`, strings.ToUpper(q[rn])),
+			Name:   "Captain Flameheart yells at you:",
 			Inline: false,
 		},
 	}
