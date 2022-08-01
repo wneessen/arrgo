@@ -15,7 +15,7 @@ func (b *Bot) SlashCmdVersion(s *discordgo.Session, i *discordgo.InteractionCrea
 		},
 	}
 	if err := s.InteractionRespond(i.Interaction, &r); err != nil {
-		return fmt.Errorf("failed to respond to /time request: %w", err)
+		return fmt.Errorf("failed to respond to /version request: %w", err)
 	}
 	return nil
 }

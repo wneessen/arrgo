@@ -18,6 +18,12 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 			Name:        "version",
 			Description: "Tells you some information about the bot",
 		},
+
+		// flameheart returns a random SoT Flameheart quote in all caps
+		{
+			Name:        "flameheart",
+			Description: "Returns a random quote from Captain Flameheart",
+		},
 	}
 }
 
@@ -33,8 +39,9 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 
 	// Define list of slash command handler methods
 	sh := map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate) error{
-		"time":    b.SlashCmdTime,
-		"version": b.SlashCmdVersion,
+		"time":       b.SlashCmdTime,
+		"version":    b.SlashCmdVersion,
+		"flameheart": b.SlashCmdSoTFlameheart,
 	}
 
 	// Check if provided command is available and process it
