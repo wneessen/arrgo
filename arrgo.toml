@@ -1,0 +1,6 @@
+## Default ArrGo discord bot configuration file
+[discord]
+token = ""
+
+[log]
+level = "debug"
