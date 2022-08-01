@@ -2,7 +2,6 @@ package bot
 
 import (
 	"github.com/bwmarrin/discordgo"
-	"strings"
 )
 
 // getSlashCommands returns a list of slash commands that will be registered for the bot
@@ -12,6 +11,12 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 		{
 			Name:        "time",
 			Description: "Let's you know how late it currently is",
+		},
+
+		// version returns the current version information
+		{
+			Name:        "version",
+			Description: "Tells you some information about the bot",
 		},
 	}
 }
@@ -26,13 +31,16 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		return
 	}
 
-	switch strings.ToLower(i.ApplicationCommandData().Name) {
-	case "time":
-		ll.Debug().Msg("time slash command requested")
-		if err := b.SlashCmdTime(s, i); err != nil {
-			ll.Error().Msgf("failed to process time request: %s", err)
+	// Define list of slash command handler methods
+	sh := map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate) error{
+		"time":    b.SlashCmdTime,
+		"version": b.SlashCmdVersion,
+	}
+
+	// Check if provided command is available and process it
+	if h, ok := sh[i.ApplicationCommandData().Name]; ok {
+		if err := h(s, i); err != nil {
+			ll.Error().Msgf("failed to process /%s command: %s", i.ApplicationCommandData().Name, err)
 		}
-	default:
-		ll.Warn().Msgf("unknown slash command: %s", i.ApplicationCommandData().Name)
 	}
 }
