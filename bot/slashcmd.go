@@ -1,7 +1,9 @@
 package bot
 
 import (
+	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"time"
 )
 
 // getSlashCommands returns a list of slash commands that will be registered for the bot
@@ -31,6 +33,69 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 			Description: "Returns a random quote from Captain Flameheart",
 		},
 	}
+}
+
+// RegisterSlashCommands will fetch the list of available slash commands and register them with the Guild
+// if not present yet
+func (b *Bot) RegisterSlashCommands() error {
+	ll := b.Log.With().Str("context", "bot.RegisterSlashCommands").Logger()
+
+	// Get a list of currently registered slash commands
+	rcl, err := b.Session.ApplicationCommands(b.Session.State.User.ID, "")
+	if err != nil {
+		return fmt.Errorf("failed to fetch list registered slash commands: %w", err)
+	}
+
+	for _, sc := range b.getSlashCommands() {
+		n := true
+		c := false
+		for _, rc := range rcl {
+			if sc.Name == rc.Name && sc.Description == rc.Description {
+				ll.Debug().Msgf("slash command %s already registered. Skipping.", rc.Name)
+				n = false
+				c = false
+				break
+			}
+			if sc.Name == rc.Name && sc.Description != rc.Description {
+				ll.Debug().Msgf("slash command %s changed. Updating.", rc.Name)
+				n = false
+				c = true
+				break
+			}
+		}
+		if n || c {
+			go func(s *discordgo.ApplicationCommand, e bool) {
+				rn, err := b.randNum(2000)
+				if err != nil {
+					ll.Error().Msgf("failed to generate random number: %s", err)
+					return
+				}
+				rn += 1000
+				rd, _ := time.ParseDuration(fmt.Sprintf("%dms", rn))
+				ll.Debug().Msgf("[%s] delaying registration/update for %f seconds", s.Name, rd.Seconds())
+				time.Sleep(rd)
+				if e {
+					ll.Debug().Msgf("[%s] updating slash command...", s.Name)
+					_, err := b.Session.ApplicationCommandEdit(b.Session.State.User.ID, "", s.ID, s)
+					if err != nil {
+						ll.Error().Msgf("[%s] failed to update slash command: %s", s.Name, err)
+						return
+					}
+					ll.Debug().Msgf("[%s] slash command successfully updated...", s.Name)
+				}
+				if !e {
+					ll.Debug().Msgf("[%s] registering slash command...", s.Name)
+					_, err := b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", s)
+					if err != nil {
+						ll.Error().Msgf("[%s] failed to register slash command: %s", s.Name, err)
+						return
+					}
+					ll.Debug().Msgf("[%s] slash command successfully registered...", s.Name)
+				}
+			}(sc, c)
+		}
+	}
+	return nil
 }
 
 // SlashCommandHandler is the central handler method for all slash commands. It will look up

@@ -2,11 +2,11 @@ package bot
 
 import (
 	"crypto/rand"
-	"database/sql"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/rs/zerolog"
 	"github.com/wneessen/arrgo/config"
+	"github.com/wneessen/arrgo/model"
 	"math/big"
 	"os"
 	"os/signal"
@@ -19,7 +19,7 @@ type Bot struct {
 	Log     zerolog.Logger
 	Config  *config.Config
 	Session *discordgo.Session
-	DB      *sql.DB
+	Model   model.Model
 
 	st time.Time
 }
@@ -38,11 +38,13 @@ func New(l zerolog.Logger, c *config.Config) (*Bot, error) {
 			c.Discord.Token = t
 		}
 	}
+
+	// Connect to DB model
 	db, err := b.OpenDB(c)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
-	b.DB = db
+	b.Model = model.New(db)
 
 	return b, nil
 }
@@ -59,11 +61,14 @@ func (b *Bot) Run() error {
 	b.Session = dg
 
 	// Define list of events we want to see
-	dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildMessages | discordgo.IntentsGuildVoiceStates |
-		discordgo.IntentsDirectMessages | discordgo.IntentsGuildPresences
+	dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildMessages |
+		discordgo.IntentsGuildVoiceStates | discordgo.IntentsDirectMessages |
+		discordgo.IntentsGuildPresences | discordgo.IntentsMessageContent |
+		discordgo.IntentsGuildIntegrations
 
 	// Add handlers
 	b.Session.AddHandlerOnce(b.ReadyHandler)
+	b.Session.AddHandler(b.GuildCreate)
 	b.Session.AddHandler(b.SlashCommandHandler)
 
 	// Open the websocket and begin listening.
@@ -110,88 +115,6 @@ func (b *Bot) StartTimeString() string {
 // StartTimeUnix returns the time when the bot was last initalized
 func (b *Bot) StartTimeUnix() int64 {
 	return b.st.Unix()
-}
-
-// ReadyHandler updates the Bot's session data
-func (b *Bot) ReadyHandler(s *discordgo.Session, ev *discordgo.Ready) {
-	ll := b.Log.With().Str("context", "bot.ReadyHandler").Str("sessionID", ev.SessionID).Logger()
-	ll.Debug().Msg("bot reached the 'ready' state...")
-
-	usd := &discordgo.UpdateStatusData{Status: "online"}
-	usd.Activities = make([]*discordgo.Activity, 1)
-	usd.Activities[0] = &discordgo.Activity{
-		Name: fmt.Sprintf("ArrGo v%s", Version),
-		Type: discordgo.ActivityTypeGame,
-		URL:  "https://github.com/wneessen/arrgo",
-	}
-
-	err := s.UpdateStatusComplex(*usd)
-	if err != nil {
-		ll.Error().Msgf("failed to set bot's ready state: %s", err)
-	}
-}
-
-// RegisterSlashCommands will fetch the list of available slash commands and register them with the Guild
-// if not present yet
-func (b *Bot) RegisterSlashCommands() error {
-	ll := b.Log.With().Str("context", "bot.RegisterSlashCommands").Logger()
-
-	// Get a list of currently registered slash commands
-	rcl, err := b.Session.ApplicationCommands(b.Session.State.User.ID, "")
-	if err != nil {
-		return fmt.Errorf("failed to fetch list registered slash commands: %w", err)
-	}
-
-	for _, sc := range b.getSlashCommands() {
-		n := true
-		c := false
-		for _, rc := range rcl {
-			if sc.Name == rc.Name && sc.Description == rc.Description {
-				ll.Debug().Msgf("slash command %s already registered. Skipping.", rc.Name)
-				n = false
-				c = false
-				break
-			}
-			if sc.Name == rc.Name && sc.Description != rc.Description {
-				ll.Debug().Msgf("slash command %s changed. Updating.", rc.Name)
-				n = false
-				c = true
-				break
-			}
-		}
-		if n || c {
-			go func(s *discordgo.ApplicationCommand, e bool) {
-				rn, err := b.randNum(2000)
-				if err != nil {
-					ll.Error().Msgf("failed to generate random number: %s", err)
-					return
-				}
-				rn += 1000
-				rd, _ := time.ParseDuration(fmt.Sprintf("%dms", rn))
-				ll.Debug().Msgf("[%s] delaying registration/update for %f seconds", s.Name, rd.Seconds())
-				time.Sleep(rd)
-				if e {
-					ll.Debug().Msgf("[%s] updating slash command...", s.Name)
-					_, err := b.Session.ApplicationCommandEdit(b.Session.State.User.ID, "", s.ID, s)
-					if err != nil {
-						ll.Error().Msgf("[%s] failed to update slash command: %s", s.Name, err)
-						return
-					}
-					ll.Debug().Msgf("[%s] slash command successfully updated...", s.Name)
-				}
-				if !e {
-					ll.Debug().Msgf("[%s] registering slash command...", s.Name)
-					_, err := b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", s)
-					if err != nil {
-						ll.Error().Msgf("[%s] failed to register slash command: %s", s.Name, err)
-						return
-					}
-					ll.Debug().Msgf("[%s] slash command successfully registered...", s.Name)
-				}
-			}(sc, c)
-		}
-	}
-	return nil
 }
 
 // randNum returns a random number with a maximum value of n
