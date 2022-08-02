@@ -13,6 +13,12 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 			Description: "Let's you know how late it currently is",
 		},
 
+		// uptime returns the current time back to the user
+		{
+			Name:        "uptime",
+			Description: "Let's you know how long the bot has been running",
+		},
+
 		// version returns the current version information
 		{
 			Name:        "version",
@@ -27,6 +33,9 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 	}
 }
 
+// SlashCommandHandler is the central handler method for all slash commands. It will look up
+// the name of the received SC-handler event in a map and when found execute the corresponding
+// method
 func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	ll := b.Log.With().Str("context", "bot.SlashCommandHandler").
 		Str("command_type", i.Data.Type().String()).
@@ -40,6 +49,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 	// Define list of slash command handler methods
 	sh := map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate) error{
 		"time":       b.SlashCmdTime,
+		"uptime":     b.SlashCmdUptime,
 		"version":    b.SlashCmdVersion,
 		"flameheart": b.SlashCmdSoTFlameheart,
 	}

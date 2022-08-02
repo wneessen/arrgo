@@ -2,6 +2,7 @@ package bot
 
 import (
 	"crypto/rand"
+	"database/sql"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/rs/zerolog"
@@ -18,6 +19,7 @@ type Bot struct {
 	Log     zerolog.Logger
 	Config  *config.Config
 	Session *discordgo.Session
+	DB      *sql.DB
 
 	st time.Time
 }
@@ -36,6 +38,12 @@ func New(l zerolog.Logger, c *config.Config) (*Bot, error) {
 			c.Discord.Token = t
 		}
 	}
+	db, err := b.OpenDB(c)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open database: %w", err)
+	}
+	b.DB = db
+
 	return b, nil
 }
 
@@ -94,9 +102,14 @@ func (b *Bot) Run() error {
 	}
 }
 
-// StartTime returns the time when the bot was last initalized
-func (b *Bot) StartTime() string {
+// StartTimeString returns the time when the bot was last initalized
+func (b *Bot) StartTimeString() string {
 	return b.st.Format(time.RFC1123)
+}
+
+// StartTimeUnix returns the time when the bot was last initalized
+func (b *Bot) StartTimeUnix() int64 {
+	return b.st.Unix()
 }
 
 // ReadyHandler updates the Bot's session data

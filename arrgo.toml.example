@@ -4,3 +4,6 @@ token = ""
 
 [log]
 level = "debug"
+
+[db]
+path = "/home/arrgo/arrgo.db"

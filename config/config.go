@@ -12,6 +12,9 @@ type Config struct {
 		Token   string `fig:"token"`
 		ShardID int    `fig:"shard_id" default:"0"`
 	}
+	DB struct {
+		Path string `fig:"path" validate:"required"`
+	}
 	Log struct {
 		Level string `fig:"level" default:"info"`
 	}
