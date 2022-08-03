@@ -142,6 +142,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"uptime":     b.SlashCmdUptime,
 		"version":    b.SlashCmdVersion,
 		"flameheart": b.SlashCmdSoTFlameheart,
+		"config":     b.SlashCmdConfig,
 	}
 
 	// Check if provided command is available and process it

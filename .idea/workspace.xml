@@ -4,16 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a88a2c1-1969-454a-bef5-f30422fc0643" name="Changes" comment="Added FH quote for @wilbertxz32">
-      <change afterPath="$PROJECT_DIR$/model/guild_pref.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql_migrations/000002_add_guild_prefs.down.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql_migrations/000002_add_guild_prefs.up.sql" afterDir="false" />
+    <list default="true" id="1a88a2c1-1969-454a-bef5-f30422fc0643" name="Changes" comment="We've got guild preference settings and started the /config option">
+      <change afterPath="$PROJECT_DIR$/bot/sc_handler_config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/bot.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/bot.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/handler_guildcreate.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/handler_guildcreate.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/sc_handler_sot_flameheart.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/sc_handler_sot_flameheart.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot/slashcmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/slashcmd.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/model.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +77,8 @@
     <MESSAGE value="Added GUILD_DELETE handler" />
     <MESSAGE value="Added timed FH spam" />
     <MESSAGE value="Added FH quote for @wilbertxz32" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added FH quote for @wilbertxz32" />
+    <MESSAGE value="We've got guild preference settings and started the /config option" />
+    <option name="LAST_COMMIT_MESSAGE" value="We've got guild preference settings and started the /config option" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
