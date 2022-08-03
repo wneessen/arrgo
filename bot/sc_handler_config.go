@@ -19,7 +19,10 @@ func (b *Bot) SlashCmdConfig(s *discordgo.Session, i *discordgo.InteractionCreat
 	// Initalize the deferred message
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{Content: "", Flags: 64},
+		Data: &discordgo.InteractionResponseData{
+			Content: "",
+			Flags:   uint64(discordgo.MessageFlagsEphemeral),
+		},
 	})
 	if err != nil {
 		return fmt.Errorf("failed to defer /config request: %w", err)

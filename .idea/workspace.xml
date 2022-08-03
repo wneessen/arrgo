@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a88a2c1-1969-454a-bef5-f30422fc0643" name="Changes" comment="We've got guild preference settings and started the /config option">
-      <change afterPath="$PROJECT_DIR$/bot/sc_handler_config.go" afterDir="false" />
+    <list default="true" id="1a88a2c1-1969-454a-bef5-f30422fc0643" name="Changes" comment="Flameheart spam is now configurable">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/slashcmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/slashcmd.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/sc_handler_config.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/sc_handler_config.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +77,8 @@
     <MESSAGE value="Added timed FH spam" />
     <MESSAGE value="Added FH quote for @wilbertxz32" />
     <MESSAGE value="We've got guild preference settings and started the /config option" />
-    <option name="LAST_COMMIT_MESSAGE" value="We've got guild preference settings and started the /config option" />
+    <MESSAGE value="Flameheart spam is now configurable" />
+    <option name="LAST_COMMIT_MESSAGE" value="Flameheart spam is now configurable" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
