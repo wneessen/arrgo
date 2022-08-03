@@ -3,6 +3,8 @@ package bot
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/pkg/errors"
+	"github.com/wneessen/arrgo/model"
 	"strings"
 )
 
@@ -26,6 +28,36 @@ func (b *Bot) SlashCmdSoTFlameheart(s *discordgo.Session, i *discordgo.Interacti
 		return fmt.Errorf("failed to edit /flameheart request: %w", err)
 	}
 
+	return nil
+}
+
+// ScheduledEventSoTFlameheart performs scheuled FH spam message to the guilds system channel
+func (b *Bot) ScheduledEventSoTFlameheart() error {
+	ll := b.Log.With().Str("context", "bot.ScheduledEventSoTFlameheart").Logger()
+	gl, err := b.Model.Guild.GetGuilds()
+	if err != nil {
+		return err
+	}
+	for _, g := range gl {
+		var en bool
+		en, err = b.Model.Guild.GetPrefBool(g, model.GuildPrefScheduledFlameheart)
+		if err != nil {
+			if !errors.Is(err, model.ErrGuildPrefNotExistant) {
+				ll.Warn().Msgf("failed to read scheduled flameheart preference from DB: %s", err)
+				continue
+			}
+			en = true
+		}
+		if en {
+			e, err := b.getFlameheartEmbed()
+			if err != nil {
+				continue
+			}
+			if _, err := b.Session.ChannelMessageSendEmbed(g.SystemChannelID, e[0]); err != nil {
+				ll.Error().Msgf("failed to send timed FH spam message: %s", err)
+			}
+		}
+	}
 	return nil
 }
 
@@ -64,7 +96,7 @@ func (b *Bot) getFlameheartEmbed() ([]*discordgo.MessageEmbed, error) {
 		`You dare defy me?!`,
 		`I'll show you no mercy!`,
 		`Tremble at the might of Flameheart!`,
-		`*** frustrated groan ***`,
+		`\*\*\* frustrated groan ***`,
 	}
 
 	// Prepare the embed message

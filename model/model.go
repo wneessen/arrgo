@@ -13,6 +13,10 @@ const SQLTimeout = time.Second * 1
 var (
 	// ErrGuildNotExistant should be used in case a requested guild was not found in the database
 	ErrGuildNotExistant = errors.New("requested guild not existant in database")
+
+	// ErrGuildPrefNotExistant should be returned in case a guild preference is requested that does
+	// not exist in the database
+	ErrGuildPrefNotExistant = errors.New("requested guild preference not existant in database")
 )
 
 // Model is a collection of all available models

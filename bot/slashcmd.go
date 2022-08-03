@@ -32,6 +32,31 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 			Name:        "flameheart",
 			Description: "Returns a random quote from Captain Flameheart",
 		},
+
+		// config allows to configure certain settings of the ArrBot
+		{
+			Name:        "config",
+			Description: "Configure certain aspects of your ArrBot instance",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Name:        "flameheart-spam",
+					Description: "Enable/Disable the random Captain Flameheart quote spam",
+					Options: []*discordgo.ApplicationCommandOption{
+						{
+							Name:        "enable",
+							Description: "Enable Captain Flameheart",
+							Type:        discordgo.ApplicationCommandOptionSubCommand,
+						},
+						{
+							Name:        "disable",
+							Description: "Disable Captain Flameheart",
+							Type:        discordgo.ApplicationCommandOptionSubCommand,
+						},
+					},
+					Type: discordgo.ApplicationCommandOptionSubCommandGroup,
+				},
+			},
+		},
 	}
 }
 

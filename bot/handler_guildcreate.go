@@ -30,6 +30,11 @@ func (b *Bot) GuildCreate(s *discordgo.Session, ev *discordgo.GuildCreate) {
 			ll.Error().Msgf("failed to insert guild into database: %s", err)
 		}
 
+		// By default we don't want FH spam
+		if err := b.Model.Guild.SetPref(g, model.GuildPrefScheduledFlameheart, false); err != nil {
+			ll.Error().Msgf("failed to set guild preference FH_SPAM in database: %s", err)
+		}
+
 		// Send introduction to system channel
 		ef := []*discordgo.MessageEmbedField{
 			{

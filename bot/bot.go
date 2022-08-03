@@ -14,8 +14,8 @@ import (
 	"time"
 )
 
-// FH_TIMER defines the maximum random number for the FH spammer timer
-const FH_TIMER = 30
+// FHTimer defines the maximum random number for the FH spammer timer (in minutes)
+const FHTimer = 60
 
 // Bot represents the bot instance
 type Bot struct {
@@ -91,13 +91,13 @@ func (b *Bot) Run() error {
 	signal.Notify(sc)
 
 	// Times events
-	rn := FH_TIMER
-	rn, err = b.randNum(FH_TIMER)
+	rn := FHTimer
+	rn, err = b.randNum(FHTimer)
 	if err != nil {
 		ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
-		rn = FH_TIMER
+		rn = FHTimer
 	}
-	fht := time.NewTicker(time.Duration(rn) * time.Minute)
+	fht := time.NewTicker(time.Duration(int64(rn)+FHTimer) * time.Minute)
 	defer fht.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.
@@ -118,27 +118,17 @@ func (b *Bot) Run() error {
 				return nil
 			}
 		case <-fht.C:
-			gl, err := b.Model.Guild.GetGuilds()
-			if err != nil {
-				return err
-			}
-			for _, g := range gl {
-				e, err := b.getFlameheartEmbed()
-				if err != nil {
-					continue
-				}
-				if _, err := b.Session.ChannelMessageSendEmbed(g.SystemChannelID, e[0]); err != nil {
-					ll.Error().Msgf("failed to send timed FH spam message: %s", err)
-				}
+			if err := b.ScheduledEventSoTFlameheart(); err != nil {
+				ll.Error().Msgf("failed to process scheuled flameheart event: %s", err)
 			}
 
 			// Reset the duration
-			rn, err = b.randNum(FH_TIMER)
+			rn, err = b.randNum(FHTimer)
 			if err != nil {
 				ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
-				rn = FH_TIMER
+				rn = FHTimer
 			}
-			fht.Reset(time.Duration(rn) * time.Minute)
+			fht.Reset(time.Duration(int64(rn)+FHTimer) * time.Minute)
 		}
 	}
 }
