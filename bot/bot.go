@@ -69,6 +69,7 @@ func (b *Bot) Run() error {
 	// Add handlers
 	b.Session.AddHandlerOnce(b.ReadyHandler)
 	b.Session.AddHandler(b.GuildCreate)
+	b.Session.AddHandler(b.GuildDelete)
 	b.Session.AddHandler(b.SlashCommandHandler)
 
 	// Open the websocket and begin listening.

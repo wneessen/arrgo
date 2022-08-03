@@ -26,7 +26,8 @@ type Guild struct {
 
 // GetByGuildID retrieves the Guild details from the database based on the given Guild ID
 func (m GuildModel) GetByGuildID(i string) (*Guild, error) {
-	q := `SELECT g.id, g.guild_id, g.guild_name, g.owner_id, g.joined_at, g.version, g.ctime, g.mtime
+	q := `SELECT g.id, g.guild_id, g.guild_name, g.owner_id, g.joined_at, g.system_channel, 
+       		     g.version, g.ctime, g.mtime
             FROM guilds g
            WHERE g.guild_id = $1`
 
@@ -64,4 +65,14 @@ func (m GuildModel) Insert(g *Guild) error {
 		return err
 	}
 	return nil
+}
+
+// Delete removes a Guild from the database
+func (m GuildModel) Delete(g *Guild) error {
+	q := `DELETE FROM guilds g WHERE g.id = $1`
+	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
+	defer cancel()
+
+	_, err := m.DB.ExecContext(ctx, q, g.ID)
+	return err
 }

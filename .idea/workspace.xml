@@ -4,22 +4,25 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a88a2c1-1969-454a-bef5-f30422fc0643" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/db.go" afterDir="false" />
+    <list default="true" id="1a88a2c1-1969-454a-bef5-f30422fc0643" name="Changes" comment="Added GUILD_DELETE handler">
+      <change afterPath="$PROJECT_DIR$/bot/handler_guilddelete.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/bot.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/bot.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot/handler_guildcreate.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/handler_guildcreate.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/guild.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/guild.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql_migrations/000001_guild_table.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/sql_migrations/000001_guild_table.up.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
   </component>
   <component name="GOROOT" url="file://$PROJECT_DIR$/../../go1.18.3" />
   <component name="Git.Settings">
@@ -37,12 +40,14 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
     "RunOnceActivity.go.migrated.go.modules.settings": "true",
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
     "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
+    "TF_FMT": "false",
     "WebServerToolWindowFactoryState": "true",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
@@ -69,6 +74,11 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Switched DB to PgSQL and added introduction" />
+    <MESSAGE value="Added GUILD_DELETE handler" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added GUILD_DELETE handler" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

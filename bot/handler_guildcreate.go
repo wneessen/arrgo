@@ -29,26 +29,26 @@ func (b *Bot) GuildCreate(s *discordgo.Session, ev *discordgo.GuildCreate) {
 		if err := b.Model.Guild.Insert(g); err != nil {
 			ll.Error().Msgf("failed to insert guild into database: %s", err)
 		}
-	}
 
-	// Send introduction to system channel
-	ef := []*discordgo.MessageEmbedField{
-		{
-			Name: "Ahoy, Mateys!",
-			Value: "I am ArrGo the Discord Pirate Lord! I just joined this nice vessel to have " +
-				"an an eye on you scallywags!",
-			Inline: true,
-		},
-	}
-	e := &discordgo.MessageEmbed{
-		Type: discordgo.EmbedTypeRich,
-		Thumbnail: &discordgo.MessageEmbedThumbnail{
-			URL: `https://github.com/wneessen/arrgo/raw/main/assets/piratelord_small.png`,
-		},
-		Title:  "Avast ye!",
-		Fields: ef,
-	}
-	if _, err := s.ChannelMessageSendEmbed(ev.Guild.SystemChannelID, e); err != nil {
-		ll.Error().Msgf("failed to send introcution message: %s", err)
+		// Send introduction to system channel
+		ef := []*discordgo.MessageEmbedField{
+			{
+				Name: "Ahoy, Mateys!",
+				Value: "I am ArrGo the Discord Pirate Lord! I just joined this nice vessel to have " +
+					"an an eye on you scallywags!",
+				Inline: true,
+			},
+		}
+		e := &discordgo.MessageEmbed{
+			Type: discordgo.EmbedTypeRich,
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL: `https://github.com/wneessen/arrgo/raw/main/assets/piratelord_small.png`,
+			},
+			Title:  "Avast ye!",
+			Fields: ef,
+		}
+		if _, err := s.ChannelMessageSendEmbed(ev.Guild.SystemChannelID, e); err != nil {
+			ll.Error().Msgf("failed to send introcution message: %s", err)
+		}
 	}
 }
