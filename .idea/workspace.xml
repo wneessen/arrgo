@@ -5,11 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a88a2c1-1969-454a-bef5-f30422fc0643" name="Changes" comment="Added GUILD_DELETE handler">
-      <change afterPath="$PROJECT_DIR$/bot/handler_guilddelete.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot/bot.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/bot.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/handler_guildcreate.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/handler_guildcreate.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/sc_handler_sot_flameheart.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/sc_handler_sot_flameheart.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/guild.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/guild.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

@@ -14,6 +14,9 @@ import (
 	"time"
 )
 
+// FH_TIMER defines the maximum random number for the FH spammer timer
+const FH_TIMER = 30
+
 // Bot represents the bot instance
 type Bot struct {
 	Log     zerolog.Logger
@@ -87,6 +90,16 @@ func (b *Bot) Run() error {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc)
 
+	// Times events
+	rn := FH_TIMER
+	rn, err = b.randNum(FH_TIMER)
+	if err != nil {
+		ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
+		rn = FH_TIMER
+	}
+	fht := time.NewTicker(time.Duration(rn) * time.Minute)
+	defer fht.Stop()
+
 	// Wait here until CTRL-C or other term signal is received.
 	ll.Info().Msg("bot successfully initialized and connected. Press CTRL-C to exit.")
 	for {
@@ -104,6 +117,28 @@ func (b *Bot) Run() error {
 				}
 				return nil
 			}
+		case <-fht.C:
+			gl, err := b.Model.Guild.GetGuilds()
+			if err != nil {
+				return err
+			}
+			for _, g := range gl {
+				e, err := b.getFlameheartEmbed()
+				if err != nil {
+					continue
+				}
+				if _, err := b.Session.ChannelMessageSendEmbed(g.SystemChannelID, e[0]); err != nil {
+					ll.Error().Msgf("failed to send timed FH spam message: %s", err)
+				}
+			}
+
+			// Reset the duration
+			rn, err = b.randNum(FH_TIMER)
+			if err != nil {
+				ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
+				rn = FH_TIMER
+			}
+			fht.Reset(time.Duration(rn) * time.Minute)
 		}
 	}
 }

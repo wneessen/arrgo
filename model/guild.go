@@ -49,6 +49,38 @@ func (m GuildModel) GetByGuildID(i string) (*Guild, error) {
 	return &g, nil
 }
 
+// GetGuilds returns a list of all guilds registered in the database
+func (m GuildModel) GetGuilds() ([]*Guild, error) {
+	q := `SELECT g.guild_id
+            FROM guilds g`
+
+	var gl []*Guild
+	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
+	defer cancel()
+	rows, err := m.DB.QueryContext(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = rows.Close() }()
+
+	for rows.Next() {
+		var id string
+		err := rows.Scan(&id)
+		if err != nil {
+			return nil, err
+		}
+		g, err := m.GetByGuildID(id)
+		if err != nil {
+			return nil, err
+		}
+		gl = append(gl, g)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return gl, nil
+}
+
 // Insert adds a new Guild into the database
 func (m GuildModel) Insert(g *Guild) error {
 	q := `INSERT INTO guilds (guild_id, guild_name, owner_id, joined_at, system_channel)

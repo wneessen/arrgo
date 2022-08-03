@@ -8,6 +8,29 @@ import (
 
 // SlashCmdSoTFlameheart handles the /flameheart slash command
 func (b *Bot) SlashCmdSoTFlameheart(s *discordgo.Session, i *discordgo.InteractionCreate) error {
+	// Initalize the deferred message
+	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{Content: ""},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to defer /flameheart request: %w", err)
+	}
+	e, err := b.getFlameheartEmbed()
+	if err != nil {
+		return err
+	}
+
+	// Edit the deferred message
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+		return fmt.Errorf("failed to edit /flameheart request: %w", err)
+	}
+
+	return nil
+}
+
+// getFlameheartEmbed returns a embed slice for use in slash commands or SendMessageEmbeds
+func (b *Bot) getFlameheartEmbed() ([]*discordgo.MessageEmbed, error) {
 	q := []string{
 		`You're starting to annoy me.`,
 		`Surely you don't expect to triumph?`,
@@ -43,19 +66,10 @@ func (b *Bot) SlashCmdSoTFlameheart(s *discordgo.Session, i *discordgo.Interacti
 		`Tremble at the might of Flameheart!`,
 	}
 
-	// Initalize the deferred message
-	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{Content: ""},
-	})
-	if err != nil {
-		return fmt.Errorf("failed to defer /flameheart request: %w", err)
-	}
-
 	// Prepare the embed message
 	rn, err := b.randNum(len(q))
 	if err != nil {
-		return fmt.Errorf("failed to generate random number: %w", err)
+		return []*discordgo.MessageEmbed{}, fmt.Errorf("failed to generate random number: %w", err)
 	}
 	ef := []*discordgo.MessageEmbedField{
 		{
@@ -73,11 +87,5 @@ func (b *Bot) SlashCmdSoTFlameheart(s *discordgo.Session, i *discordgo.Interacti
 			Fields: ef,
 		},
 	}
-
-	// Edit the deferred message
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
-		return fmt.Errorf("failed to edit /flameheart request: %w", err)
-	}
-
-	return nil
+	return e, nil
 }
