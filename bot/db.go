@@ -5,12 +5,12 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/sqlite"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/lib/pq"
 	"github.com/wneessen/arrgo/config"
 	"github.com/wneessen/arrgo/model"
 	"io/fs"
-	_ "modernc.org/sqlite"
 	"os"
 	"strings"
 )
@@ -27,7 +27,8 @@ const (
 
 // OpenDB tries to connect to the SQLite file and returns the sql.DB pointer
 func (b *Bot) OpenDB(c *config.Config) (*sql.DB, error) {
-	db, err := sql.Open("sqlite", c.DB.Path)
+	dsn := getDbDSN(c)
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +44,8 @@ func (b *Bot) OpenDB(c *config.Config) (*sql.DB, error) {
 // CheckDBVersion compares the DB version with the SQL migrations
 func (b *Bot) CheckDBVersion(c *config.Config) (uint, error) {
 	ll := b.Log.With().Str("context", "bot.CheckDBVersion").Logger()
-	m, err := migrate.New(MigrationsPath, fmt.Sprintf("sqlite://%s", c.DB.Path))
+	dsn := getDbDSN(c)
+	m, err := migrate.New(MigrationsPath, dsn)
 	if err != nil {
 		return 0, err
 	}
@@ -84,8 +86,7 @@ func (b *Bot) CheckDBVersion(c *config.Config) (uint, error) {
 // SQLMigrate migrates the database to the latest SQL set
 func (b *Bot) SQLMigrate(c *config.Config) error {
 	ll := b.Log.With().Str("context", "bot.SQLMigrate").Logger()
-	dsn := fmt.Sprintf("sqlite://%s", c.DB.Path)
-
+	dsn := getDbDSN(c)
 	m, err := migrate.New(MigrationsPath, dsn)
 	if err != nil {
 		return err
@@ -124,8 +125,7 @@ func (b *Bot) SQLMigrate(c *config.Config) error {
 // SQLDowngrade migrates the database to the latest SQL set
 func (b *Bot) SQLDowngrade(c *config.Config) error {
 	ll := b.Log.With().Str("context", "bot.SQLDowngrade").Logger()
-	dsn := fmt.Sprintf("sqlite://%s", c.DB.Path)
-
+	dsn := getDbDSN(c)
 	m, err := migrate.New(MigrationsPath, dsn)
 	if err != nil {
 		return err
@@ -155,4 +155,17 @@ func (b *Bot) SQLDowngrade(c *config.Config) error {
 	}
 	ll.Info().Msgf("successfully downgraded database to v%d", cv)
 	return nil
+}
+
+// getDbDSN returns the DB connection string based on the given config
+func getDbDSN(c *config.Config) string {
+	var dp string
+	if c.DB.UseTLS {
+		dp += "sslmode=verify-full"
+	}
+	if !c.DB.UseTLS {
+		dp += "sslmode=disable"
+	}
+	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?%s", c.DB.Username, c.DB.Password, c.DB.Host,
+		c.DB.Port, c.DB.Database, dp)
 }

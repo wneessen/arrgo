@@ -3,7 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"time"
 )
 
 // GuildModel wraps the connection pool.
@@ -13,18 +13,20 @@ type GuildModel struct {
 
 // Guild represents the guild information in the database
 type Guild struct {
-	ID         int64  `json:"id"`
-	GuildID    string `json:"guildId"`
-	GuildName  string `json:"guildName"`
-	OwnerID    string `json:"ownerId"`
-	Version    int    `json:"-"`
-	CreateTime string `json:"createTime"`
-	ModTime    string `json:"modTime"`
+	ID              int64     `json:"id"`
+	GuildID         string    `json:"guildId"`
+	GuildName       string    `json:"guildName"`
+	OwnerID         string    `json:"ownerId"`
+	JoinedAt        time.Time `json:"joinedAt"`
+	SystemChannelID string    `json:"systemChannelID"`
+	Version         int       `json:"-"`
+	CreateTime      time.Time `json:"createTime"`
+	ModTime         time.Time `json:"modTime"`
 }
 
 // GetByGuildID retrieves the Guild details from the database based on the given Guild ID
 func (m GuildModel) GetByGuildID(i string) (*Guild, error) {
-	q := `SELECT g.id, g.guild_id, g.guild_name, g.owner_id, g.version, g.ctime, g.mtime
+	q := `SELECT g.id, g.guild_id, g.guild_name, g.owner_id, g.joined_at, g.version, g.ctime, g.mtime
             FROM guilds g
            WHERE g.guild_id = $1`
 
@@ -32,16 +34,10 @@ func (m GuildModel) GetByGuildID(i string) (*Guild, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
 	defer cancel()
 
-	tx, err := m.DB.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+	row := m.DB.QueryRowContext(ctx, q, i)
+	err := row.Scan(&g.ID, &g.GuildID, &g.GuildName, &g.OwnerID, &g.JoinedAt, &g.SystemChannelID,
+		&g.Version, &g.CreateTime, &g.ModTime)
 	if err != nil {
-		return &g, err
-	}
-	row := tx.QueryRowContext(ctx, q, i)
-	err = row.Scan(&g.ID, &g.GuildID, &g.GuildName, &g.OwnerID, &g.Version, &g.CreateTime, &g.ModTime)
-	if err != nil {
-		if txErr := tx.Rollback(); txErr != nil {
-			return &g, fmt.Errorf("select failed: %s, rollback failed: %w", err, txErr)
-		}
 		switch err {
 		case sql.ErrNoRows:
 			return &g, ErrGuildNotExistant
@@ -49,36 +45,22 @@ func (m GuildModel) GetByGuildID(i string) (*Guild, error) {
 			return &g, err
 		}
 	}
-	if err := tx.Commit(); err != nil {
-		return &g, err
-	}
-
 	return &g, nil
 }
 
 // Insert adds a new Guild into the database
 func (m GuildModel) Insert(g *Guild) error {
-	q := `INSERT INTO guilds (guild_id, guild_name, owner_id)
-               VALUES ($1, $2, $3)
+	q := `INSERT INTO guilds (guild_id, guild_name, owner_id, joined_at, system_channel)
+               VALUES ($1, $2, $3, $4, $5)
             RETURNING id, ctime, mtime, version`
-	v := []interface{}{g.GuildID, g.GuildName, g.OwnerID}
+	v := []interface{}{g.GuildID, g.GuildName, g.OwnerID, g.JoinedAt, g.SystemChannelID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
 	defer cancel()
 
-	tx, err := m.DB.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+	row := m.DB.QueryRowContext(ctx, q, v...)
+	err := row.Scan(&g.ID, &g.CreateTime, &g.ModTime, &g.Version)
 	if err != nil {
-		return err
-	}
-	row := tx.QueryRowContext(ctx, q, v...)
-	err = row.Scan(&g.ID, &g.CreateTime, &g.ModTime, &g.Version)
-	if err != nil {
-		if txErr := tx.Rollback(); txErr != nil {
-			return fmt.Errorf("insert failed: %s, rollback failed: %w", err, txErr)
-		}
-		return err
-	}
-	if err := tx.Commit(); err != nil {
 		return err
 	}
 	return nil

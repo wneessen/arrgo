@@ -13,7 +13,12 @@ type Config struct {
 		ShardID int    `fig:"shard_id" default:"0"`
 	}
 	DB struct {
-		Path string `fig:"path" validate:"required"`
+		Host     string `fig:"host" validate:"required"`
+		Username string `fig:"user" default:"arrgo"`
+		Password string `fig:"password"`
+		Database string `fig:"db" default:"arrgo"`
+		UseTLS   bool   `fig:"use_tls"`
+		Port     int    `fig:"port" default:"5432"`
 	}
 	Log struct {
 		Level string `fig:"level" default:"info"`
