@@ -64,6 +64,7 @@ func (b *Bot) getFlameheartEmbed() ([]*discordgo.MessageEmbed, error) {
 		`You dare defy me?!`,
 		`I'll show you no mercy!`,
 		`Tremble at the might of Flameheart!`,
+		`*** frustrated groan ***`,
 	}
 
 	// Prepare the embed message
