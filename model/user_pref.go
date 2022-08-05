@@ -15,7 +15,8 @@ type UserPrefKey string
 // List of possible UserPrefKeys
 const (
 	// UserPrefSoTAuthToken is the authentication token for Sea of Thieves
-	UserPrefSoTAuthToken UserPrefKey = "rat_token"
+	UserPrefSoTAuthToken           UserPrefKey = "rat_token"
+	UserPrefSoTAuthTokenExpiration UserPrefKey = "rat_token_expire"
 )
 
 // GetPrefString fetches a client-specific setting from the database as string type
