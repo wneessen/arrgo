@@ -3,12 +3,16 @@ package model
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"github.com/wneessen/arrgo/config"
+	"github.com/wneessen/arrgo/crypto"
 	"time"
 )
 
 // GuildModel wraps the connection pool.
 type GuildModel struct {
-	DB *sql.DB
+	Config *config.Config
+	DB     *sql.DB
 }
 
 // Guild represents the guild information in the database
@@ -19,6 +23,7 @@ type Guild struct {
 	OwnerID         string    `json:"ownerId"`
 	JoinedAt        time.Time `json:"joinedAt"`
 	SystemChannelID string    `json:"systemChannelID"`
+	EncryptionKey   []byte    `json:"-"`
 	Version         int       `json:"-"`
 	CreateTime      time.Time `json:"createTime"`
 	ModTime         time.Time `json:"modTime"`
@@ -26,7 +31,7 @@ type Guild struct {
 
 // GetByGuildID retrieves the Guild details from the database based on the given Guild ID
 func (m GuildModel) GetByGuildID(i string) (*Guild, error) {
-	q := `SELECT g.id, g.guild_id, g.guild_name, g.owner_id, g.joined_at, g.system_channel, 
+	q := `SELECT g.id, g.guild_id, g.guild_name, g.owner_id, g.joined_at, g.system_channel, g.enc_key,
        		     g.version, g.ctime, g.mtime
             FROM guilds g
            WHERE g.guild_id = $1`
@@ -36,7 +41,7 @@ func (m GuildModel) GetByGuildID(i string) (*Guild, error) {
 	defer cancel()
 
 	row := m.DB.QueryRowContext(ctx, q, i)
-	err := row.Scan(&g.ID, &g.GuildID, &g.GuildName, &g.OwnerID, &g.JoinedAt, &g.SystemChannelID,
+	err := row.Scan(&g.ID, &g.GuildID, &g.GuildName, &g.OwnerID, &g.JoinedAt, &g.SystemChannelID, &g.EncryptionKey,
 		&g.Version, &g.CreateTime, &g.ModTime)
 	if err != nil {
 		switch err {
@@ -83,10 +88,10 @@ func (m GuildModel) GetGuilds() ([]*Guild, error) {
 
 // Insert adds a new Guild into the database
 func (m GuildModel) Insert(g *Guild) error {
-	q := `INSERT INTO guilds (guild_id, guild_name, owner_id, joined_at, system_channel)
-               VALUES ($1, $2, $3, $4, $5)
+	q := `INSERT INTO guilds (guild_id, guild_name, owner_id, joined_at, system_channel, enc_key)
+               VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id, ctime, mtime, version`
-	v := []interface{}{g.GuildID, g.GuildName, g.OwnerID, g.JoinedAt, g.SystemChannelID}
+	v := []interface{}{g.GuildID, g.GuildName, g.OwnerID, g.JoinedAt, g.SystemChannelID, g.EncryptionKey}
 
 	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
 	defer cancel()
@@ -107,4 +112,13 @@ func (m GuildModel) Delete(g *Guild) error {
 
 	_, err := m.DB.ExecContext(ctx, q, g.ID)
 	return err
+}
+
+// DecryptEncSecret decrypts the guild specific encryption secret in the DB with the global encryption key
+func (m GuildModel) DecryptEncSecret(g *Guild) ([]byte, error) {
+	ek, err := crypto.DecryptAuth(g.EncryptionKey, []byte(m.Config.Data.EncryptionKey), []byte(g.GuildID))
+	if err != nil {
+		return []byte{}, fmt.Errorf("failed to decrypt guild encryption secret: %w", err)
+	}
+	return ek, nil
 }

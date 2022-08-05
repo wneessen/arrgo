@@ -1,13 +1,12 @@
 package bot
 
 import (
-	"crypto/rand"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/rs/zerolog"
 	"github.com/wneessen/arrgo/config"
+	"github.com/wneessen/arrgo/crypto"
 	"github.com/wneessen/arrgo/model"
-	"math/big"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,7 +14,7 @@ import (
 )
 
 // FHTimer defines the maximum random number for the FH spammer timer (in minutes)
-const FHTimer = 60
+const FHTimer = 2
 
 // Bot represents the bot instance
 type Bot struct {
@@ -47,7 +46,20 @@ func New(l zerolog.Logger, c *config.Config) (*Bot, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
-	b.Model = model.New(db)
+	b.Model = model.New(db, c)
+
+	// We require a global encryption key
+	if c.Data.EncryptionKey == "" || len(c.Data.EncryptionKey) != config.CryptoKeyLen {
+		b.Log.Warn().Msgf("no/invalid encryption key in configuration file... generating key...")
+		cs, err := crypto.RandomStringSecure(config.CryptoKeyLen, true, false)
+		if err != nil {
+			b.Log.Error().Msgf("failed to generate encryption key: %s", err)
+			os.Exit(1)
+		}
+		b.Log.Info().Msg("encryption key generated... please add the following key to your config...")
+		b.Log.Info().Msgf(`enc_key = "%s"`, cs)
+		os.Exit(0)
+	}
 
 	return b, nil
 }
@@ -92,7 +104,7 @@ func (b *Bot) Run() error {
 
 	// Times events
 	rn := FHTimer
-	rn, err = b.randNum(FHTimer)
+	rn, err = crypto.RandNum(FHTimer)
 	if err != nil {
 		ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
 		rn = FHTimer
@@ -123,7 +135,7 @@ func (b *Bot) Run() error {
 			}
 
 			// Reset the duration
-			rn, err = b.randNum(FHTimer)
+			rn, err = crypto.RandNum(FHTimer)
 			if err != nil {
 				ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
 				rn = FHTimer
@@ -141,24 +153,4 @@ func (b *Bot) StartTimeString() string {
 // StartTimeUnix returns the time when the bot was last initalized
 func (b *Bot) StartTimeUnix() int64 {
 	return b.st.Unix()
-}
-
-// randNum returns a random number with a maximum value of n
-func (b *Bot) randNum(n int) (int, error) {
-	if n <= 0 {
-		return 0, fmt.Errorf("provided number is <= 0: %d", n)
-	}
-	mbi := big.NewInt(int64(n))
-	if !mbi.IsUint64() {
-		return 0, fmt.Errorf("big.NewInt() generation returned negative value: %d", mbi)
-	}
-	rn64, err := rand.Int(rand.Reader, mbi)
-	if err != nil {
-		return 0, err
-	}
-	rn := int(rn64.Int64())
-	if rn < 0 {
-		return 0, fmt.Errorf("generated random number does not fit as int64: %d", rn64)
-	}
-	return rn, nil
 }

@@ -8,10 +8,12 @@ import (
 )
 
 const (
-	TitleConfigUpdates = "Bot configuration updated"
+	TitleConfigUpdated      = "Bot configuration updated"
+	TitleConfigUpdateFailed = "Bot configuration update failed"
 )
 
 // SlashCmdConfig handles the /config slash command
+// All /config commands require admin or moderate-members permissions on the guild
 func (b *Bot) SlashCmdConfig(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	ll := b.Log.With().Str("context", "bot.SlashCmdConfig").Logger()
 	ol := i.ApplicationCommandData().Options
@@ -26,6 +28,30 @@ func (b *Bot) SlashCmdConfig(s *discordgo.Session, i *discordgo.InteractionCreat
 	})
 	if err != nil {
 		return fmt.Errorf("failed to defer /config request: %w", err)
+	}
+
+	// Only admin users are allowed to execute /config commands
+	r := Requester{i.Member}
+	if !r.IsAdmin() && !r.CanModerateMembers() {
+		ll.Warn().Msgf("non admin user tried to change configuration: %s", i.Member.User.Username)
+		e := []*discordgo.MessageEmbed{
+			{
+				Type: discordgo.EmbedTypeRich,
+				Fields: []*discordgo.MessageEmbedField{
+					{
+						Value:  "You don't have permissions to change bot settings on this server",
+						Name:   TitleConfigUpdateFailed,
+						Inline: false,
+					},
+				},
+			},
+		}
+
+		// Edit the deferred message
+		if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+			return fmt.Errorf("failed to edit /config flameheart-spam request: %w", err)
+		}
+		return nil
 	}
 
 	// Define list of config option methods
@@ -43,6 +69,7 @@ func (b *Bot) SlashCmdConfig(s *discordgo.Session, i *discordgo.InteractionCreat
 	return nil
 }
 
+// configFlameheart en-/disables the Flameheart spam for a Guild
 func (b *Bot) configFlameheart(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	mo := i.ApplicationCommandData().Options
 	if len(mo) <= 0 {
@@ -75,7 +102,7 @@ func (b *Bot) configFlameheart(s *discordgo.Session, i *discordgo.InteractionCre
 	ef := []*discordgo.MessageEmbedField{
 		{
 			Value:  "The bot will not spam the server with Captain Flameheart quotes",
-			Name:   TitleConfigUpdates,
+			Name:   TitleConfigUpdated,
 			Inline: false,
 		},
 	}

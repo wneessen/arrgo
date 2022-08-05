@@ -1,0 +1,1 @@
+ALTER TABLE guilds ADD COLUMN enc_key BYTEA;

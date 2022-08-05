@@ -3,6 +3,8 @@ package bot
 import (
 	"errors"
 	"github.com/bwmarrin/discordgo"
+	"github.com/wneessen/arrgo/config"
+	"github.com/wneessen/arrgo/crypto"
 	"github.com/wneessen/arrgo/model"
 )
 
@@ -19,12 +21,23 @@ func (b *Bot) GuildCreate(s *discordgo.Session, ev *discordgo.GuildCreate) {
 		}
 
 		ll.Debug().Msg("guild not found in database... trying to add it")
+		gs, err := crypto.RandomStringSecure(config.CryptoKeyLen, true, false)
+		if err != nil {
+			ll.Error().Msgf("failed to generate guild encryption secret: %s", err)
+			return
+		}
+		ek, err := crypto.EncryptAuth([]byte(gs), []byte(b.Config.Data.EncryptionKey), []byte(ev.Guild.ID))
+		if err != nil {
+			ll.Error().Msgf("failed to encrypt guild encryption secret with global encryption key: %s", err)
+			return
+		}
 		g = &model.Guild{
 			GuildID:         ev.Guild.ID,
 			GuildName:       ev.Guild.Name,
 			OwnerID:         ev.Guild.OwnerID,
 			JoinedAt:        ev.Guild.JoinedAt,
 			SystemChannelID: ev.Guild.SystemChannelID,
+			EncryptionKey:   ek,
 		}
 		if err := b.Model.Guild.Insert(g); err != nil {
 			ll.Error().Msgf("failed to insert guild into database: %s", err)

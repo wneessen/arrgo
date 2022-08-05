@@ -6,6 +6,12 @@ import (
 	"os"
 )
 
+// Some crypto defaults
+const (
+	// CryptoKeyLen defines the required length of cryptographic keys
+	CryptoKeyLen = 32
+)
+
 // Config represents the global configuration struct that the config file is marshalled into
 type Config struct {
 	Discord struct {
@@ -22,6 +28,9 @@ type Config struct {
 	}
 	Log struct {
 		Level string `fig:"level" default:"info"`
+	}
+	Data struct {
+		EncryptionKey string `fig:"enc_key"`
 	}
 	confFile string
 }

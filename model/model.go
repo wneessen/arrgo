@@ -3,6 +3,7 @@ package model
 import (
 	"database/sql"
 	"errors"
+	"github.com/wneessen/arrgo/config"
 	"time"
 )
 
@@ -25,8 +26,8 @@ type Model struct {
 }
 
 // New returns the collection of all available models
-func New(db *sql.DB) Model {
+func New(db *sql.DB, c *config.Config) Model {
 	return Model{
-		Guild: &GuildModel{DB: db},
+		Guild: &GuildModel{DB: db, Config: c},
 	}
 }

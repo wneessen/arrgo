@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="arrgo@localhost" uuid="84ff8473-9274-4ffa-b395-7d397a6b14b0">
+    <data-source source="LOCAL" name="arrgo@easyshare.fritz.box" uuid="83faab4b-4f63-48e8-8445-1f886e6894ea">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/arrgo</jdbc-url>
+      <jdbc-url>jdbc:postgresql://easyshare.fritz.box:5432/arrgo</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

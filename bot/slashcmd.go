@@ -3,6 +3,7 @@ package bot
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/wneessen/arrgo/crypto"
 	"time"
 )
 
@@ -90,7 +91,7 @@ func (b *Bot) RegisterSlashCommands() error {
 		}
 		if n || c {
 			go func(s *discordgo.ApplicationCommand, e bool) {
-				rn, err := b.randNum(2000)
+				rn, err := crypto.RandNum(2000)
 				if err != nil {
 					ll.Error().Msgf("failed to generate random number: %s", err)
 					return

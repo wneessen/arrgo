@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/pkg/errors"
+	"github.com/wneessen/arrgo/crypto"
 	"github.com/wneessen/arrgo/model"
 	"strings"
 )
@@ -100,7 +101,7 @@ func (b *Bot) getFlameheartEmbed() ([]*discordgo.MessageEmbed, error) {
 	}
 
 	// Prepare the embed message
-	rn, err := b.randNum(len(q))
+	rn, err := crypto.RandNum(len(q))
 	if err != nil {
 		return []*discordgo.MessageEmbed{}, fmt.Errorf("failed to generate random number: %w", err)
 	}
