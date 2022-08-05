@@ -4,15 +4,17 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dd9ee092-0f85-4978-b01e-9f9be67af451" name="Changes" comment="Added User model">
-      <change afterPath="$PROJECT_DIR$/model/user_pref.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql_migrations/000005_user_prefs_table.down.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql_migrations/000005_user_prefs_table.up.sql" afterDir="false" />
+    <list default="true" id="dd9ee092-0f85-4978-b01e-9f9be67af451" name="Changes" comment="Updated user model and added user prefs">
+      <change afterPath="$PROJECT_DIR$/bot/sc_handler_register.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bot/sc_handler_sot_setrat.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/guild_pref.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/guild_pref.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql_migrations/000004_user_table.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/sql_migrations/000004_user_table.up.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/handler_guildcreate.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/handler_guildcreate.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/sc_handler_config.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/sc_handler_config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/sc_handler_sot_flameheart.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/sc_handler_sot_flameheart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/sc_handler_time.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/sc_handler_time.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/sc_handler_uptime.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/sc_handler_uptime.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/sc_handler_version.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/sc_handler_version.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/slashcmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/bot/slashcmd.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,52 +42,34 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
-    "TF_FMT": "false",
-    "WebServerToolWindowFactoryState": "true",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "W:/go/src/arrgo/model",
-    "settings.editor.selected.configurable": "SQL Dialects"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
+    &quot;TF_FMT&quot;: &quot;false&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;true&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;W:/go/src/arrgo/bot&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;SQL Dialects&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="W:\go\src\arrgo\bot" />
       <recent name="W:\go\src\arrgo\model" />
     </key>
-  </component>
-  <component name="RunManager">
-    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
-      <module name="arrgo" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
-      <module name="arrgo" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="DIRECTORY" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <method v="2" />
-    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
@@ -111,7 +95,8 @@
     <MESSAGE value="Flameheart spam is now configurable" />
     <MESSAGE value="We have fully functional global and per-guild encryption" />
     <MESSAGE value="Added User model" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added User model" />
+    <MESSAGE value="Updated user model and added user prefs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated user model and added user prefs" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

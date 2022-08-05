@@ -11,14 +11,6 @@ import (
 
 // SlashCmdSoTFlameheart handles the /flameheart slash command
 func (b *Bot) SlashCmdSoTFlameheart(s *discordgo.Session, i *discordgo.InteractionCreate) error {
-	// Initalize the deferred message
-	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{Content: ""},
-	})
-	if err != nil {
-		return fmt.Errorf("failed to defer /flameheart request: %w", err)
-	}
 	e, err := b.getFlameheartEmbed()
 	if err != nil {
 		return err
@@ -26,7 +18,7 @@ func (b *Bot) SlashCmdSoTFlameheart(s *discordgo.Session, i *discordgo.Interacti
 
 	// Edit the deferred message
 	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
-		return fmt.Errorf("failed to edit /flameheart request: %w", err)
+		return err
 	}
 
 	return nil

@@ -13,15 +13,21 @@ func (b *Bot) SlashCmdUptime(s *discordgo.Session, i *discordgo.InteractionCreat
 	if err != nil {
 		return fmt.Errorf("failed to parse time difference: %w", err)
 	}
-	r := discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: fmt.Sprintf("I was started on: %s, so I am running for %s now",
-				b.StartTimeString(), td.String()),
+	e := []*discordgo.MessageEmbed{
+		{
+			Type: discordgo.EmbedTypeRich,
+			Fields: []*discordgo.MessageEmbedField{
+				{
+					Name: "Forrest Gump would be proud...",
+					Value: fmt.Sprintf("I started running: <t:%d> and haven't stopped since... "+
+						"which means I've been running for %s now!", b.StartTimeUnix(), td.String()),
+					Inline: false,
+				},
+			},
 		},
 	}
-	if err := s.InteractionRespond(i.Interaction, &r); err != nil {
-		return fmt.Errorf("failed to respond to /uptime request: %w", err)
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+		return err
 	}
 	return nil
 }

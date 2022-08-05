@@ -37,7 +37,7 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 		// config allows to configure certain settings of the ArrBot
 		{
 			Name:        "config",
-			Description: "Configure certain aspects of your ArrBot instance",
+			Description: "Configure certain aspects of your ArrBot instance (admin-only)",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Name:        "flameheart-spam",
@@ -55,6 +55,26 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 						},
 					},
 					Type: discordgo.ApplicationCommandOptionSubCommandGroup,
+				},
+			},
+		},
+
+		// register registers the requesting user with the bot
+		{
+			Name:        "register",
+			Description: "Regsiters your user with ArrGo so you can use certain user-specific features",
+		},
+
+		// setrat stores the SoT authentication token in the Bot's database
+		{
+			Name:        "setrat",
+			Description: "Stores the Sea of Thieves authentication token in the Bot's database",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "rat-cookie",
+					Description: "Full SoT authentication cookie string as provided by the SoT-RAT-Extractor",
+					Required:    true,
 				},
 			},
 		},
@@ -76,6 +96,8 @@ func (b *Bot) RegisterSlashCommands() error {
 		n := true
 		c := false
 		for _, rc := range rcl {
+			sc.ApplicationID = rc.ApplicationID
+			sc.ID = rc.ID
 			if sc.Name == rc.Name && sc.Description == rc.Description {
 				ll.Debug().Msgf("slash command %s already registered. Skipping.", rc.Name)
 				n = false
@@ -102,6 +124,7 @@ func (b *Bot) RegisterSlashCommands() error {
 				time.Sleep(rd)
 				if e {
 					ll.Debug().Msgf("[%s] updating slash command...", s.Name)
+
 					_, err := b.Session.ApplicationCommandEdit(b.Session.State.User.ID, "", s.ID, s)
 					if err != nil {
 						ll.Error().Msgf("[%s] failed to update slash command: %s", s.Name, err)
@@ -144,12 +167,49 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"version":    b.SlashCmdVersion,
 		"flameheart": b.SlashCmdSoTFlameheart,
 		"config":     b.SlashCmdConfig,
+		"register":   b.SlashCmdRegister,
+		"setrat":     b.SlashCmdSetRAT,
+	}
+
+	// Define list of slash commands that should use ephemeral messages
+	el := map[string]bool{
+		"register": true,
+		"setrat":   true,
+		"config":   true,
+		"version":  true,
 	}
 
 	// Check if provided command is available and process it
 	if h, ok := sh[i.ApplicationCommandData().Name]; ok {
+		r := &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{Content: ""},
+		}
+		if _, ok := el[i.ApplicationCommandData().Name]; ok {
+			r.Data.Flags = uint64(discordgo.MessageFlagsEphemeral)
+		}
+		err := s.InteractionRespond(i.Interaction, r)
+		if err != nil {
+			ll.Error().Msgf("failed to defer the /%s command request: %s",
+				i.ApplicationCommandData().Name, err)
+			return
+		}
 		if err := h(s, i); err != nil {
 			ll.Error().Msgf("failed to process /%s command: %s", i.ApplicationCommandData().Name, err)
+			e := []*discordgo.MessageEmbed{
+				{
+					Type: discordgo.EmbedTypeRich,
+					Fields: []*discordgo.MessageEmbedField{
+						{
+							Name: "Something went wrong!",
+							Value: fmt.Sprintf("I am sorry, but I was not able to process your request: %s",
+								err),
+							Inline: false,
+						},
+					},
+				},
+			}
+			_, _ = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e})
 		}
 	}
 }

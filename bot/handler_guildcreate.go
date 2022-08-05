@@ -21,12 +21,12 @@ func (b *Bot) GuildCreate(s *discordgo.Session, ev *discordgo.GuildCreate) {
 		}
 
 		ll.Debug().Msg("guild not found in database... trying to add it")
-		gs, err := crypto.RandomStringSecure(config.CryptoKeyLen, true, false)
+		gs, err := crypto.RandomBytes(config.CryptoKeyLen)
 		if err != nil {
 			ll.Error().Msgf("failed to generate guild encryption secret: %s", err)
 			return
 		}
-		ek, err := crypto.EncryptAuth([]byte(gs), []byte(b.Config.Data.EncryptionKey), []byte(ev.Guild.ID))
+		ek, err := crypto.EncryptAuth(gs, []byte(b.Config.Data.EncryptionKey), []byte(ev.Guild.ID))
 		if err != nil {
 			ll.Error().Msgf("failed to encrypt guild encryption secret with global encryption key: %s", err)
 			return

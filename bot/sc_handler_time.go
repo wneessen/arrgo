@@ -8,14 +8,20 @@ import (
 
 // SlashCmdTime handles the /time slash command
 func (b *Bot) SlashCmdTime(s *discordgo.Session, i *discordgo.InteractionCreate) error {
-	r := discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: fmt.Sprintf("The current bot time is: <t:%d>", time.Now().Unix()),
+	e := []*discordgo.MessageEmbed{
+		{
+			Type: discordgo.EmbedTypeRich,
+			Fields: []*discordgo.MessageEmbedField{
+				{
+					Name:   "It's time, Matey!",
+					Value:  fmt.Sprintf("The current bot time is: <t:%d>", time.Now().Unix()),
+					Inline: false,
+				},
+			},
 		},
 	}
-	if err := s.InteractionRespond(i.Interaction, &r); err != nil {
-		return fmt.Errorf("failed to respond to /time request: %w", err)
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+		return err
 	}
 	return nil
 }

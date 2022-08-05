@@ -8,8 +8,7 @@ import (
 )
 
 const (
-	TitleConfigUpdated      = "Bot configuration updated"
-	TitleConfigUpdateFailed = "Bot configuration update failed"
+	TitleConfigUpdated = "Bot configuration updated"
 )
 
 // SlashCmdConfig handles the /config slash command
@@ -18,40 +17,11 @@ func (b *Bot) SlashCmdConfig(s *discordgo.Session, i *discordgo.InteractionCreat
 	ll := b.Log.With().Str("context", "bot.SlashCmdConfig").Logger()
 	ol := i.ApplicationCommandData().Options
 
-	// Initalize the deferred message
-	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "",
-			Flags:   uint64(discordgo.MessageFlagsEphemeral),
-		},
-	})
-	if err != nil {
-		return fmt.Errorf("failed to defer /config request: %w", err)
-	}
-
 	// Only admin users are allowed to execute /config commands
 	r := Requester{i.Member}
 	if !r.IsAdmin() && !r.CanModerateMembers() {
 		ll.Warn().Msgf("non admin user tried to change configuration: %s", i.Member.User.Username)
-		e := []*discordgo.MessageEmbed{
-			{
-				Type: discordgo.EmbedTypeRich,
-				Fields: []*discordgo.MessageEmbedField{
-					{
-						Value:  "You don't have permissions to change bot settings on this server",
-						Name:   TitleConfigUpdateFailed,
-						Inline: false,
-					},
-				},
-			},
-		}
-
-		// Edit the deferred message
-		if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
-			return fmt.Errorf("failed to edit /config flameheart-spam request: %w", err)
-		}
-		return nil
+		return fmt.Errorf("this command is only accessible for admin-user")
 	}
 
 	// Define list of config option methods
@@ -62,7 +32,7 @@ func (b *Bot) SlashCmdConfig(s *discordgo.Session, i *discordgo.InteractionCreat
 	// Check if provided command is available and process it
 	if h, ok := co[ol[0].Name]; ok {
 		if err := h(s, i); err != nil {
-			ll.Error().Msgf("failed to process /config %s command: %s", ol[0].Name, err)
+			return fmt.Errorf("failed to process /config %s command: %w", ol[0].Name, err)
 		}
 	}
 
