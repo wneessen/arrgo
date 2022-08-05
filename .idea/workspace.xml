@@ -4,12 +4,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dd9ee092-0f85-4978-b01e-9f9be67af451" name="Changes" comment="We have fully functional global and per-guild encryption">
-      <change afterPath="$PROJECT_DIR$/model/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql_migrations/000004_user_table.down.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql_migrations/000004_user_table.up.sql" afterDir="false" />
+    <list default="true" id="dd9ee092-0f85-4978-b01e-9f9be67af451" name="Changes" comment="Added User model">
+      <change afterPath="$PROJECT_DIR$/model/user_pref.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sql_migrations/000005_user_prefs_table.down.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sql_migrations/000005_user_prefs_table.up.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/guild_pref.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/guild_pref.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/model.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sql_migrations/000004_user_table.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/sql_migrations/000004_user_table.up.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +110,8 @@
     <MESSAGE value="We've got guild preference settings and started the /config option" />
     <MESSAGE value="Flameheart spam is now configurable" />
     <MESSAGE value="We have fully functional global and per-guild encryption" />
-    <option name="LAST_COMMIT_MESSAGE" value="We have fully functional global and per-guild encryption" />
+    <MESSAGE value="Added User model" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added User model" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

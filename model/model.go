@@ -21,6 +21,10 @@ var (
 	// ErrGuildPrefNotExistant should be returned in case a guild preference is requested that does
 	// not exist in the database
 	ErrGuildPrefNotExistant = errors.New("requested guild preference not existant in database")
+
+	// ErrUserPrefNotExistant should be returned in case a user preference is requested that does
+	// not exist in the database
+	ErrUserPrefNotExistant = errors.New("requested user preference not existant in database")
 )
 
 // Model is a collection of all available models
@@ -33,6 +37,6 @@ type Model struct {
 func New(db *sql.DB, c *config.Config) Model {
 	return Model{
 		Guild: &GuildModel{DB: db, Config: c},
-		User:  &UserModel{DB: db},
+		User:  &UserModel{DB: db, Config: c},
 	}
 }

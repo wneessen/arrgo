@@ -3,26 +3,31 @@ package model
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"github.com/wneessen/arrgo/config"
+	"github.com/wneessen/arrgo/crypto"
 	"time"
 )
 
 // UserModel wraps the connection pool.
 type UserModel struct {
-	DB *sql.DB
+	Config *config.Config
+	DB     *sql.DB
 }
 
 // User represents the user information in the database
 type User struct {
-	ID         int64     `json:"id"`
-	UserID     string    `json:"guildId"`
-	Version    int       `json:"-"`
-	CreateTime time.Time `json:"createTime"`
-	ModTime    time.Time `json:"modTime"`
+	ID            int64     `json:"id"`
+	UserID        string    `json:"userId"`
+	EncryptionKey []byte    `json:"-"`
+	Version       int       `json:"-"`
+	CreateTime    time.Time `json:"createTime"`
+	ModTime       time.Time `json:"modTime"`
 }
 
 // GetByUserID retrieves the User details from the database based on the given User ID
 func (m UserModel) GetByUserID(i string) (*User, error) {
-	q := `SELECT u.id, u.user_id, u.version, u.ctime, u.mtime
+	q := `SELECT u.id, u.user_id, u.enc_key, u.version, u.ctime, u.mtime
             FROM users u
            WHERE u.user_id = $1`
 
@@ -31,7 +36,7 @@ func (m UserModel) GetByUserID(i string) (*User, error) {
 	defer cancel()
 
 	row := m.DB.QueryRowContext(ctx, q, i)
-	err := row.Scan(&u.ID, &u.UserID, &u.Version, &u.CreateTime, &u.ModTime)
+	err := row.Scan(&u.ID, &u.UserID, &u.EncryptionKey, &u.Version, &u.CreateTime, &u.ModTime)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -43,7 +48,7 @@ func (m UserModel) GetByUserID(i string) (*User, error) {
 	return &u, nil
 }
 
-// GetUsers returns a list of all guilds registered in the database
+// GetUsers returns a list of all users registered in the database
 func (m UserModel) GetUsers() ([]*User, error) {
 	q := `SELECT u.user_id
             FROM users u`
@@ -77,10 +82,10 @@ func (m UserModel) GetUsers() ([]*User, error) {
 
 // Insert adds a new User into the database
 func (m UserModel) Insert(u *User) error {
-	q := `INSERT INTO users (user_id)
-               VALUES ($1)
+	q := `INSERT INTO users (user_id, enc_key)
+               VALUES ($1, $2)
             RETURNING id, ctime, mtime, version`
-	v := []interface{}{u.UserID}
+	v := []interface{}{u.UserID, u.EncryptionKey}
 
 	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
 	defer cancel()
@@ -101,4 +106,13 @@ func (m UserModel) Delete(u *User) error {
 
 	_, err := m.DB.ExecContext(ctx, q, u.ID)
 	return err
+}
+
+// DecryptEncSecret decrypts the user specific encryption secret in the DB with the global encryption key
+func (m UserModel) DecryptEncSecret(u *User) ([]byte, error) {
+	ek, err := crypto.DecryptAuth(u.EncryptionKey, []byte(m.Config.Data.EncryptionKey), []byte(u.UserID))
+	if err != nil {
+		return []byte{}, fmt.Errorf("failed to decrypt user encryption secret: %w", err)
+	}
+	return ek, nil
 }

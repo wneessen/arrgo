@@ -20,27 +20,27 @@ const (
 
 // GetPrefString fetches a client-specific setting from the database as string type
 func (m GuildModel) GetPrefString(g *Guild, k GuildPrefKey) (string, error) {
-	return getPref[string](m, g, k)
+	return getGuildPref[string](m, g, k)
 }
 
 // GetPrefStringEnc fetches an encrypted client-specific setting from the database as string type
 func (m GuildModel) GetPrefStringEnc(g *Guild, k GuildPrefKey) (string, error) {
-	return getPrefEnc[string](m, g, k)
+	return getGuildPrefEnc[string](m, g, k)
 }
 
 // GetPrefInt fetches a client-specific setting from the database as string type
 func (m GuildModel) GetPrefInt(g *Guild, k GuildPrefKey) (int, error) {
-	return getPref[int](m, g, k)
+	return getGuildPref[int](m, g, k)
 }
 
 // GetPrefInt64 fetches a client-specific setting from the database as string type
 func (m GuildModel) GetPrefInt64(g *Guild, k GuildPrefKey) (int64, error) {
-	return getPref[int64](m, g, k)
+	return getGuildPref[int64](m, g, k)
 }
 
 // GetPrefBool fetches a client-specific setting from the database as string type
 func (m GuildModel) GetPrefBool(g *Guild, k GuildPrefKey) (bool, error) {
-	return getPref[bool](m, g, k)
+	return getGuildPref[bool](m, g, k)
 }
 
 // PrefExists checks if a guild preference is already present in the DB
@@ -143,9 +143,9 @@ func (m GuildModel) SetPrefEnc(g *Guild, k GuildPrefKey, v interface{}) error {
 	return nil
 }
 
-// getPref is a generic interface to fetch guild-specific settings from the database
+// getGuildPref is a generic interface to fetch guild-specific settings from the database
 // for different types
-func getPref[V string | bool | int | int64](m GuildModel, g *Guild, k GuildPrefKey) (V, error) {
+func getGuildPref[V string | bool | int | int64](m GuildModel, g *Guild, k GuildPrefKey) (V, error) {
 	var v V
 	var bv []byte
 	var ob bytes.Buffer
@@ -177,9 +177,9 @@ func getPref[V string | bool | int | int64](m GuildModel, g *Guild, k GuildPrefK
 	return v, nil
 }
 
-// getPrefEnc is a generic interface to fetch encrypted guild-specific settings from the database
+// getGuildPrefEnc is a generic interface to fetch encrypted guild-specific settings from the database
 // for different types
-func getPrefEnc[V string | bool | int | int64](m GuildModel, g *Guild, k GuildPrefKey) (V, error) {
+func getGuildPrefEnc[V string | bool | int | int64](m GuildModel, g *Guild, k GuildPrefKey) (V, error) {
 	var v V
 	var bv []byte
 	var ob bytes.Buffer
