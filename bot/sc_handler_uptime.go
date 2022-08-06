@@ -15,15 +15,10 @@ func (b *Bot) SlashCmdUptime(s *discordgo.Session, i *discordgo.InteractionCreat
 	}
 	e := []*discordgo.MessageEmbed{
 		{
-			Type: discordgo.EmbedTypeRich,
-			Fields: []*discordgo.MessageEmbedField{
-				{
-					Name: "Forrest Gump would be proud...",
-					Value: fmt.Sprintf("I started running: <t:%d> and haven't stopped since... "+
-						"which means I've been running for %s now!", b.StartTimeUnix(), td.String()),
-					Inline: false,
-				},
-			},
+			Type:  discordgo.EmbedTypeArticle,
+			Title: "Forrest Gump would be proud...",
+			Description: fmt.Sprintf("I started running: <t:%d> and haven't stopped since... "+
+				"which means I've been running for %s now!", b.StartTimeUnix(), td.String()),
 		},
 	}
 	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {

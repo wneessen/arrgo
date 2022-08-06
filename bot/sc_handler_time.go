@@ -10,14 +10,9 @@ import (
 func (b *Bot) SlashCmdTime(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	e := []*discordgo.MessageEmbed{
 		{
-			Type: discordgo.EmbedTypeRich,
-			Fields: []*discordgo.MessageEmbedField{
-				{
-					Name:   "It's time, Matey!",
-					Value:  fmt.Sprintf("The current bot time is: <t:%d>", time.Now().Unix()),
-					Inline: false,
-				},
-			},
+			Type:        discordgo.EmbedTypeArticle,
+			Title:       "It's time, Matey!",
+			Description: fmt.Sprintf("The current bot time is: <t:%d>", time.Now().Unix()),
 		},
 	}
 	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {

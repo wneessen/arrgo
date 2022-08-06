@@ -18,14 +18,9 @@ func (b *Bot) SlashCmdRegister(s *discordgo.Session, i *discordgo.InteractionCre
 	if u.ID > 0 {
 		e := []*discordgo.MessageEmbed{
 			{
-				Type: discordgo.EmbedTypeRich,
-				Fields: []*discordgo.MessageEmbedField{
-					{
-						Value:  "You are already registered with ArrGo. Thanks for double checking...",
-						Name:   "Welcome back!",
-						Inline: false,
-					},
-				},
+				Type:        discordgo.EmbedTypeArticle,
+				Title:       "Welcome back!",
+				Description: "You are already registered with ArrGo. Thanks for double checking...",
 			},
 		}
 		if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
@@ -52,14 +47,9 @@ func (b *Bot) SlashCmdRegister(s *discordgo.Session, i *discordgo.InteractionCre
 
 	e := []*discordgo.MessageEmbed{
 		{
-			Type: discordgo.EmbedTypeRich,
-			Fields: []*discordgo.MessageEmbedField{
-				{
-					Value:  "You have successfully registered your account and are now able to use the full feature set",
-					Name:   "Welcome!",
-					Inline: false,
-				},
-			},
+			Type:        discordgo.EmbedTypeArticle,
+			Title:       "Welcome!",
+			Description: "You have successfully registered your account and are now able to use the full feature set",
 		},
 	}
 	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {

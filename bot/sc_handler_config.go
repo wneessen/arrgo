@@ -68,23 +68,15 @@ func (b *Bot) configFlameheart(s *discordgo.Session, i *discordgo.InteractionCre
 		return fmt.Errorf("failed to set flameheart preference in database: %w", err)
 	}
 
-	// Initalize the deferred message
-	ef := []*discordgo.MessageEmbedField{
+	e := []*discordgo.MessageEmbed{
 		{
-			Value:  "The bot will not spam the server with Captain Flameheart quotes",
-			Name:   TitleConfigUpdated,
-			Inline: false,
+			Type:        discordgo.EmbedTypeArticle,
+			Title:       TitleConfigUpdated,
+			Description: "The bot will not spam the server with Captain Flameheart quotes",
 		},
 	}
 	if nv {
-		ef[0].Value = "The bot will spam the server with Captain Flameheart quotes"
-	}
-
-	e := []*discordgo.MessageEmbed{
-		{
-			Type:   discordgo.EmbedTypeRich,
-			Fields: ef,
-		},
+		e[0].Description = "The bot will spam the server with Captain Flameheart quotes"
 	}
 
 	// Edit the deferred message

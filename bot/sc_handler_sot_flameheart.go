@@ -97,20 +97,14 @@ func (b *Bot) getFlameheartEmbed() ([]*discordgo.MessageEmbed, error) {
 	if err != nil {
 		return []*discordgo.MessageEmbed{}, fmt.Errorf("failed to generate random number: %w", err)
 	}
-	ef := []*discordgo.MessageEmbedField{
-		{
-			Value:  fmt.Sprintf(`«*%s*»`, strings.ToUpper(q[rn])),
-			Name:   "Captain Flameheart yells at you:",
-			Inline: false,
-		},
-	}
 	e := []*discordgo.MessageEmbed{
 		{
-			Type: discordgo.EmbedTypeRich,
+			Type:        discordgo.EmbedTypeArticle,
+			Title:       "Captain Flameheart yells at you:",
+			Description: fmt.Sprintf(`«*%s*»`, strings.ToUpper(q[rn])),
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
 				URL: `https://github.com/wneessen/arrgo/raw/main/assets/flameheart.png`,
 			},
-			Fields: ef,
 		},
 	}
 	return e, nil

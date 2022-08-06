@@ -26,15 +26,10 @@ func (b *Bot) SlashCmdSetRAT(s *discordgo.Session, i *discordgo.InteractionCreat
 		}
 		e := []*discordgo.MessageEmbed{
 			{
-				Type: discordgo.EmbedTypeRich,
-				Fields: []*discordgo.MessageEmbedField{
-					{
-						Name: "Please register your user first!",
-						Value: "To use the Sea of Thieves bot features, please first use the **/register** " +
-							"command to register your user with the bot",
-						Inline: false,
-					},
-				},
+				Type:  discordgo.EmbedTypeArticle,
+				Title: "Please register your user first!",
+				Description: "To use the Sea of Thieves bot features, please first use the **/register** " +
+					"command to register your user with the bot",
 			},
 		}
 		if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
@@ -77,14 +72,9 @@ func (b *Bot) SlashCmdSetRAT(s *discordgo.Session, i *discordgo.InteractionCreat
 
 	e := []*discordgo.MessageEmbed{
 		{
-			Type: discordgo.EmbedTypeRich,
-			Fields: []*discordgo.MessageEmbedField{
-				{
-					Name:   "Sea of Thieves authentication cookie stored/updated",
-					Value:  "Thank you for storing/updating your Sea of Thieves authentication cookie.",
-					Inline: false,
-				},
-			},
+			Type:        discordgo.EmbedTypeArticle,
+			Title:       "Sea of Thieves authentication cookie stored/updated",
+			Description: "Thank you for storing/updating your Sea of Thieves authentication cookie.",
 		},
 	}
 	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
