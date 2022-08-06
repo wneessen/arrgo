@@ -83,7 +83,7 @@ func (b *Bot) SlashCmdSoTSeasonProgress(s *discordgo.Session, i *discordgo.Inter
 	sp := sl[len(sl)-1]
 	var ef []*discordgo.MessageEmbedField
 	ef = append(ef, &discordgo.MessageEmbedField{
-		Name:   "Your current title",
+		Name:   "Current title",
 		Value:  sp.Tiers[sp.Tier-1].Title,
 		Inline: false,
 	})
@@ -105,7 +105,7 @@ func (b *Bot) SlashCmdSoTSeasonProgress(s *discordgo.Session, i *discordgo.Inter
 
 	e := []*discordgo.MessageEmbed{
 		{
-			Title: fmt.Sprintf("Your current for Sea of Thieves progress in %s", sp.SeasonTitle),
+			Title: fmt.Sprintf("Your progress in Sea of Thieves %s", sp.SeasonTitle),
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
 				URL: fmt.Sprintf("https://github.com/wneessen/arrgo/raw/main/assets/numerals/%s.png",
 					rn[sp.Tier]),
