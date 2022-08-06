@@ -78,6 +78,12 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 				},
 			},
 		},
+
+		// achievement gets the users latest achievement from the SoT API
+		{
+			Name:        "achievement",
+			Description: "Returns your latest achievement in Sea of Thieves to you",
+		},
 	}
 }
 
@@ -162,13 +168,14 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 
 	// Define list of slash command handler methods
 	sh := map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate) error{
-		"time":       b.SlashCmdTime,
-		"uptime":     b.SlashCmdUptime,
-		"version":    b.SlashCmdVersion,
-		"flameheart": b.SlashCmdSoTFlameheart,
-		"config":     b.SlashCmdConfig,
-		"register":   b.SlashCmdRegister,
-		"setrat":     b.SlashCmdSetRAT,
+		"time":        b.SlashCmdTime,
+		"uptime":      b.SlashCmdUptime,
+		"version":     b.SlashCmdVersion,
+		"flameheart":  b.SlashCmdSoTFlameheart,
+		"config":      b.SlashCmdConfig,
+		"register":    b.SlashCmdRegister,
+		"setrat":      b.SlashCmdSetRAT,
+		"achievement": b.SlashCmdSoTAchievement,
 	}
 
 	// Define list of slash commands that should use ephemeral messages

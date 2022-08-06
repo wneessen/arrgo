@@ -16,12 +16,18 @@ import (
 // FHTimer defines the maximum random number for the FH spammer timer (in minutes)
 const FHTimer = 2
 
+// List of Sea of Thieves API endpoints
+const (
+	ApiURLSoTAchievements = "https://www.seaofthieves.com/api/profilev2/achievements"
+)
+
 // Bot represents the bot instance
 type Bot struct {
-	Log     zerolog.Logger
-	Config  *config.Config
-	Session *discordgo.Session
-	Model   model.Model
+	Log        zerolog.Logger
+	Config     *config.Config
+	Session    *discordgo.Session
+	Model      model.Model
+	HTTPClient *HTTPClient
 
 	st time.Time
 }
@@ -60,6 +66,12 @@ func New(l zerolog.Logger, c *config.Config) (*Bot, error) {
 		b.Log.Info().Msgf(`enc_key = "%s"`, cs)
 		os.Exit(0)
 	}
+
+	hc, err := NewHTTPClient()
+	if err != nil {
+		return b, fmt.Errorf("failed to create HTTP client object: %w", err)
+	}
+	b.HTTPClient = hc
 
 	return b, nil
 }

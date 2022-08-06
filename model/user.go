@@ -116,19 +116,3 @@ func (m UserModel) DecryptEncSecret(u *User) ([]byte, error) {
 	}
 	return ek, nil
 }
-
-// GetSoTRATCookie returns the Sea of Thieves RAT cookie from the database if present
-func (m UserModel) GetSoTRATCookie(u *User) (string, error) {
-	c, err := m.GetPrefStringEnc(u, UserPrefSoTAuthToken)
-	if err != nil {
-		return "", err
-	}
-	e, err := m.GetPrefInt64(u, UserPrefSoTAuthTokenExpiration)
-	if err != nil {
-		return "", err
-	}
-	if e > time.Now().Unix() {
-		return "", fmt.Errorf("authentication token expired")
-	}
-	return c, nil
-}
