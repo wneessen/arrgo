@@ -8,22 +8,6 @@ import (
 	"golang.org/x/text/message"
 )
 
-// List of icons/emojis
-const (
-	IconGold        = "\U0001F7E1"
-	IconDoubloon    = "🔵"
-	IconAncientCoin = "💰"
-	IconIncrease    = "📈 "
-	IconDecrease    = "📉 "
-	/*
-	   "Kraken":      "🐙",
-	   "Megalodon":   "🦈",
-	   "Chest":       "🗝️",
-	   "Ship":        "⛵",
-	   "Vomit":       "🤮",
-	*/
-)
-
 // SoTUserBalance represents the JSON structure of the Sea of Thieves user balance API response
 type SoTUserBalance struct {
 	GamerTag     string `json:"gamertag"`
@@ -44,25 +28,28 @@ func (b *Bot) SlashCmdSoTBalance(s *discordgo.Session, i *discordgo.InteractionC
 	p := message.NewPrinter(language.German)
 	var ef []*discordgo.MessageEmbedField
 	ef = append(ef, &discordgo.MessageEmbedField{
-		Name:   fmt.Sprintf("%s Gold", IconGold),
-		Value:  fmt.Sprintf("**%s** Gold", p.Sprintf("%d", ub.Gold)),
+		Name: fmt.Sprintf("%s Gold", IconGold),
+		Value: fmt.Sprintf("%s **%s** Gold", changeIcon(ub.Gold),
+			p.Sprintf("%d", ub.Gold)),
 		Inline: true,
 	})
 	ef = append(ef, &discordgo.MessageEmbedField{
-		Name:   fmt.Sprintf("%s Doubloons", IconDoubloon),
-		Value:  fmt.Sprintf("**%s** Doubloons", p.Sprintf("%d", ub.Doubloons)),
+		Name: fmt.Sprintf("%s Doubloons", IconDoubloon),
+		Value: fmt.Sprintf("%s **%s** Doubloons", changeIcon(ub.Doubloons),
+			p.Sprintf("%d", ub.Doubloons)),
 		Inline: true,
 	})
 	ef = append(ef, &discordgo.MessageEmbedField{
-		Name:   fmt.Sprintf("%s Ancient Coins", IconAncientCoin),
-		Value:  fmt.Sprintf("**%s** Ancient Coins", p.Sprintf("%d", ub.AncientCoins)),
+		Name: fmt.Sprintf("%s Ancient Coins", IconAncientCoin),
+		Value: fmt.Sprintf("%s **%s** Ancient Coins", changeIcon(ub.AncientCoins),
+			p.Sprintf("%d", ub.AncientCoins)),
 		Inline: true,
 	})
 
 	e := []*discordgo.MessageEmbed{
 		{
 			Title:       "Your current balance in Sea of Thieves:",
-			Description: fmt.Sprintf("**Title:** %s", ub.Title),
+			Description: fmt.Sprintf("**Current Title:** %s", ub.Title),
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
 				URL: "https://github.com/wneessen/arrgo/raw/main/assets/season/gold-s.png",
 			},
