@@ -34,14 +34,29 @@ func (m UserModel) GetPrefInt(g *User, k UserPrefKey) (int, error) {
 	return getUserPref[int](m, g, k)
 }
 
+// GetPrefIntEnc fetches an encrypted client-specific setting from the database as string type
+func (m UserModel) GetPrefIntEnc(g *User, k UserPrefKey) (int, error) {
+	return getUserPrefEnc[int](m, g, k)
+}
+
 // GetPrefInt64 fetches a client-specific setting from the database as string type
 func (m UserModel) GetPrefInt64(g *User, k UserPrefKey) (int64, error) {
 	return getUserPref[int64](m, g, k)
 }
 
+// GetPrefInt64Enc fetches an encrypted client-specific setting from the database as string type
+func (m UserModel) GetPrefInt64Enc(g *User, k UserPrefKey) (int64, error) {
+	return getUserPrefEnc[int64](m, g, k)
+}
+
 // GetPrefBool fetches a client-specific setting from the database as string type
 func (m UserModel) GetPrefBool(g *User, k UserPrefKey) (bool, error) {
 	return getUserPref[bool](m, g, k)
+}
+
+// GetPrefBoolEnc fetches an encrypted client-specific setting from the database as string type
+func (m UserModel) GetPrefBoolEnc(g *User, k UserPrefKey) (bool, error) {
+	return getUserPrefEnc[bool](m, g, k)
 }
 
 // PrefExists checks if a user preference is already present in the DB

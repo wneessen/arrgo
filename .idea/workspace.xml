@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dd9ee092-0f85-4978-b01e-9f9be67af451" name="Changes" comment="Lots of optimizations and refactoring in the slash command handling">
-      <change afterPath="$PROJECT_DIR$/bot/sc_handler_sot_setrat.go" afterDir="false" />
+    <list default="true" id="dd9ee092-0f85-4978-b01e-9f9be67af451" name="Changes" comment="Make the config options Ephemeral">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/user.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/user_pref.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/user_pref.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -21,7 +22,7 @@
       </list>
     </option>
   </component>
-  <component name="GOROOT" url="file://$USER_HOME$/go/go1.18.3" />
+  <component name="GOROOT" url="file://$PROJECT_DIR$/../../go1.18.3" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
