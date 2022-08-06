@@ -19,6 +19,7 @@ const FHTimer = 2
 // List of Sea of Thieves API endpoints
 const (
 	ApiURLSoTAchievements = "https://www.seaofthieves.com/api/profilev2/achievements"
+	ApiURLSoTSeasons      = "https://www.seaofthieves.com/api/profilev2/seasons-progress"
 )
 
 // Bot represents the bot instance
