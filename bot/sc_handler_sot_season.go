@@ -55,7 +55,7 @@ type SoTSeasonReward struct {
 	EntitlementDescription string `json:"EntitlementDescription"`
 }
 
-// SlashCmdSoTSeasonProgress handles the /time slash command
+// SlashCmdSoTSeasonProgress handles the /season slash command
 func (b *Bot) SlashCmdSoTSeasonProgress(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	r := &Requester{i.Member, b.Model.User}
 	sl, err := b.SoTGetSeasonProgress(r)

@@ -24,7 +24,7 @@ type SoTAchievement struct {
 	MediaUrl    string `json:"MediaUrl"`
 }
 
-// SlashCmdSoTAchievement handles the /time slash command
+// SlashCmdSoTAchievement handles the /achievement slash command
 func (b *Bot) SlashCmdSoTAchievement(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	r := &Requester{i.Member, b.Model.User}
 	al, err := b.SoTGetAchievements(r)

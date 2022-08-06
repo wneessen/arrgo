@@ -90,6 +90,12 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 			Name:        "season",
 			Description: "Returns your renown progress in the current Sea of Thieves season to you",
 		},
+
+		// balance gets the users current gold/doubloon/ac balance from the SoT API
+		{
+			Name:        "balance",
+			Description: "Returns your current Sea of Thieves gold/doubloon/ancient coins balance",
+		},
 	}
 }
 
@@ -183,6 +189,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"setrat":      b.SlashCmdSetRAT,
 		"achievement": b.SlashCmdSoTAchievement,
 		"season":      b.SlashCmdSoTSeasonProgress,
+		"balance":     b.SlashCmdSoTBalance,
 	}
 
 	// Define list of slash commands that should use ephemeral messages

@@ -20,6 +20,7 @@ const FHTimer = 2
 const (
 	ApiURLSoTAchievements = "https://www.seaofthieves.com/api/profilev2/achievements"
 	ApiURLSoTSeasons      = "https://www.seaofthieves.com/api/profilev2/seasons-progress"
+	ApiURLSoTUserBalance  = "https://www.seaofthieves.com/api/profilev2/balance"
 )
 
 // Bot represents the bot instance
