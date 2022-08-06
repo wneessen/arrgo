@@ -205,15 +205,10 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 			ll.Error().Msgf("failed to process /%s command: %s", i.ApplicationCommandData().Name, err)
 			e := []*discordgo.MessageEmbed{
 				{
-					Type: discordgo.EmbedTypeRich,
-					Fields: []*discordgo.MessageEmbedField{
-						{
-							Name: "Something went wrong!",
-							Value: fmt.Sprintf("I am sorry, but I was not able to process your request: %s",
-								err),
-							Inline: false,
-						},
-					},
+					Type: discordgo.EmbedTypeArticle,
+					Description: fmt.Sprintf("I am sorry, but I was not able to process your request: %s",
+						err),
+					Title: "Oh no! Something went wrong!",
 				},
 			}
 			_, _ = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e})

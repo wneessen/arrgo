@@ -1,7 +1,7 @@
 package bot
 
 import (
-	"fmt"
+	"errors"
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/model"
 	"time"
@@ -12,6 +12,16 @@ type Requester struct {
 	*discordgo.Member
 	*model.UserModel
 }
+
+// List of Requester specific errors
+var (
+	ErrUserNotRegistered = errors.New("your user is not registered with the bot. Please use the " +
+		"**/register** command to activate the full feature set first")
+	ErrUserHasNoRATCookie = errors.New("you have not provided a Sea of Thieves authentication token. " +
+		"Please store your cookie with the **/setrat** command first")
+	ErrRATCookieExpired = errors.New("your Sea of Thieves authentication token is expired. " +
+		"Please use the **/setrat** command to update your token")
+)
 
 // IsAdmin returns true if the Requester has administrative permissions on the guild
 func (r *Requester) IsAdmin() bool {
@@ -27,18 +37,18 @@ func (r *Requester) CanModerateMembers() bool {
 func (r *Requester) GetSoTRATCookie() (string, error) {
 	u, err := r.UserModel.GetByUserID(r.Member.User.ID)
 	if err != nil {
-		return "", fmt.Errorf("failed to look up user in DB: %w", err)
+		return "", ErrUserNotRegistered
 	}
 	c, err := r.UserModel.GetPrefStringEnc(u, model.UserPrefSoTAuthToken)
 	if err != nil {
-		return "", fmt.Errorf("failed to fetch rat_token from DB: %w", err)
+		return "", ErrUserHasNoRATCookie
 	}
 	e, err := r.UserModel.GetPrefInt64Enc(u, model.UserPrefSoTAuthTokenExpiration)
 	if err != nil {
-		return "", fmt.Errorf("failed to fetch rat_token_expiration from DB: %w", err)
+		return "", ErrUserHasNoRATCookie
 	}
 	if e < time.Now().Unix() {
-		return "", fmt.Errorf("authentication token expired")
+		return "", ErrRATCookieExpired
 	}
 	return c, nil
 }
