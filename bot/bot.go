@@ -13,14 +13,21 @@ import (
 	"time"
 )
 
-// FHTimer defines the maximum random number for the FH spammer timer (in minutes)
-const FHTimer = 2
+const (
+	// FHTimer defines the maximum random number for the FH spammer timer (in minutes)
+	FHTimer = 2
+
+	// TRTimer defines the time in minutes how often the traderoute should be checked
+	// for updates
+	TRTimer = 5
+)
 
 // List of Sea of Thieves API endpoints
 const (
 	ApiURLSoTAchievements = "https://www.seaofthieves.com/api/profilev2/achievements"
 	ApiURLSoTSeasons      = "https://www.seaofthieves.com/api/profilev2/seasons-progress"
 	ApiURLSoTUserBalance  = "https://www.seaofthieves.com/api/profilev2/balance"
+	ApiURLRTTradeRoutes   = "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
 )
 
 // Bot represents the bot instance
@@ -116,7 +123,7 @@ func (b *Bot) Run() error {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc)
 
-	// Times events
+	// Timer events
 	rn := FHTimer
 	rn, err = crypto.RandNum(FHTimer)
 	if err != nil {
@@ -124,6 +131,8 @@ func (b *Bot) Run() error {
 		rn = FHTimer
 	}
 	fht := time.NewTicker(time.Duration(int64(rn)+FHTimer) * time.Minute)
+	defer fht.Stop()
+	trt := time.NewTicker(time.Duration(TRTimer) * time.Second)
 	defer fht.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.
@@ -155,6 +164,10 @@ func (b *Bot) Run() error {
 				rn = FHTimer
 			}
 			fht.Reset(time.Duration(int64(rn)+FHTimer) * time.Minute)
+		case <-trt.C:
+			if err := b.ScheduledEventUpdateTradeRoutes(); err != nil {
+				ll.Error().Msgf("failed to process scheuled traderoute update event: %s", err)
+			}
 		}
 	}
 }
