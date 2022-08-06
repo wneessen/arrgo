@@ -111,7 +111,7 @@ func (h *HTTPClient) Fetch(r *HTTPRequest) ([]byte, *http.Response, error) {
 
 // SetSOTRequest sets the required additional headers for Sea of Thieves API requests
 func (r *HTTPRequest) SetSOTRequest(c string) {
-	r.Header.Set("referer", SOTReferer)
+	r.SetReferer(SOTReferer)
 	rc := &http.Cookie{Name: "rat", Value: c}
 	r.AddCookie(rc)
 }
