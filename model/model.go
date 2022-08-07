@@ -25,18 +25,26 @@ var (
 	// ErrUserPrefNotExistant should be returned in case a user preference is requested that does
 	// not exist in the database
 	ErrUserPrefNotExistant = errors.New("requested user preference not existant in database")
+
+	// ErrTradeRouteNotExistant should be used in case a requested trade route was not found in the database
+	ErrTradeRouteNotExistant = errors.New("requested trade route not existant in database")
+
+	// ErrEditConflict should be used when an UPDATE to the database ran into a race-condition
+	ErrEditConflict = errors.New("a conflict occured while updating data")
 )
 
 // Model is a collection of all available models
 type Model struct {
-	Guild *GuildModel
-	User  *UserModel
+	Guild      *GuildModel
+	User       *UserModel
+	TradeRoute *TradeRouteModel
 }
 
 // New returns the collection of all available models
 func New(db *sql.DB, c *config.Config) Model {
 	return Model{
-		Guild: &GuildModel{DB: db, Config: c},
-		User:  &UserModel{DB: db, Config: c},
+		Guild:      &GuildModel{DB: db, Config: c},
+		User:       &UserModel{DB: db, Config: c},
+		TradeRoute: &TradeRouteModel{DB: db},
 	}
 }

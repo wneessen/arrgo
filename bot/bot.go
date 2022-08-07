@@ -17,9 +17,9 @@ const (
 	// FHTimer defines the maximum random number for the FH spammer timer (in minutes)
 	FHTimer = 2
 
-	// TRTimer defines the time in minutes how often the traderoute should be checked
+	// TRTimer defines the time in hours how often the traderoute should be checked
 	// for updates
-	TRTimer = 5
+	TRTimer = 12 * time.Hour
 )
 
 // List of Sea of Thieves API endpoints
@@ -132,7 +132,7 @@ func (b *Bot) Run() error {
 	}
 	fht := time.NewTicker(time.Duration(int64(rn)+FHTimer) * time.Minute)
 	defer fht.Stop()
-	trt := time.NewTicker(time.Duration(TRTimer) * time.Second)
+	trt := time.NewTicker(TRTimer)
 	defer fht.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.

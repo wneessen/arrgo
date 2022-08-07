@@ -9,6 +9,7 @@ require (
 	github.com/lib/pq v1.10.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.27.0
+	golang.org/x/text v0.3.7
 )
 
 require (

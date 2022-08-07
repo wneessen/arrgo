@@ -96,6 +96,12 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 			Name:        "balance",
 			Description: "Returns your current Sea of Thieves gold/doubloon/ancient coins balance",
 		},
+
+		// traderoutes announces the currently active tradring routes (from rarethief.com)
+		{
+			Name:        "traderoutes",
+			Description: "Returns the currently active trade routes in Sea of Thieves",
+		},
 	}
 }
 
@@ -190,6 +196,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"achievement": b.SlashCmdSoTAchievement,
 		"season":      b.SlashCmdSoTSeasonProgress,
 		"balance":     b.SlashCmdSoTBalance,
+		"traderoutes": b.SlashCmdSoTTradeRoutes,
 	}
 
 	// Define list of slash commands that should use ephemeral messages

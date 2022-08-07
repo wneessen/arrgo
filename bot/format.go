@@ -7,6 +7,8 @@ const (
 	IconAncientCoin = "💰"
 	IconIncrease    = "📈 "
 	IconDecrease    = "📉 "
+	IconArrowUp     = "⬆️ "
+	IconArrowDown   = "⬇️ "
 	/*
 	   "Kraken":      "🐙",
 	   "Megalodon":   "🦈",

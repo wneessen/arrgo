@@ -3,6 +3,11 @@ package bot
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/bwmarrin/discordgo"
+	"github.com/pkg/errors"
+	"github.com/wneessen/arrgo/model"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"regexp"
 	"strings"
 	"time"
@@ -24,14 +29,81 @@ type RTRoute struct {
 	Surplus     string `json:"surplus"`
 }
 
+// SlashCmdSoTTradeRoutes handles the /balance slash command
+func (b *Bot) SlashCmdSoTTradeRoutes(s *discordgo.Session, i *discordgo.InteractionCreate) error {
+	tl, err := b.Model.TradeRoute.GetTradeRoutes()
+	if err != nil {
+		return err
+	}
+
+	var ef []*discordgo.MessageEmbedField
+	c := cases.Title(language.English)
+	for _, tr := range tl {
+		ef = append(ef, &discordgo.MessageEmbedField{
+			Name: tr.Outpost,
+			Value: fmt.Sprintf("%s **%s**\n%s **%s**", IconArrowUp, c.String(tr.Surplus),
+				IconArrowDown, c.String(tr.SoughtAfter)),
+			Inline: true,
+		})
+
+	}
+
+	e := []*discordgo.MessageEmbed{
+		{
+			Title:       "Trade Routes",
+			Description: fmt.Sprintf("valid thru %s", tl[0].ValidThru.Format(time.RFC1123)),
+			Type:        discordgo.EmbedTypeRich,
+			Fields:      ef,
+		},
+	}
+
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+		return err
+	}
+	return nil
+}
+
 // ScheduledEventUpdateTradeRoutes performs scheuled updates of the TR data from rarethief.com
 func (b *Bot) ScheduledEventUpdateTradeRoutes() error {
 	ll := b.Log.With().Str("context", "bot.ScheduledEventUpdateTradeRoutes").Logger()
+	rl, err := b.Model.TradeRoute.GetTradeRoutes()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve trade routes list from DB: %w", err)
+	}
+	if len(rl) > 0 {
+		dbv, err := b.Model.TradeRoute.ValidThru()
+		if err != nil {
+			return fmt.Errorf("failed to retrieve trade routes validity date from DB: %w", err)
+		}
+		if dbv.Unix() > time.Now().Unix() {
+			ll.Debug().Msgf("trade routes in DB are still valid. Skipping update")
+			return nil
+		}
+	}
 	tr, err := b.RTGetTradeRoutes()
 	if err != nil {
 		return fmt.Errorf("failed to fetch traderoute: %w", err)
 	}
-	ll.Debug().Msgf("TR: %+v", tr)
+	for _, r := range tr.Routes {
+		dtr, err := b.Model.TradeRoute.GetByOutpost(r.Outpost)
+		dtr.Outpost = r.Outpost
+		dtr.SoughtAfter = r.SoughtAfter
+		dtr.Surplus = r.Surplus
+		dtr.ValidThru = tr.ValidThru
+		if err != nil {
+			if !errors.Is(err, model.ErrTradeRouteNotExistant) {
+				ll.Error().Msgf("failed to retrieve trade route for %q from DB: %s", r.Outpost, err)
+				continue
+			}
+			if err := b.Model.TradeRoute.Insert(dtr); err != nil {
+				ll.Error().Msgf("failed to insert trade route for %q into DB: %s", r.Outpost, err)
+				continue
+			}
+		}
+		if err := b.Model.TradeRoute.Update(dtr); err != nil {
+			ll.Error().Msgf("failed to update trade route for %q into DB: %s", r.Outpost, err)
+		}
+	}
 	return nil
 }
 
