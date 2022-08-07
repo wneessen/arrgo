@@ -11,6 +11,7 @@ import (
 type Requester struct {
 	*discordgo.Member
 	*model.UserModel
+	*model.User
 }
 
 // List of Requester specific errors
@@ -35,15 +36,18 @@ func (r *Requester) CanModerateMembers() bool {
 
 // GetSoTRATCookie checks if the Requester has a SoT RAT cookie and reads it from the DB
 func (r *Requester) GetSoTRATCookie() (string, error) {
-	u, err := r.UserModel.GetByUserID(r.Member.User.ID)
-	if err != nil {
-		return "", ErrUserNotRegistered
+	if r.User == nil {
+		u, err := r.UserModel.GetByUserID(r.Member.User.ID)
+		if err != nil {
+			return "", ErrUserNotRegistered
+		}
+		r.User = u
 	}
-	c, err := r.UserModel.GetPrefStringEnc(u, model.UserPrefSoTAuthToken)
+	c, err := r.UserModel.GetPrefStringEnc(r.User, model.UserPrefSoTAuthToken)
 	if err != nil {
 		return "", ErrUserHasNoRATCookie
 	}
-	e, err := r.UserModel.GetPrefInt64Enc(u, model.UserPrefSoTAuthTokenExpiration)
+	e, err := r.UserModel.GetPrefInt64Enc(r.User, model.UserPrefSoTAuthTokenExpiration)
 	if err != nil {
 		return "", ErrUserHasNoRATCookie
 	}

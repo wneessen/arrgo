@@ -26,7 +26,7 @@ type SoTAchievement struct {
 
 // SlashCmdSoTAchievement handles the /achievement slash command
 func (b *Bot) SlashCmdSoTAchievement(s *discordgo.Session, i *discordgo.InteractionCreate) error {
-	r := &Requester{i.Member, b.Model.User}
+	r := &Requester{i.Member, b.Model.User, nil}
 	al, err := b.SoTGetAchievements(r)
 	if err != nil {
 		return err

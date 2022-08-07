@@ -31,12 +31,16 @@ var (
 
 	// ErrEditConflict should be used when an UPDATE to the database ran into a race-condition
 	ErrEditConflict = errors.New("a conflict occured while updating data")
+
+	// ErrUserStatNotExistant should be used in case a requested user stat was not found in the database
+	ErrUserStatNotExistant = errors.New("requested user stat not existant in database")
 )
 
 // Model is a collection of all available models
 type Model struct {
 	Guild      *GuildModel
 	User       *UserModel
+	UserStats  *UserStatModel
 	TradeRoute *TradeRouteModel
 }
 
@@ -45,6 +49,7 @@ func New(db *sql.DB, c *config.Config) Model {
 	return Model{
 		Guild:      &GuildModel{DB: db, Config: c},
 		User:       &UserModel{DB: db, Config: c},
+		UserStats:  &UserStatModel{DB: db},
 		TradeRoute: &TradeRouteModel{DB: db},
 	}
 }

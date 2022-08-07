@@ -57,7 +57,7 @@ type SoTSeasonReward struct {
 
 // SlashCmdSoTSeasonProgress handles the /season slash command
 func (b *Bot) SlashCmdSoTSeasonProgress(s *discordgo.Session, i *discordgo.InteractionCreate) error {
-	r := &Requester{i.Member, b.Model.User}
+	r := &Requester{i.Member, b.Model.User, nil}
 	sl, err := b.SoTGetSeasonProgress(r)
 	if err != nil {
 		return err

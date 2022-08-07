@@ -17,9 +17,13 @@ const (
 	// FHTimer defines the maximum random number for the FH spammer timer (in minutes)
 	FHTimer = 2
 
-	// TRTimer defines the time in hours how often the traderoute should be checked
+	// TRTimer defines the time.Duration how often the traderoute should be checked
 	// for updates
 	TRTimer = 12 * time.Hour
+
+	// USTimer defines the time.Duration how often the user stats should be checked
+	// for updates
+	USTimer = 10 * time.Minute
 )
 
 // List of Sea of Thieves API endpoints
@@ -134,7 +138,9 @@ func (b *Bot) Run() error {
 	fht := time.NewTicker(time.Duration(int64(rn)+FHTimer) * time.Minute)
 	defer fht.Stop()
 	trt := time.NewTicker(TRTimer)
-	defer fht.Stop()
+	defer trt.Stop()
+	ust := time.NewTicker(USTimer)
+	defer ust.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.
 	ll.Info().Msg("bot successfully initialized and connected. Press CTRL-C to exit.")
@@ -167,6 +173,10 @@ func (b *Bot) Run() error {
 			fht.Reset(time.Duration(int64(rn)+FHTimer) * time.Minute)
 		case <-trt.C:
 			if err := b.ScheduledEventUpdateTradeRoutes(); err != nil {
+				ll.Error().Msgf("failed to process scheuled traderoute update event: %s", err)
+			}
+		case <-ust.C:
+			if err := b.ScheduledEventUpdateUserStats(); err != nil {
 				ll.Error().Msgf("failed to process scheuled traderoute update event: %s", err)
 			}
 		}
