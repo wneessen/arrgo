@@ -9,13 +9,12 @@ const (
 	IconDecrease    = "📉 "
 	IconArrowUp     = "⬆️ "
 	IconArrowDown   = "⬇️ "
-	/*
-	   "Kraken":      "🐙",
-	   "Megalodon":   "🦈",
-	   "Chest":       "🗝️",
-	   "Ship":        "⛵",
-	   "Vomit":       "🤮",
-	*/
+	IconKraken      = "🐙"
+	IconMegalodon   = "🦈"
+	IconChest       = "🗝️"
+	IconShip        = "⛵"
+	IconVomit       = "🤮"
+	IconDistance    = "📐"
 )
 
 // changeIcon returns either an increase or decrease icon based on the provided value

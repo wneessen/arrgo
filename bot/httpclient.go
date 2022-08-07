@@ -4,10 +4,13 @@ import (
 	"bytes"
 	"crypto/tls"
 	"fmt"
+	"github.com/wneessen/arrgo/crypto"
 	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -32,6 +35,9 @@ const (
 	// ReqMethodPost is the POST request method
 	ReqMethodPost HTTPReqMethod = "POST"
 )
+
+// APIIntString represents a API response string that is actually a Integer
+type APIIntString int64
 
 // SOTReferer is the referer that apparently is needed for the SoT API to accept requests
 const SOTReferer = "https://www.seaofthieves.com/profile/achievements"
@@ -112,11 +118,33 @@ func (h *HTTPClient) Fetch(r *HTTPRequest) ([]byte, *http.Response, error) {
 // SetSOTRequest sets the required additional headers for Sea of Thieves API requests
 func (r *HTTPRequest) SetSOTRequest(c string) {
 	r.SetReferer(SOTReferer)
+	r.Header.Set("accept", "application/json")
+	r.Header.Set("cache-control", "max-age=0")
 	rc := &http.Cookie{Name: "rat", Value: c}
 	r.AddCookie(rc)
+	rn, err := crypto.RandNum(10000)
+	if err == nil {
+		r.URL.RawQuery = fmt.Sprintf("x=%d", rn)
+	}
 }
 
 // SetReferer sets a custom referer to the request
 func (r *HTTPRequest) SetReferer(rf string) {
 	r.Header.Set("referer", rf)
+}
+
+// UnmarshalJSON converts the APIIntString string into an int64
+func (s *APIIntString) UnmarshalJSON(ib []byte) error {
+	is := string(ib)
+	if is == "null" {
+		return nil
+	}
+	is = strings.ReplaceAll(is, `"`, ``)
+	realInt, err := strconv.ParseInt(is, 10, 64)
+	if err != nil {
+		return fmt.Errorf("string to int conversion failed: %v", err)
+	}
+	*(*int64)(s) = realInt
+
+	return nil
 }

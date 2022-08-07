@@ -27,6 +27,7 @@ const (
 	ApiURLSoTAchievements = "https://www.seaofthieves.com/api/profilev2/achievements"
 	ApiURLSoTSeasons      = "https://www.seaofthieves.com/api/profilev2/seasons-progress"
 	ApiURLSoTUserBalance  = "https://www.seaofthieves.com/api/profilev2/balance"
+	ApiURLSoTUserOverview = "https://www.seaofthieves.com/api/profilev2/overview"
 	ApiURLRTTradeRoutes   = "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
 )
 

@@ -53,6 +53,7 @@ func (b *Bot) SlashCmdSoTTradeRoutes(s *discordgo.Session, i *discordgo.Interact
 			Title:       "Trade Routes",
 			Description: fmt.Sprintf("valid thru %s", tl[0].ValidThru.Format(time.RFC1123)),
 			Type:        discordgo.EmbedTypeRich,
+			Footer:      &discordgo.MessageEmbedFooter{Text: "Source: https://maps.seaofthieves.rarethief.com/"},
 			Fields:      ef,
 		},
 	}
