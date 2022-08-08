@@ -4,7 +4,17 @@ import (
 	"fmt"
 	"github.com/kkyr/fig"
 	"os"
+	"path/filepath"
 )
+
+// CfgOpt is a overloading function for the New() method
+type CfgOpt func(parm *ConfParm)
+
+// ConfParm sets some overridable parameters for the config file parsing
+type ConfParm struct {
+	cf string // represents the config file name
+	cp string // represents the config path
+}
 
 // Some crypto defaults
 const (
@@ -32,23 +42,42 @@ type Config struct {
 	Data struct {
 		EncryptionKey string `fig:"enc_key"`
 	}
+	confPath string
 	confFile string
 }
 
-func New(p string) (Config, error) {
-	co := Config{
-		confFile: p,
+// WithConfFile overrides the default config file path/name
+func WithConfFile(p string) CfgOpt {
+	return func(c *ConfParm) {
+		cf := filepath.Base(p)
+		cp := filepath.Dir(p)
+		c.cf = cf
+		c.cp = cp
 	}
-	if p == "" {
-		return co, fmt.Errorf("config path cannot be empty")
+}
+
+func New(ol ...CfgOpt) (Config, error) {
+	cp := ConfParm{
+		cf: "arrgo.toml",
+		cp: "/arrgo/etc",
 	}
-	_, err := os.Stat(p)
+	for _, o := range ol {
+		if o == nil {
+			continue
+		}
+		o(&cp)
+	}
+	_, err := os.Stat(fmt.Sprintf("%s/%s", cp.cp, cp.cf))
 	if err != nil {
-		return co, fmt.Errorf("config file %q not readable: %w", p, err)
+		return Config{}, fmt.Errorf("config file %q not readable: %w",
+			fmt.Sprintf("%s/%s", cp.cp, cp.cf), err)
 	}
-	if err := fig.Load(&co, fig.File(p)); err != nil {
+	co := Config{}
+	if err := fig.Load(&co, fig.Dirs(cp.cp), fig.File(cp.cf)); err != nil {
 		return co, fmt.Errorf("unable to unmarshall config: %w", err)
 	}
+	co.confPath = cp.cp
+	co.confFile = cp.cf
 
 	return co, nil
 }

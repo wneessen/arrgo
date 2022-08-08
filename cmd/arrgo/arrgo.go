@@ -20,7 +20,7 @@ type CLIFlags struct {
 
 func main() {
 	cf := CLIFlags{
-		c: "arrgo.toml",
+		c: "/arrgo/etc/arrgo.toml",
 	}
 	if cfe := os.Getenv("ARRGO_CONFIG"); cfe != "" {
 		cf.c = cfe
@@ -35,7 +35,7 @@ func main() {
 		_, _ = fmt.Fprintf(os.Stderr, "no config file provided. Aborting")
 		os.Exit(1)
 	}
-	c, err := config.New(cf.c)
+	c, err := config.New(config.WithConfFile(cf.c))
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "could not read config: %s. Aborting", err)
 		os.Exit(1)
