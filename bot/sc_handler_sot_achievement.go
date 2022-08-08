@@ -55,16 +55,20 @@ func (b *Bot) SlashCmdSoTAchievement(s *discordgo.Session, i *discordgo.Interact
 // SoTGetAchievements returns the parsed API response from the Sea of Thieves achievements API
 func (b *Bot) SoTGetAchievements(rq *Requester) (SoTAchievementList, error) {
 	var a SoTAchievementList
+	hc, err := NewHTTPClient()
+	if err != nil {
+		return a, fmt.Errorf(ErrFailedHTTPClient, err)
+	}
 	c, err := rq.GetSoTRATCookie()
 	if err != nil {
 		return a, err
 	}
-	r, err := b.HTTPClient.HttpReq(ApiURLSoTAchievements, ReqMethodGet, nil)
+	r, err := hc.HttpReq(ApiURLSoTAchievements, ReqMethodGet, nil)
 	if err != nil {
 		return a, err
 	}
 	r.SetSOTRequest(c)
-	rd, _, err := b.HTTPClient.Fetch(r)
+	rd, _, err := hc.Fetch(r)
 	if err != nil {
 		return a, err
 	}

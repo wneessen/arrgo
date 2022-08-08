@@ -144,16 +144,20 @@ func (b *Bot) SlashCmdSoTSeasonProgress(s *discordgo.Session, i *discordgo.Inter
 // SoTGetSeasonProgress returns the parsed API response from the Sea of Thieves season progress API
 func (b *Bot) SoTGetSeasonProgress(rq *Requester) (SoTSeasonList, error) {
 	var s SoTSeasonList
+	hc, err := NewHTTPClient()
+	if err != nil {
+		return s, fmt.Errorf(ErrFailedHTTPClient, err)
+	}
 	c, err := rq.GetSoTRATCookie()
 	if err != nil {
 		return s, err
 	}
-	r, err := b.HTTPClient.HttpReq(ApiURLSoTSeasons, ReqMethodGet, nil)
+	r, err := hc.HttpReq(ApiURLSoTSeasons, ReqMethodGet, nil)
 	if err != nil {
 		return s, err
 	}
 	r.SetSOTRequest(c)
-	rd, _, err := b.HTTPClient.Fetch(r)
+	rd, _, err := hc.Fetch(r)
 	if err != nil {
 		return s, err
 	}

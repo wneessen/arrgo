@@ -35,13 +35,16 @@ const (
 	ApiURLRTTradeRoutes   = "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
 )
 
+const (
+	ErrFailedHTTPClient = "failed to generate new HTTP client: %w"
+)
+
 // Bot represents the bot instance
 type Bot struct {
-	Log        zerolog.Logger
-	Config     *config.Config
-	Session    *discordgo.Session
-	Model      model.Model
-	HTTPClient *HTTPClient
+	Log     zerolog.Logger
+	Config  *config.Config
+	Session *discordgo.Session
+	Model   model.Model
 
 	st time.Time
 }
@@ -80,12 +83,6 @@ func New(l zerolog.Logger, c *config.Config) (*Bot, error) {
 		b.Log.Info().Msgf(`enc_key = "%s"`, cs)
 		os.Exit(0)
 	}
-
-	hc, err := NewHTTPClient()
-	if err != nil {
-		return b, fmt.Errorf("failed to create HTTP client object: %w", err)
-	}
-	b.HTTPClient = hc
 
 	return b, nil
 }

@@ -146,16 +146,20 @@ func (b *Bot) SlashCmdSoTBalance(s *discordgo.Session, i *discordgo.InteractionC
 // SoTGetUserBalance returns the parsed API response from the Sea of Thieves gold/coins balance API
 func (b *Bot) SoTGetUserBalance(rq *Requester) (SoTUserBalance, error) {
 	var ub SoTUserBalance
+	hc, err := NewHTTPClient()
+	if err != nil {
+		return ub, fmt.Errorf(ErrFailedHTTPClient, err)
+	}
 	c, err := rq.GetSoTRATCookie()
 	if err != nil {
 		return ub, err
 	}
-	r, err := b.HTTPClient.HttpReq(ApiURLSoTUserBalance, ReqMethodGet, nil)
+	r, err := hc.HttpReq(ApiURLSoTUserBalance, ReqMethodGet, nil)
 	if err != nil {
 		return ub, err
 	}
 	r.SetSOTRequest(c)
-	rd, _, err := b.HTTPClient.Fetch(r)
+	rd, _, err := hc.Fetch(r)
 	if err != nil {
 		return ub, err
 	}
@@ -168,18 +172,22 @@ func (b *Bot) SoTGetUserBalance(rq *Requester) (SoTUserBalance, error) {
 // SoTGetUserOverview returns the parsed API response from the Sea of Thieves gold/coins balance API
 func (b *Bot) SoTGetUserOverview(rq *Requester) (SoTUserStats, error) {
 	var us SoTUserOverview
+	hc, err := NewHTTPClient()
+	if err != nil {
+		return SoTUserStats{}, fmt.Errorf(ErrFailedHTTPClient, err)
+	}
 	c, err := rq.GetSoTRATCookie()
 	if err != nil {
-		return us.Stats, err
+		return SoTUserStats{}, err
 	}
-	r, err := b.HTTPClient.HttpReq(ApiURLSoTUserOverview, ReqMethodGet, nil)
+	r, err := hc.HttpReq(ApiURLSoTUserOverview, ReqMethodGet, nil)
 	if err != nil {
-		return us.Stats, err
+		return SoTUserStats{}, err
 	}
 	r.SetSOTRequest(c)
-	rd, _, err := b.HTTPClient.Fetch(r)
+	rd, _, err := hc.Fetch(r)
 	if err != nil {
-		return us.Stats, err
+		return SoTUserStats{}, err
 	}
 	if err := json.Unmarshal(rd, &us); err != nil {
 		return us.Stats, err

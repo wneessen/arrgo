@@ -111,11 +111,15 @@ func (b *Bot) ScheduledEventUpdateTradeRoutes() error {
 // RTGetTradeRoutes returns the parsed API response from the rarethief.com traderoutes API
 func (b *Bot) RTGetTradeRoutes() (RTTraderoute, error) {
 	var tr RTTraderoute
-	r, err := b.HTTPClient.HttpReq(ApiURLRTTradeRoutes, ReqMethodGet, nil)
+	hc, err := NewHTTPClient()
+	if err != nil {
+		return tr, fmt.Errorf(ErrFailedHTTPClient, err)
+	}
+	r, err := hc.HttpReq(ApiURLRTTradeRoutes, ReqMethodGet, nil)
 	if err != nil {
 		return tr, err
 	}
-	rd, _, err := b.HTTPClient.Fetch(r)
+	rd, _, err := hc.Fetch(r)
 	if err != nil {
 		return tr, err
 	}
