@@ -15,7 +15,7 @@ import (
 
 const (
 	// FHTimer defines the maximum random number for the FH spammer timer (in minutes)
-	FHTimer = 2
+	FHTimer = 60
 
 	// TRTimer defines the time.Duration how often the traderoute should be checked
 	// for updates
