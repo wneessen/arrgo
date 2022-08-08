@@ -55,6 +55,35 @@ func (m UserStatModel) GetByUserID(i int64) (*UserStat, error) {
 	return &us, nil
 }
 
+// GetByUserIDAtTime retrieves the User details from the database based on the given User ID at a specific
+// point of time
+func (m UserStatModel) GetByUserIDAtTime(i int64, t time.Time) (*UserStat, error) {
+	q := `SELECT id, user_id, title, gold, doubloons, ancient_coins, kraken, megalodon, chests, ships, vomit, distance, ctime
+            FROM user_stats s
+           WHERE s.user_id = $1
+             AND s.ctime >= $2
+           ORDER BY id
+           LIMIT 1`
+
+	var us UserStat
+	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
+	defer cancel()
+
+	row := m.DB.QueryRowContext(ctx, q, i, t)
+	err := row.Scan(&us.ID, &us.UserID, &us.Title, &us.Gold, &us.Doubloons, &us.AncientCoins, &us.KrakenDefeated,
+		&us.MegalodonEnounter, &us.ChestsHandedIn, &us.ShipsSunk, &us.VomittedTimes, &us.DistanceSailed,
+		&us.CreateTime)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return &us, ErrUserStatNotExistant
+		default:
+			return &us, err
+		}
+	}
+	return &us, nil
+}
+
 // Insert adds a new User into the database
 func (m UserStatModel) Insert(us *UserStat) error {
 	q := `INSERT INTO user_stats (user_id, title, gold, doubloons, ancient_coins, kraken, megalodon, 

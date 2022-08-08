@@ -17,6 +17,8 @@ const (
 	// UserPrefSoTAuthToken is the authentication token for Sea of Thieves
 	UserPrefSoTAuthToken           UserPrefKey = "rat_token"
 	UserPrefSoTAuthTokenExpiration UserPrefKey = "rat_token_expire"
+	UserPrefPlaysSoT               UserPrefKey = "plays_sot"
+	UserPrefPlaysSoTStartTime      UserPrefKey = "plays_sot_start"
 )
 
 // GetPrefString fetches a client-specific setting from the database as string type
