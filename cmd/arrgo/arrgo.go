@@ -14,6 +14,7 @@ import (
 // CLIFlags represents the struct that is used to handle CLI flags
 type CLIFlags struct {
 	c string // Path to config file
+	r bool   // Remove slash commands
 	m bool   // Run in SQL migration mode
 	d bool   // Run in SQL downgrade mode
 }
@@ -26,6 +27,7 @@ func main() {
 		cf.c = cfe
 	}
 	flag.StringVar(&cf.c, "c", cf.c, "Path to config file")
+	flag.BoolVar(&cf.r, "r", cf.r, "Remove slash commands")
 	flag.BoolVar(&cf.m, "migrate", false, "Execute SQL migrations before starting the bot")
 	flag.BoolVar(&cf.d, "downgrade", false, "Execute SQL downgrade migrations before starting the bot")
 	flag.Parse()
@@ -76,6 +78,14 @@ func main() {
 	if cf.d {
 		if err := b.SQLDowngrade(&c); err != nil {
 			ll.Error().Msgf("SQL downgrade failed: %s", err)
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
+	if cf.r {
+		ll.Info().Msg("Removing all slash commands...")
+		if err := b.RemoveSlashCommands(); err != nil {
+			ll.Error().Msgf("failed to remove slash commands: %s", err)
 			os.Exit(1)
 		}
 		os.Exit(0)

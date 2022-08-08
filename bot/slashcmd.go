@@ -56,6 +56,37 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 					},
 					Type: discordgo.ApplicationCommandOptionSubCommandGroup,
 				},
+				{
+					Name:        "announce-sot-summary",
+					Description: "Enable/Disable posting of SoT play summaries to the system/announce channel",
+					Options: []*discordgo.ApplicationCommandOption{
+						{
+							Name:        "enable",
+							Description: "Announce Sea of Thieves play summaries",
+							Type:        discordgo.ApplicationCommandOptionSubCommand,
+						},
+						{
+							Name:        "disable",
+							Description: "Do not announce Sea of Thieves play summaries",
+							Type:        discordgo.ApplicationCommandOptionSubCommand,
+						},
+					},
+					Type: discordgo.ApplicationCommandOptionSubCommandGroup,
+				},
+			},
+		},
+
+		// override allows to override some defaults
+		{
+			Name:        "override",
+			Description: "Override some default settings of your ArrBot instance (admin-only)",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "announce-channel",
+					Description: "Override the default system channel for bot related announcements",
+					Required:    true,
+				},
 			},
 		},
 
@@ -140,6 +171,12 @@ func (b *Bot) RegisterSlashCommands() error {
 				c = true
 				break
 			}
+			if sc.Name == rc.Name && len(sc.Options) != len(rc.Options) {
+				ll.Debug().Msgf("slash command %s changed. Updating.", rc.Name)
+				n = false
+				c = true
+				break
+			}
 		}
 		if n || c {
 			go func(s *discordgo.ApplicationCommand, e bool) {
@@ -177,6 +214,41 @@ func (b *Bot) RegisterSlashCommands() error {
 	return nil
 }
 
+// RemoveSlashCommands will fetch the list of registered slash commands and remove them
+func (b *Bot) RemoveSlashCommands() error {
+	ll := b.Log.With().Str("context", "bot.RegisterSlashCommands").Logger()
+
+	dg, err := discordgo.New("Bot " + b.Config.Discord.Token)
+	if err != nil {
+		return fmt.Errorf("failed to create discord session: %w", err)
+	}
+	b.Session = dg
+
+	// Define list of events we want to see
+	dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildMessages |
+		discordgo.IntentsGuildVoiceStates | discordgo.IntentsDirectMessages |
+		discordgo.IntentsGuildPresences | discordgo.IntentsMessageContent |
+		discordgo.IntentsGuildIntegrations
+
+	// Open the websocket and begin listening.
+	err = b.Session.Open()
+	if err != nil {
+		return fmt.Errorf("failed to open websocket to listen: %w", err)
+	}
+
+	// Get a list of currently registered slash commands
+	rcl, err := b.Session.ApplicationCommands(b.Session.State.User.ID, "")
+	if err != nil {
+		return fmt.Errorf("failed to fetch list registered slash commands: %w", err)
+	}
+	for _, rc := range rcl {
+		if err := b.Session.ApplicationCommandDelete(rc.ApplicationID, "", rc.ID); err != nil {
+			ll.Warn().Msgf("failed to remove %s command: %s", rc.ID, err)
+		}
+	}
+	return nil
+}
+
 // SlashCommandHandler is the central handler method for all slash commands. It will look up
 // the name of the received SC-handler event in a map and when found execute the corresponding
 // method
@@ -197,6 +269,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"version":     b.SlashCmdVersion,
 		"flameheart":  b.SlashCmdSoTFlameheart,
 		"config":      b.SlashCmdConfig,
+		"override":    b.SlashCmdConfig,
 		"register":    b.SlashCmdRegister,
 		"setrat":      b.SlashCmdSetRAT,
 		"achievement": b.SlashCmdSoTAchievement,
@@ -211,6 +284,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"register": true,
 		"setrat":   true,
 		"config":   true,
+		"override": true,
 		"version":  true,
 	}
 

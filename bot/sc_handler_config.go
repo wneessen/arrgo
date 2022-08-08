@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/model"
+	"regexp"
 	"strings"
 )
 
@@ -26,7 +27,8 @@ func (b *Bot) SlashCmdConfig(s *discordgo.Session, i *discordgo.InteractionCreat
 
 	// Define list of config option methods
 	co := map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate) error{
-		"flameheart-spam": b.configFlameheart,
+		"flameheart-spam":  b.configFlameheart,
+		"announce-channel": b.overrideAnnounceChannel,
 	}
 
 	// Check if provided command is available and process it
@@ -82,6 +84,49 @@ func (b *Bot) configFlameheart(s *discordgo.Session, i *discordgo.InteractionCre
 	// Edit the deferred message
 	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
 		return fmt.Errorf("failed to edit /config flameheart-spam request: %w", err)
+	}
+
+	return nil
+}
+
+// overrideAnnounceChannel overrides the default system channel with a guild specific channel
+func (b *Bot) overrideAnnounceChannel(s *discordgo.Session, i *discordgo.InteractionCreate) error {
+	mo := i.ApplicationCommandData().Options
+	if len(mo) <= 0 {
+		return fmt.Errorf("no options found")
+	}
+	rc, ok := mo[0].Value.(string)
+	if !ok {
+		return fmt.Errorf("provided value is not a string")
+	}
+
+	re, err := regexp.Compile(`<#(\d+)>`)
+	if err != nil {
+		return err
+	}
+	cha := re.FindStringSubmatch(rc)
+	if len(cha) != 2 {
+		return fmt.Errorf("failed to parse value string")
+	}
+	ch := cha[1]
+	g, err := b.Model.Guild.GetByGuildID(i.GuildID)
+	if err != nil {
+		return fmt.Errorf("failed to look up guild in database: %w", err)
+	}
+	if err := b.Model.Guild.SetPref(g, model.GuildPrefAnnounceChannel, ch); err != nil {
+		return err
+	}
+
+	// Edit the deferred message
+	e := []*discordgo.MessageEmbed{
+		{
+			Type:        discordgo.EmbedTypeArticle,
+			Title:       TitleConfigUpdated,
+			Description: fmt.Sprintf("The annoucment channel for this server has been set to: <#%s>", ch),
+		},
+	}
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+		return fmt.Errorf("failed to edit /override annouce-channel request: %w", err)
 	}
 
 	return nil
