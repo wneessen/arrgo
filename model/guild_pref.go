@@ -16,6 +16,9 @@ type GuildPrefKey string
 const (
 	// GuildPrefScheduledFlameheart is the setting for en-/disabling the scheduled Flameheart spam
 	GuildPrefScheduledFlameheart GuildPrefKey = "scheduled_fh"
+
+	// GuildPrefAnnounceChannel is an alternative announcement channel for the guild
+	GuildPrefAnnounceChannel GuildPrefKey = "announce_channel"
 )
 
 // GetPrefString fetches a client-specific setting from the database as string type

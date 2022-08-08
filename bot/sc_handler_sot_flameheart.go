@@ -46,7 +46,7 @@ func (b *Bot) ScheduledEventSoTFlameheart() error {
 			if err != nil {
 				continue
 			}
-			if _, err := b.Session.ChannelMessageSendEmbed(g.SystemChannelID, e[0]); err != nil {
+			if _, err := b.Session.ChannelMessageSendEmbed(b.Model.Guild.AnnouceChannel(g), e[0]); err != nil {
 				ll.Error().Msgf("failed to send timed FH spam message: %s", err)
 			}
 		}

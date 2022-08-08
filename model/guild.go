@@ -122,3 +122,13 @@ func (m GuildModel) DecryptEncSecret(g *Guild) ([]byte, error) {
 	}
 	return ek, nil
 }
+
+// AnnouceChannel will return the dedicated annouce channel or the system channel if no alternative is
+// configured in the database
+func (m GuildModel) AnnouceChannel(g *Guild) string {
+	ch, err := m.GetPrefString(g, GuildPrefAnnounceChannel)
+	if err != nil {
+		return g.SystemChannelID
+	}
+	return ch
+}
