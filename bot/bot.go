@@ -23,7 +23,7 @@ const (
 
 	// USTimer defines the time.Duration how often the user stats should be checked
 	// for updates
-	USTimer = 10 * time.Minute
+	USTimer = 30 * time.Minute
 )
 
 // List of Sea of Thieves API endpoints
@@ -109,6 +109,7 @@ func (b *Bot) Run() error {
 	b.Session.AddHandler(b.GuildCreate)
 	b.Session.AddHandler(b.GuildDelete)
 	b.Session.AddHandler(b.SlashCommandHandler)
+	b.Session.AddHandler(b.UserPlaySoT)
 
 	// Open the websocket and begin listening.
 	err = b.Session.Open()
