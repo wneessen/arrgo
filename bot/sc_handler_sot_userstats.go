@@ -35,8 +35,14 @@ type SoTUserBalance struct {
 
 // SlashCmdSoTOverview handles the /balance slash command
 func (b *Bot) SlashCmdSoTOverview(s *discordgo.Session, i *discordgo.InteractionCreate) error {
-	r := &Requester{i.Member, b.Model.User, nil}
-	us, err := b.SoTGetUserOverview(r)
+	u, err := b.Model.User.GetByUserID(i.Member.User.ID)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve user from DB: %w", err)
+	}
+	if err := b.StoreSoTUserStats(u); err != nil {
+		return fmt.Errorf("failed to update user stats in DB: %w", err)
+	}
+	us, err := b.Model.UserStats.GetByUserID(u.ID)
 	if err != nil {
 		return err
 	}
@@ -50,7 +56,7 @@ func (b *Bot) SlashCmdSoTOverview(s *discordgo.Session, i *discordgo.Interaction
 	})
 	ef = append(ef, &discordgo.MessageEmbedField{
 		Name:   fmt.Sprintf("%s Megalodon", IconMegalodon),
-		Value:  fmt.Sprintf("**%s** encounter(s)", p.Sprintf("%d", us.MegalodonEncounters)),
+		Value:  fmt.Sprintf("**%s** encounter(s)", p.Sprintf("%d", us.MegalodonEnounter)),
 		Inline: true,
 	})
 	ef = append(ef, &discordgo.MessageEmbedField{
@@ -65,13 +71,13 @@ func (b *Bot) SlashCmdSoTOverview(s *discordgo.Session, i *discordgo.Interaction
 	})
 	ef = append(ef, &discordgo.MessageEmbedField{
 		Name:   fmt.Sprintf("%s Vomitted", IconVomit),
-		Value:  fmt.Sprintf("**%s** times", p.Sprintf("%d", us.VomitedTotal)),
+		Value:  fmt.Sprintf("**%s** times", p.Sprintf("%d", us.VomittedTimes)),
 		Inline: true,
 	})
-	if us.MetresSailed > 0 {
+	if us.DistanceSailed > 0 {
 		ef = append(ef, &discordgo.MessageEmbedField{
 			Name:   fmt.Sprintf("%s Distance", IconDistance),
-			Value:  fmt.Sprintf("**%s** nmi sailed", p.Sprintf("%d", us.MetresSailed/1852)),
+			Value:  fmt.Sprintf("**%s** nmi sailed", p.Sprintf("%d", us.DistanceSailed/1852)),
 			Inline: true,
 		})
 	} else {
@@ -98,8 +104,14 @@ func (b *Bot) SlashCmdSoTOverview(s *discordgo.Session, i *discordgo.Interaction
 
 // SlashCmdSoTBalance handles the /balance slash command
 func (b *Bot) SlashCmdSoTBalance(s *discordgo.Session, i *discordgo.InteractionCreate) error {
-	r := &Requester{i.Member, b.Model.User, nil}
-	ub, err := b.SoTGetUserBalance(r)
+	u, err := b.Model.User.GetByUserID(i.Member.User.ID)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve user from DB: %w", err)
+	}
+	if err := b.StoreSoTUserStats(u); err != nil {
+		return fmt.Errorf("failed to update user stats in DB: %w", err)
+	}
+	ub, err := b.Model.UserStats.GetByUserID(u.ID)
 	if err != nil {
 		return err
 	}
@@ -127,14 +139,16 @@ func (b *Bot) SlashCmdSoTBalance(s *discordgo.Session, i *discordgo.InteractionC
 
 	e := []*discordgo.MessageEmbed{
 		{
-			Title:       "Your current balance in Sea of Thieves:",
-			Description: fmt.Sprintf("**Current Title:** %s", ub.Title),
+			Title: "Your current balance in Sea of Thieves:",
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
 				URL: "https://github.com/wneessen/arrgo/raw/main/assets/season/gold-s.png",
 			},
 			Type:   discordgo.EmbedTypeRich,
 			Fields: ef,
 		},
+	}
+	if ub.Title != "" {
+		e[0].Description = fmt.Sprintf("**Current Title:** %s", ub.Title)
 	}
 
 	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
@@ -203,34 +217,40 @@ func (b *Bot) ScheduledEventUpdateUserStats() error {
 		return fmt.Errorf("failed to retrieve user list from DB: %w", err)
 	}
 	for _, u := range ul {
-		r := &Requester{nil, b.Model.User, u}
-		ub, err := b.SoTGetUserBalance(r)
-		if err != nil {
-			ll.Error().Msgf("failed to fetch user balance for user %q: %s", u.UserID, err)
-			continue
-		}
-		us, err := b.SoTGetUserOverview(r)
-		if err != nil {
-			ll.Error().Msgf("failed to fetch user stats for user %q: %s", u.UserID, err)
-			continue
-		}
-		dus := &model.UserStat{
-			UserID:            u.ID,
-			Gold:              ub.Gold,
-			Doubloons:         ub.Doubloons,
-			AncientCoins:      ub.AncientCoins,
-			KrakenDefeated:    int64(us.KrakenDefeated),
-			MegalodonEnounter: int64(us.MegalodonEncounters),
-			ChestsHandedIn:    int64(us.ChestsHandedIn),
-			ShipsSunk:         int64(us.ShipsSunk),
-			VomittedTimes:     int64(us.VomitedTotal),
-			DistanceSailed:    int64(us.MetresSailed),
-		}
-		if err := b.Model.UserStats.Insert(dus); err != nil {
-			ll.Error().Msgf("failed to store user stats for user %q in DB: %s", u.UserID, err)
+		if err := b.StoreSoTUserStats(u); err != nil {
+			ll.Error().Msgf("failed to store user stats in DB: %s", err)
 			continue
 		}
 	}
+	return nil
+}
 
+// StoreSoTUserStats will retrieve the latest user stats from the API and store them in the DB
+func (b *Bot) StoreSoTUserStats(u *model.User) error {
+	r := &Requester{nil, b.Model.User, u}
+	ub, err := b.SoTGetUserBalance(r)
+	if err != nil {
+		return fmt.Errorf("failed to fetch user balance for user %q: %s", u.UserID, err)
+	}
+	us, err := b.SoTGetUserOverview(r)
+	if err != nil {
+		return fmt.Errorf("failed to fetch user stats for user %q: %s", u.UserID, err)
+	}
+	dus := &model.UserStat{
+		UserID:            u.ID,
+		Title:             ub.Title,
+		Gold:              ub.Gold,
+		Doubloons:         ub.Doubloons,
+		AncientCoins:      ub.AncientCoins,
+		KrakenDefeated:    int64(us.KrakenDefeated),
+		MegalodonEnounter: int64(us.MegalodonEncounters),
+		ChestsHandedIn:    int64(us.ChestsHandedIn),
+		ShipsSunk:         int64(us.ShipsSunk),
+		VomittedTimes:     int64(us.VomitedTotal),
+		DistanceSailed:    int64(us.MetresSailed),
+	}
+	if err := b.Model.UserStats.Insert(dus); err != nil {
+		return fmt.Errorf("failed to store user stats for user %q in DB: %s", u.UserID, err)
+	}
 	return nil
 }

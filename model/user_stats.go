@@ -15,6 +15,7 @@ type UserStatModel struct {
 type UserStat struct {
 	ID                int64     `json:"id"`
 	UserID            int64     `json:"userId"`
+	Title             string    `json:"title"`
 	Gold              int64     `json:"gold"`
 	Doubloons         int64     `json:"doubloons"`
 	AncientCoins      int64     `json:"ancientCoins"`
@@ -28,17 +29,19 @@ type UserStat struct {
 }
 
 // GetByUserID retrieves the User details from the database based on the given User ID
-func (m UserStatModel) GetByUserID(i string) (*UserStat, error) {
-	q := `SELECT id, user_id, gold, doubloons, ancient_coins, kraken, megalodon, chests, ships, vomit, distance, ctime
+func (m UserStatModel) GetByUserID(i int64) (*UserStat, error) {
+	q := `SELECT id, user_id, title, gold, doubloons, ancient_coins, kraken, megalodon, chests, ships, vomit, distance, ctime
             FROM user_stats s
-           WHERE s.user_id = $1`
+           WHERE s.user_id = $1
+           ORDER BY id DESC
+           LIMIT 1`
 
 	var us UserStat
 	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
 	defer cancel()
 
 	row := m.DB.QueryRowContext(ctx, q, i)
-	err := row.Scan(&us.ID, &us.UserID, &us.Gold, &us.Doubloons, &us.AncientCoins, &us.KrakenDefeated,
+	err := row.Scan(&us.ID, &us.UserID, &us.Title, &us.Gold, &us.Doubloons, &us.AncientCoins, &us.KrakenDefeated,
 		&us.MegalodonEnounter, &us.ChestsHandedIn, &us.ShipsSunk, &us.VomittedTimes, &us.DistanceSailed,
 		&us.CreateTime)
 	if err != nil {
@@ -54,11 +57,11 @@ func (m UserStatModel) GetByUserID(i string) (*UserStat, error) {
 
 // Insert adds a new User into the database
 func (m UserStatModel) Insert(us *UserStat) error {
-	q := `INSERT INTO user_stats (user_id, gold, doubloons, ancient_coins, kraken, megalodon, 
+	q := `INSERT INTO user_stats (user_id, title, gold, doubloons, ancient_coins, kraken, megalodon, 
                         chests, ships, vomit, distance)
-               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             RETURNING id, ctime`
-	v := []interface{}{us.UserID, us.Gold, us.Doubloons, us.AncientCoins, us.KrakenDefeated,
+	v := []interface{}{us.UserID, us.Title, us.Gold, us.Doubloons, us.AncientCoins, us.KrakenDefeated,
 		us.MegalodonEnounter, us.ChestsHandedIn, us.ShipsSunk, us.VomittedTimes, us.DistanceSailed}
 
 	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)

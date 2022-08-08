@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS user_stats
 (
     id            bigserial PRIMARY KEY,
     user_id       bigint                      NOT NULL REFERENCES users ON DELETE CASCADE,
+    title         varchar(256)                NULL,
     gold          bigint                      NULL,
     doubloons     bigint                      NULL,
     ancient_coins bigint                      NULL,
