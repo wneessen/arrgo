@@ -101,7 +101,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 			sto := time.Unix(s, 0)
 			eto := time.Unix(e, 0)
 			pt := e - s
-			if pt < 1 {
+			if pt < 180 {
 				ll.Debug().Msgf("user played less then 3 minutes (%d seconds). There is no chance of "+
 					"any changes to the stats", pt)
 				return
@@ -219,8 +219,15 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 				ll.Error().Msgf("failed to retrieve guild information from DB: %s", err)
 				return
 			}
-			if _, err := b.Session.ChannelMessageSendEmbed(b.Model.Guild.AnnouceChannel(g), eb[0]); err != nil {
-				ll.Error().Msgf("failed to send voyage summary message: %s", err)
+			ag, err := b.Model.Guild.GetPrefBool(g, model.GuildPrefAnnounceSoTSummary)
+			if err != nil && !errors.Is(err, model.ErrGuildPrefNotExistant) {
+				ll.Error().Msgf("failed to fetch guild preference from DB: %s", err)
+				return
+			}
+			if ag {
+				if _, err := b.Session.ChannelMessageSendEmbed(b.Model.Guild.AnnouceChannel(g), eb[0]); err != nil {
+					ll.Error().Msgf("failed to send voyage summary message: %s", err)
+				}
 			}
 		}(st, et, &r)
 	}

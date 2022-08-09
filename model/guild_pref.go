@@ -19,6 +19,9 @@ const (
 
 	// GuildPrefAnnounceChannel is an alternative announcement channel for the guild
 	GuildPrefAnnounceChannel GuildPrefKey = "announce_channel"
+
+	// GuildPrefAnnounceSoTSummary is set, when the guild allows the announcing of SoT play summaries
+	GuildPrefAnnounceSoTSummary GuildPrefKey = "announce_sot_play_summary"
 )
 
 // GetPrefString fetches a client-specific setting from the database as string type

@@ -27,8 +27,9 @@ func (b *Bot) SlashCmdConfig(s *discordgo.Session, i *discordgo.InteractionCreat
 
 	// Define list of config option methods
 	co := map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate) error{
-		"flameheart-spam":  b.configFlameheart,
-		"announce-channel": b.overrideAnnounceChannel,
+		"flameheart-spam":      b.configFlameheart,
+		"announce-sot-summary": b.configAnnounceSoTPlaySummary,
+		"announce-channel":     b.overrideAnnounceChannel,
 	}
 
 	// Check if provided command is available and process it
@@ -43,28 +44,14 @@ func (b *Bot) SlashCmdConfig(s *discordgo.Session, i *discordgo.InteractionCreat
 
 // configFlameheart en-/disables the Flameheart spam for a Guild
 func (b *Bot) configFlameheart(s *discordgo.Session, i *discordgo.InteractionCreate) error {
-	mo := i.ApplicationCommandData().Options
-	if len(mo) <= 0 {
-		return fmt.Errorf("no options found")
-	}
-	so := mo[0].Options
-	if len(so) <= 0 {
-		return fmt.Errorf("no suboption found")
+	nv, err := appCommandGetEnalbedDisabled(i.ApplicationCommandData().Options)
+	if err != nil {
+		return err
 	}
 
 	g, err := b.Model.Guild.GetByGuildID(i.GuildID)
 	if err != nil {
 		return fmt.Errorf("failed to look up guild in database: %w", err)
-	}
-
-	var nv bool
-	switch strings.ToLower(so[0].Name) {
-	case "disable":
-		nv = false
-	case "enable":
-		nv = true
-	default:
-		return fmt.Errorf("unsupported value")
 	}
 	if err = b.Model.Guild.SetPref(g, model.GuildPrefScheduledFlameheart, nv); err != nil {
 		return fmt.Errorf("failed to set flameheart preference in database: %w", err)
@@ -130,4 +117,60 @@ func (b *Bot) overrideAnnounceChannel(s *discordgo.Session, i *discordgo.Interac
 	}
 
 	return nil
+}
+
+// configAnnounceSoTPlaySummary en-/disables the announcing of SoT play summaries
+func (b *Bot) configAnnounceSoTPlaySummary(s *discordgo.Session, i *discordgo.InteractionCreate) error {
+	nv, err := appCommandGetEnalbedDisabled(i.ApplicationCommandData().Options)
+	if err != nil {
+		return err
+	}
+
+	g, err := b.Model.Guild.GetByGuildID(i.GuildID)
+	if err != nil {
+		return fmt.Errorf("failed to look up guild in database: %w", err)
+	}
+	if err = b.Model.Guild.SetPref(g, model.GuildPrefAnnounceSoTSummary, nv); err != nil {
+		return fmt.Errorf("failed to set announce-sot-summary preference in database: %w", err)
+	}
+
+	e := []*discordgo.MessageEmbed{
+		{
+			Type:        discordgo.EmbedTypeArticle,
+			Title:       TitleConfigUpdated,
+			Description: "The bot will not announce a user's summary after they played SoT",
+		},
+	}
+	if nv {
+		e[0].Description = "The bot will announce a user's summary after they played SoT"
+	}
+
+	// Edit the deferred message
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+		return fmt.Errorf("failed to edit /config announce-sot-summary request: %w", err)
+	}
+
+	return nil
+}
+
+// getEnabledDisabled takes the applicationcommand options and checks wether enabled or disabled was selected
+func appCommandGetEnalbedDisabled(os []*discordgo.ApplicationCommandInteractionDataOption) (bool, error) {
+	if len(os) <= 0 {
+		return false, fmt.Errorf("no options found")
+	}
+	so := os[0].Options
+	if len(so) <= 0 {
+		return false, fmt.Errorf("no suboption found")
+	}
+
+	var nv bool
+	switch strings.ToLower(so[0].Name) {
+	case "disable":
+		nv = false
+	case "enable":
+		nv = true
+	default:
+		return false, fmt.Errorf("unsupported value")
+	}
+	return nv, nil
 }
