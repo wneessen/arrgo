@@ -31,9 +31,17 @@ type RTRoute struct {
 
 // SlashCmdSoTTradeRoutes handles the /balance slash command
 func (b *Bot) SlashCmdSoTTradeRoutes(s *discordgo.Session, i *discordgo.InteractionCreate) error {
+	if err := b.ScheduledEventUpdateTradeRoutes(); err != nil {
+		b.Log.Warn().Msgf("failed to update traderoutes in database: %s", err)
+		return err
+	}
+
 	tl, err := b.Model.TradeRoute.GetTradeRoutes()
 	if err != nil {
 		return err
+	}
+	if len(tl) <= 0 {
+		return fmt.Errorf("no trade routes found in database")
 	}
 
 	var ef []*discordgo.MessageEmbedField
