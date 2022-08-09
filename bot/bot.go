@@ -13,19 +13,6 @@ import (
 	"time"
 )
 
-const (
-	// FHTimer defines the maximum random number for the FH spammer timer (in minutes)
-	FHTimer = 60
-
-	// TRTimer defines the time.Duration how often the traderoute should be checked
-	// for updates
-	TRTimer = 12 * time.Hour
-
-	// USTimer defines the time.Duration how often the user stats should be checked
-	// for updates
-	USTimer = 30 * time.Minute
-)
-
 // List of Sea of Thieves API endpoints
 const (
 	ApiURLSoTAchievements = "https://www.seaofthieves.com/api/profilev2/achievements"
@@ -127,17 +114,17 @@ func (b *Bot) Run() error {
 	signal.Notify(sc)
 
 	// Timer events
-	rn := FHTimer
-	rn, err = crypto.RandNum(FHTimer)
+	rn := int(b.Config.Timer.FHSpam)
+	rn, err = crypto.RandNum(int(b.Config.Timer.FHSpam))
 	if err != nil {
 		ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
-		rn = FHTimer
+		rn = int(b.Config.Timer.FHSpam)
 	}
-	fht := time.NewTicker(time.Duration(int64(rn)+FHTimer) * time.Minute)
+	fht := time.NewTicker(time.Duration(int64(rn)+b.Config.Timer.FHSpam) * time.Minute)
 	defer fht.Stop()
-	trt := time.NewTicker(TRTimer)
+	trt := time.NewTicker(b.Config.Timer.TRUpdate)
 	defer trt.Stop()
-	ust := time.NewTicker(USTimer)
+	ust := time.NewTicker(b.Config.Timer.USUpdate)
 	defer ust.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.
@@ -163,12 +150,12 @@ func (b *Bot) Run() error {
 			}
 
 			// Reset the duration
-			rn, err = crypto.RandNum(FHTimer)
+			rn, err = crypto.RandNum(int(b.Config.Timer.FHSpam))
 			if err != nil {
 				ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
-				rn = FHTimer
+				rn = int(b.Config.Timer.FHSpam)
 			}
-			fht.Reset(time.Duration(int64(rn)+FHTimer) * time.Minute)
+			fht.Reset(time.Duration(int64(rn)+b.Config.Timer.FHSpam) * time.Minute)
 		case <-trt.C:
 			if err := b.ScheduledEventUpdateTradeRoutes(); err != nil {
 				ll.Error().Msgf("failed to process scheuled traderoute update event: %s", err)

@@ -16,7 +16,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 
 	u, err := b.Model.User.GetByUserID(ev.User.ID)
 	if err != nil {
-		ll.Error().Msgf("failed to monitor gaming since user couldn't be retieved from DB: %w", err)
+		ll.Error().Msgf("failed to monitor gaming since user couldn't be retieved from DB: %s", err)
 		return
 	}
 	r := Requester{nil, b.Model.User, u}
@@ -87,8 +87,8 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 		}
 		et := time.Now().Unix()
 
-		go func(s, e int64, rq *Requester) {
-			time.Sleep(time.Second * 2)
+		go func(s, e int64, rq *Requester, pu *discordgo.PresenceUpdate) {
+			time.Sleep(time.Minute * 1)
 			wp, err := b.Model.User.GetPrefBool(rq.User, model.UserPrefPlaysSoT)
 			if err != nil && !errors.Is(err, model.ErrUserPrefNotExistant) {
 				ll.Warn().Msgf("failed retrieve user status from DB: %s", err)
@@ -206,15 +206,21 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 					Inline: true,
 				})
 			}
+
+			du, err := b.Session.User(u.UserID)
+			if err != nil {
+				ll.Warn().Msgf("failed to retrieve user information from Discord: %s", err)
+				return
+			}
 			eb := []*discordgo.MessageEmbed{
 				{
-					Title:  fmt.Sprintf("Sea of Thieves voyage summary for <@%s>", u.UserID),
+					Title:  fmt.Sprintf("Sea of Thieves voyage summary for @%s", du.Username),
 					Type:   discordgo.EmbedTypeRich,
 					Fields: ef,
 				},
 			}
 
-			g, err := b.Model.Guild.GetByGuildID(ev.GuildID)
+			g, err := b.Model.Guild.GetByGuildID(pu.GuildID)
 			if err != nil {
 				ll.Error().Msgf("failed to retrieve guild information from DB: %s", err)
 				return
@@ -229,6 +235,6 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 					ll.Error().Msgf("failed to send voyage summary message: %s", err)
 				}
 			}
-		}(st, et, &r)
+		}(st, et, &r, ev)
 	}
 }

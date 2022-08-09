@@ -5,6 +5,7 @@ import (
 	"github.com/kkyr/fig"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 // CfgOpt is a overloading function for the New() method
@@ -41,6 +42,11 @@ type Config struct {
 	}
 	Data struct {
 		EncryptionKey string `fig:"enc_key"`
+	}
+	Timer struct {
+		FHSpam   int64         `fig:"flameheart_spam" default:"60"`
+		TRUpdate time.Duration `fig:"traderoutes_update" default:"12h"`
+		USUpdate time.Duration `fig:"userstats_update" default:"30m"`
 	}
 	confPath string
 	confFile string

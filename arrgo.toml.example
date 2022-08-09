@@ -1,9 +1,28 @@
 ## Default ArrGo discord bot configuration file
+
+## Discord specific settings
 [discord]
-token = ""
+token = "" ## The discord authentication token
 
+## Log specific settings
 [log]
-level = "debug"
+level = "info" ## The log level the bot should report on
 
+## Database settings for the bot data storage
 [db]
-path = "/home/arrgo/arrgo.db"
+#user = ""
+#pass = ""
+#db = ""
+#host = ""
+#use_tls = true
+
+## Data specific settings like the global encryption key
+[data]
+#enc_key = "" ## Data encryption key (will be generated when started without this setting)
+
+## Timer settings for background/scheduled tasks
+[timer]
+#flameheart_spam = "60"     ## Minimum amount of minutes for the random number generation
+#traderoutes_update = "12h" ## How often are traderoutes checked if an update is needed
+#userstats_update = "30m"   ## How often are the user stats updated in the database
+
