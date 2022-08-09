@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"math"
+	"strings"
 )
 
 // SoTSeasonList represents the JSON structure of the Sea of Thieves seasons API response
@@ -170,25 +171,29 @@ func (b *Bot) SoTGetSeasonProgress(rq *Requester) (SoTSeasonList, error) {
 // buildRewardEmbed returns a discordgo.MessageEmbed object for different reward types
 func buildSoTRewardEmbed(t string, r *SoTSeasonReward, cp string) *discordgo.MessageEmbed {
 	e := &discordgo.MessageEmbed{
-		Title: fmt.Sprintf("Your latest reward in the %q tier", t),
-		Type:  discordgo.EmbedTypeImage,
+		Title:       fmt.Sprintf("Your latest reward in the %q tier", t),
+		Description: r.EntitlementText,
+		URL:         fmt.Sprintf("%s/%s", cp, r.EntitlementURL),
+		Type:        discordgo.EmbedTypeImage,
 	}
-	switch r.CurrencyType {
-	case "gold-s":
+	if strings.HasPrefix(r.CurrencyType, "gold-") {
 		e.Description = "A nice stack of Gold!"
 		e.Thumbnail = &discordgo.MessageEmbedThumbnail{
-			URL: "https://github.com/wneessen/arrgo/raw/main/assets/season/gold-s.png",
-		}
-	case "doubloons-s":
-		e.Description = "A nice stack of Doubloons!"
-		e.Thumbnail = &discordgo.MessageEmbedThumbnail{
-			URL: "https://github.com/wneessen/arrgo/raw/main/assets/season/doubloons-s.png",
-		}
-	default:
-		e.Description = r.EntitlementText
-		e.Thumbnail = &discordgo.MessageEmbedThumbnail{
-			URL: fmt.Sprintf("%s/%s", cp, r.EntitlementURL),
+			URL: fmt.Sprintf("https://github.com/wneessen/arrgo/raw/main/assets/season/%s.png", r.CurrencyType),
 		}
 	}
+	if strings.HasPrefix(r.CurrencyType, "doubloons-") {
+		e.Description = "A nice stack of Doubloons!"
+		e.Thumbnail = &discordgo.MessageEmbedThumbnail{
+			URL: fmt.Sprintf("https://github.com/wneessen/arrgo/raw/main/assets/season/%s.png", r.CurrencyType),
+		}
+	}
+	if strings.HasPrefix(r.CurrencyType, "coins-") {
+		e.Description = "A nice stack of Ancient Coins!"
+		e.Thumbnail = &discordgo.MessageEmbedThumbnail{
+			URL: fmt.Sprintf("https://github.com/wneessen/arrgo/raw/main/assets/season/%s.png", r.CurrencyType),
+		}
+	}
+
 	return e
 }
