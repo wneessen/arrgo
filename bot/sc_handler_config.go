@@ -19,7 +19,10 @@ func (b *Bot) SlashCmdConfig(s *discordgo.Session, i *discordgo.InteractionCreat
 	ol := i.ApplicationCommandData().Options
 
 	// Only admin users are allowed to execute /config commands
-	r := Requester{i.Member, nil, nil}
+	r, err := b.NewRequester(i.Interaction)
+	if err != nil {
+		return err
+	}
 	if !r.IsAdmin() && !r.CanModerateMembers() {
 		ll.Warn().Msgf("non admin user tried to change configuration: %s", i.Member.User.Username)
 		return fmt.Errorf("this command is only accessible for admin-user")

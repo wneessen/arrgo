@@ -17,6 +17,7 @@ const (
 	// UserPrefSoTAuthToken is the authentication token for Sea of Thieves
 	UserPrefSoTAuthToken           UserPrefKey = "rat_token"
 	UserPrefSoTAuthTokenExpiration UserPrefKey = "rat_token_expire"
+	UserPrefSoTAuthTokenNotified   UserPrefKey = "rat_expiry_notified"
 	UserPrefPlaysSoT               UserPrefKey = "plays_sot"
 	UserPrefPlaysSoTStartTime      UserPrefKey = "plays_sot_start"
 )

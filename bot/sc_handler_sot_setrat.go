@@ -19,7 +19,7 @@ type SoTRATCookie struct {
 func (b *Bot) SlashCmdSetRAT(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	ol := i.ApplicationCommandData().Options
 
-	u, err := b.Model.User.GetByUserID(i.Member.User.ID)
+	u, err := b.Model.User.GetByUserID(i.Interaction.User.ID)
 	if err != nil {
 		if !errors.Is(err, model.ErrUserNotExistant) {
 			return fmt.Errorf("failed to look up user: %w", err)
@@ -68,6 +68,9 @@ func (b *Bot) SlashCmdSetRAT(s *discordgo.Session, i *discordgo.InteractionCreat
 	}
 	if err := b.Model.User.SetPrefEnc(u, model.UserPrefSoTAuthTokenExpiration, src.Expiration); err != nil {
 		return fmt.Errorf("failed to store RAT cookie expiration date in DB: %w", err)
+	}
+	if err := b.Model.User.SetPref(u, model.UserPrefSoTAuthTokenNotified, false); err != nil {
+		return fmt.Errorf("failed to update RAT cookie notified in DB: %w", err)
 	}
 
 	e := []*discordgo.MessageEmbed{

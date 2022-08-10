@@ -3,6 +3,7 @@ package bot
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/wneessen/arrgo/config"
 	"github.com/wneessen/arrgo/crypto"
@@ -126,6 +127,8 @@ func (b *Bot) Run() error {
 	defer trt.Stop()
 	ust := time.NewTicker(b.Config.Timer.USUpdate)
 	defer ust.Stop()
+	rct := time.NewTicker(b.Config.Timer.RCCheck)
+	defer rct.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.
 	ll.Info().Msg("bot successfully initialized and connected. Press CTRL-C to exit.")
@@ -164,6 +167,10 @@ func (b *Bot) Run() error {
 			if err := b.ScheduledEventUpdateUserStats(); err != nil {
 				ll.Error().Msgf("failed to process scheuled traderoute update event: %s", err)
 			}
+		case <-rct.C:
+			if err := b.ScheduledEventCheckRATCookies(); err != nil {
+				ll.Error().Msgf("failed to process scheuled RAT cookie check event: %s", err)
+			}
 		}
 	}
 }
@@ -176,4 +183,25 @@ func (b *Bot) StartTimeString() string {
 // StartTimeUnix returns the time when the bot was last initalized
 func (b *Bot) StartTimeUnix() int64 {
 	return b.st.Unix()
+}
+
+// NewRequester returns a Requester based on if it's a channel interaction or DM
+func (b *Bot) NewRequester(i *discordgo.Interaction) (*Requester, error) {
+	r := &Requester{nil, b.Model.User, nil}
+	if i.User != nil {
+		u, err := b.Model.User.GetByUserID(i.User.ID)
+		if err != nil {
+			switch {
+			case errors.Is(err, model.ErrUserNotExistant):
+				return r, fmt.Errorf("user is not registered")
+			default:
+				return r, err
+			}
+		}
+		r.User = u
+	}
+	if i.Member != nil {
+		r.Member = i.Member
+	}
+	return r, nil
 }
