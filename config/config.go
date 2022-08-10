@@ -32,7 +32,7 @@ type Config struct {
 	DB struct {
 		Host     string `fig:"host" validate:"required"`
 		Username string `fig:"user" default:"arrgo"`
-		Password string `fig:"password"`
+		Password string `fig:"pass"`
 		Database string `fig:"db" default:"arrgo"`
 		UseTLS   bool   `fig:"use_tls"`
 		Port     int    `fig:"port" default:"5432"`
@@ -47,6 +47,7 @@ type Config struct {
 		FHSpam   int64         `fig:"flameheart_spam" default:"60"`
 		TRUpdate time.Duration `fig:"traderoutes_update" default:"12h"`
 		USUpdate time.Duration `fig:"userstats_update" default:"30m"`
+		RCCheck  time.Duration `fig:"ratcookie_check" default:"5m"`
 	}
 	confPath string
 	confFile string
