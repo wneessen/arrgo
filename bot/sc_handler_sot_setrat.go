@@ -19,7 +19,14 @@ type SoTRATCookie struct {
 func (b *Bot) SlashCmdSetRAT(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	ol := i.ApplicationCommandData().Options
 
-	u, err := b.Model.User.GetByUserID(i.Interaction.User.ID)
+	var us string
+	if i.Interaction.User != nil {
+		us = i.Interaction.User.ID
+	}
+	if i.Member != nil {
+		us = i.Member.User.ID
+	}
+	u, err := b.Model.User.GetByUserID(us)
 	if err != nil {
 		if !errors.Is(err, model.ErrUserNotExistant) {
 			return fmt.Errorf("failed to look up user: %w", err)
