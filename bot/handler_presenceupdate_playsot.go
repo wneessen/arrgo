@@ -16,7 +16,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 
 	u, err := b.Model.User.GetByUserID(ev.User.ID)
 	if err != nil {
-		if errors.Is(err, model.ErrUserNotExistant) {
+		if !errors.Is(err, model.ErrUserNotExistant) {
 			ll.Error().Msgf("failed to monitor gaming since user couldn't be retieved from DB: %s", err)
 		}
 		return
