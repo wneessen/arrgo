@@ -25,4 +25,6 @@ level = "info" ## The log level the bot should report on
 #flameheart_spam = "60"     ## Minimum amount of minutes for the random number generation
 #traderoutes_update = "12h" ## How often are traderoutes checked if an update is needed
 #userstats_update = "30m"   ## How often are the user stats updated in the database
+#userstats_update = "30m"   ## How often are the user stats updated in the database
+#ratcookie_check = "5m"     ## How often are the user's RAT cookies checked for validity
 
