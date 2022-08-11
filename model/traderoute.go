@@ -40,7 +40,7 @@ func (m TradeRouteModel) GetByOutpost(o string) (*TradeRoute, error) {
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			return &t, ErrTradeRouteNotExistant
+			return &t, ErrTradeRouteNotExistent
 		default:
 			return &t, err
 		}

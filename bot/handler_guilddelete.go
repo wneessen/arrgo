@@ -12,7 +12,7 @@ func (b *Bot) GuildDelete(_ *discordgo.Session, ev *discordgo.GuildDelete) {
 	ll.Info().Msgf("received a GUILD_DELETE event... removing from database")
 	g, err := b.Model.Guild.GetByGuildID(ev.Guild.ID)
 	if err != nil {
-		if !errors.Is(err, model.ErrGuildNotExistant) {
+		if !errors.Is(err, model.ErrGuildNotExistent) {
 			ll.Error().Msgf("failed to fetch guild from DB: %s", err)
 			return
 		}

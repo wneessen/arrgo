@@ -169,7 +169,7 @@ func getGuildPref[V string | bool | int | int64](m GuildModel, g *Guild, k Guild
 	if err != nil {
 		switch {
 		case err == sql.ErrNoRows:
-			return v, ErrGuildPrefNotExistant
+			return v, ErrGuildPrefNotExistent
 		default:
 			return v, err
 		}
@@ -203,7 +203,7 @@ func getGuildPrefEnc[V string | bool | int | int64](m GuildModel, g *Guild, k Gu
 	if err != nil {
 		switch {
 		case err == sql.ErrNoRows:
-			return v, ErrGuildPrefNotExistant
+			return v, ErrGuildPrefNotExistent
 		default:
 			return v, err
 		}

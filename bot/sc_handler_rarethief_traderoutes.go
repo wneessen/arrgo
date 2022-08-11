@@ -100,7 +100,7 @@ func (b *Bot) ScheduledEventUpdateTradeRoutes() error {
 		dtr.Surplus = r.Surplus
 		dtr.ValidThru = tr.ValidThru
 		if err != nil {
-			if !errors.Is(err, model.ErrTradeRouteNotExistant) {
+			if !errors.Is(err, model.ErrTradeRouteNotExistent) {
 				ll.Error().Msgf("failed to retrieve trade route for %q from DB: %s", r.Outpost, err)
 				continue
 			}

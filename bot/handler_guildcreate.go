@@ -13,9 +13,11 @@ func (b *Bot) GuildCreate(s *discordgo.Session, ev *discordgo.GuildCreate) {
 	ll := b.Log.With().Str("context", "bot.GuildCreate").Str("guild_id", ev.Guild.ID).Logger()
 
 	// Check if guild is already present in database
-	g, err := b.Model.Guild.GetByGuildID(ev.Guild.ID)
+	var g *model.Guild
+	var err error
+	g, err = b.Model.Guild.GetByGuildID(ev.Guild.ID)
 	if err != nil {
-		if !errors.Is(err, model.ErrGuildNotExistant) {
+		if !errors.Is(err, model.ErrGuildNotExistent) {
 			ll.Error().Msgf("failed to fetch guild from DB: %s", err)
 			return
 		}

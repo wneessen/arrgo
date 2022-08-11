@@ -46,7 +46,7 @@ func (m GuildModel) GetByGuildID(i string) (*Guild, error) {
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			return &g, ErrGuildNotExistant
+			return &g, ErrGuildNotExistent
 		default:
 			return &g, err
 		}

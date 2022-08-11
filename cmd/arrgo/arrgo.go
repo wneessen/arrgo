@@ -43,7 +43,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Initalize zerolog
+	// Initialize zerolog
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	zerolog.TimeFieldFormat = time.RFC3339Nano
 	switch strings.ToLower(c.Log.Level) {
@@ -63,7 +63,7 @@ func main() {
 
 	b, err := bot.New(l, &c)
 	if err != nil {
-		ll.Error().Msgf("failed to initalize bot: %s", err)
+		ll.Error().Msgf("failed to initialize bot: %s", err)
 		os.Exit(1)
 	}
 

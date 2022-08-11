@@ -16,7 +16,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 
 	u, err := b.Model.User.GetByUserID(ev.User.ID)
 	if err != nil {
-		if !errors.Is(err, model.ErrUserNotExistant) {
+		if !errors.Is(err, model.ErrUserNotExistent) {
 			ll.Error().Msgf("failed to monitor gaming since user couldn't be retieved from DB: %s", err)
 		}
 		return
@@ -35,7 +35,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 	// User started playing Sea of Thieves
 	if ig {
 		wp, err := b.Model.User.GetPrefBool(u, model.UserPrefPlaysSoT)
-		if err != nil && !errors.Is(err, model.ErrUserPrefNotExistant) {
+		if err != nil && !errors.Is(err, model.ErrUserPrefNotExistent) {
 			ll.Warn().Msgf("failed retrieve user status from DB: %s", err)
 			return
 		}
@@ -67,7 +67,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 	// User likely stopped playing Sea of Thieves
 	if !ig {
 		wp, err := b.Model.User.GetPrefBool(u, model.UserPrefPlaysSoT)
-		if err != nil && !errors.Is(err, model.ErrUserPrefNotExistant) {
+		if err != nil && !errors.Is(err, model.ErrUserPrefNotExistent) {
 			ll.Warn().Msgf("failed retrieve user status from DB: %s", err)
 			return
 		}
@@ -92,7 +92,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 		go func(s, e int64, rq *Requester, pu *discordgo.PresenceUpdate) {
 			time.Sleep(time.Minute * 1)
 			wp, err := b.Model.User.GetPrefBool(rq.User, model.UserPrefPlaysSoT)
-			if err != nil && !errors.Is(err, model.ErrUserPrefNotExistant) {
+			if err != nil && !errors.Is(err, model.ErrUserPrefNotExistent) {
 				ll.Warn().Msgf("failed retrieve user status from DB: %s", err)
 				return
 			}
@@ -228,7 +228,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 				return
 			}
 			ag, err := b.Model.Guild.GetPrefBool(g, model.GuildPrefAnnounceSoTSummary)
-			if err != nil && !errors.Is(err, model.ErrGuildPrefNotExistant) {
+			if err != nil && !errors.Is(err, model.ErrGuildPrefNotExistent) {
 				ll.Error().Msgf("failed to fetch guild preference from DB: %s", err)
 				return
 			}
