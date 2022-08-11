@@ -126,7 +126,7 @@ func (b *Bot) SlashCmdSoTCompare(s *discordgo.Session, i *discordgo.InteractionC
 	if len(ef) > 0 {
 		e = []*discordgo.MessageEmbed{
 			{
-				Title: fmt.Sprintf("Your user statistics overview compared to %s ago in Sea of Thieves",
+				Title: fmt.Sprintf("Your user statistics overview compared to %s hours ago in Sea of Thieves",
 					ds),
 				Type:   discordgo.EmbedTypeRich,
 				Fields: ef,
