@@ -40,7 +40,7 @@ func (m UserModel) GetByUserID(i string) (*User, error) {
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			return &u, ErrUserNotExistant
+			return &u, ErrUserNotExistent
 		default:
 			return &u, err
 		}

@@ -47,7 +47,7 @@ func (m UserStatModel) GetByUserID(i int64) (*UserStat, error) {
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			return &us, ErrUserStatNotExistant
+			return &us, ErrUserStatNotExistent
 		default:
 			return &us, err
 		}
@@ -76,7 +76,7 @@ func (m UserStatModel) GetByUserIDAtTime(i int64, t time.Time) (*UserStat, error
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			return &us, ErrUserStatNotExistant
+			return &us, ErrUserStatNotExistent
 		default:
 			return &us, err
 		}

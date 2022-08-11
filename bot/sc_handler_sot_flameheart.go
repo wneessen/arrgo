@@ -35,7 +35,7 @@ func (b *Bot) ScheduledEventSoTFlameheart() error {
 		var en bool
 		en, err = b.Model.Guild.GetPrefBool(g, model.GuildPrefScheduledFlameheart)
 		if err != nil {
-			if !errors.Is(err, model.ErrGuildPrefNotExistant) {
+			if !errors.Is(err, model.ErrGuildPrefNotExistent) {
 				ll.Warn().Msgf("failed to read scheduled flameheart preference from DB: %s", err)
 				continue
 			}

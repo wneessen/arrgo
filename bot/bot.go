@@ -37,7 +37,7 @@ type Bot struct {
 	st time.Time
 }
 
-// New initalizes a new Bot instance
+// New initializes a new Bot instance
 func New(l zerolog.Logger, c *config.Config) (*Bot, error) {
 	b := &Bot{
 		Config: c,
@@ -78,7 +78,7 @@ func New(l zerolog.Logger, c *config.Config) (*Bot, error) {
 // Run executes the Bot's main loop
 func (b *Bot) Run() error {
 	ll := b.Log.With().Str("context", "bot.Run").Logger()
-	ll.Debug().Msg("initalizing bot...")
+	ll.Debug().Msg("initializing bot...")
 
 	dg, err := discordgo.New("Bot " + b.Config.Discord.Token)
 	if err != nil {
@@ -175,12 +175,12 @@ func (b *Bot) Run() error {
 	}
 }
 
-// StartTimeString returns the time when the bot was last initalized
+// StartTimeString returns the time when the bot was last initialized
 func (b *Bot) StartTimeString() string {
 	return b.st.Format(time.RFC1123)
 }
 
-// StartTimeUnix returns the time when the bot was last initalized
+// StartTimeUnix returns the time when the bot was last initialized
 func (b *Bot) StartTimeUnix() int64 {
 	return b.st.Unix()
 }
@@ -192,7 +192,7 @@ func (b *Bot) NewRequester(i *discordgo.Interaction) (*Requester, error) {
 		u, err := b.Model.User.GetByUserID(i.User.ID)
 		if err != nil {
 			switch {
-			case errors.Is(err, model.ErrUserNotExistant):
+			case errors.Is(err, model.ErrUserNotExistent):
 				return r, fmt.Errorf("user is not registered")
 			default:
 				return r, err

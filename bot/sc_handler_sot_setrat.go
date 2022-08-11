@@ -28,7 +28,7 @@ func (b *Bot) SlashCmdSetRAT(s *discordgo.Session, i *discordgo.InteractionCreat
 	}
 	u, err := b.Model.User.GetByUserID(us)
 	if err != nil {
-		if !errors.Is(err, model.ErrUserNotExistant) {
+		if !errors.Is(err, model.ErrUserNotExistent) {
 			return fmt.Errorf("failed to look up user: %w", err)
 		}
 		e := []*discordgo.MessageEmbed{

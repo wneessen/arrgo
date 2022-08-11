@@ -182,7 +182,7 @@ func getUserPref[V string | bool | int | int64](m UserModel, u *User, k UserPref
 	if err != nil {
 		switch {
 		case err == sql.ErrNoRows:
-			return v, ErrUserPrefNotExistant
+			return v, ErrUserPrefNotExistent
 		default:
 			return v, err
 		}
@@ -216,7 +216,7 @@ func getUserPrefEnc[V string | bool | int | int64](m UserModel, u *User, k UserP
 	if err != nil {
 		switch {
 		case err == sql.ErrNoRows:
-			return v, ErrUserPrefNotExistant
+			return v, ErrUserPrefNotExistent
 		default:
 			return v, err
 		}

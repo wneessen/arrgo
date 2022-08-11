@@ -18,7 +18,7 @@ func (b *Bot) ScheduledEventCheckRATCookies() error {
 	for _, u := range ul {
 		te, err := b.Model.User.GetPrefInt64Enc(u, model.UserPrefSoTAuthTokenExpiration)
 		if err != nil {
-			if !errors.Is(err, model.ErrUserPrefNotExistant) {
+			if !errors.Is(err, model.ErrUserPrefNotExistent) {
 				ll.Error().Msgf("failed to retrieve RAT cookie expiration from DB: %s", err)
 				continue
 			}
@@ -29,7 +29,7 @@ func (b *Bot) ScheduledEventCheckRATCookies() error {
 		// Token is expired
 		if time.Now().Unix() > te {
 			na, err := b.Model.User.GetPrefBool(u, model.UserPrefSoTAuthTokenNotified)
-			if err != nil && !errors.Is(err, model.ErrUserPrefNotExistant) {
+			if err != nil && !errors.Is(err, model.ErrUserPrefNotExistent) {
 				ll.Error().Msgf("failed to retrieve RAT cookie already notified status from DB: %s", err)
 				continue
 			}
