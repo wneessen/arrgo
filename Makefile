@@ -19,3 +19,9 @@ test:
 
 dev:
 	@/usr/bin/env CGO_ENABLED=0 go run -ldflags="-s -w $(BUILDVER)" $(MODNAME)/cmd/arrgo -c ./arrgo.toml
+
+dev-migrate:
+	@/usr/bin/env CGO_ENABLED=0 go run -ldflags="-s -w $(BUILDVER)" $(MODNAME)/cmd/arrgo -c ./arrgo.toml -migrate
+
+dev-downgrade:
+	@/usr/bin/env CGO_ENABLED=0 go run -ldflags="-s -w $(BUILDVER)" $(MODNAME)/cmd/arrgo -c ./arrgo.toml -downgrade
