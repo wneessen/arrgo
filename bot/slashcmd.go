@@ -139,6 +139,20 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 			Name:        "overview",
 			Description: "Returns an overview of some general stats of your Sea of Thieves pirate",
 		},
+
+		// historic compares the current Sea of Thives user stats with history data
+		{
+			Name:        "compare",
+			Description: "Compares the current Sea of Thieves users stats with historic data (in hours)",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "hours",
+					Description: "The backwards duration in hours that the historic data should be calculated from",
+					Required:    true,
+				},
+			},
+		},
 	}
 }
 
@@ -277,6 +291,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"balance":     b.SlashCmdSoTBalance,
 		"traderoutes": b.SlashCmdSoTTradeRoutes,
 		"overview":    b.SlashCmdSoTOverview,
+		"compare":     b.SlashCmdSoTCompare,
 	}
 
 	// Define list of slash commands that should use ephemeral messages
