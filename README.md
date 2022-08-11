@@ -16,6 +16,13 @@ server is required for the bot to operate correctly.
 
 To build the bot from the sources, you need to have Go installed, as well.
 
+## Getting started
+To get started with your own instance of ArrGo, make sure that you have [all required components](#requirements) 
+at hand. Next make sure to select the type of [Docker environment](#releases) you want to run on. Now it's time
+to set up your [config file](#configuration) with the corresponding settings for your database, discord token, etc.
+As final set, you need to run the SQL migrations, so that bot sets up all required database tables and settings. 
+You can do so by providing the `-migrate` flag. You are now all set and ready to start your ArrGo instance.
+
 ## Releases
 ArrGo is released as Docker image only. You can find the different branches on its
 [Github Packages](https://github.com/wneessen/arrgo/pkgs/container/arrgo) page.
@@ -174,3 +181,15 @@ The before and after values are then compared and announced in either the guild'
 or alternatively in a channel that has been overriden by the guild administrator using the
 `/override announce-channel` slash command. By default the summary announcing is disable per guild and has
 to enabled by the guild administrator using the `/config announce-sot-summary enable` slash command.
+
+## Command documentation
+### Administrative commands
+The bot offers two types of slash commands for configuring your bot on the Discord guild level. The `/config` 
+command usually allows to set pre-configured `enable/disable` settings. The `/override` command allows to 
+override system defaults.
+
+#### Enable/disable Sea of Thieves user monitoring
+The bot is able to monitor [if a user plays Sea of Thieves](#automatic-user-balance-tracking) and provide
+a summary after the play session. By default this feature is disabled, but can enabled guild-wide by an
+administrative user using the `/config announce-sot-summary` settings. The possible options are `enable` and
+`disable`
