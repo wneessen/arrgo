@@ -115,7 +115,8 @@ func (b *Bot) Run() error {
 	signal.Notify(sc)
 
 	// Timer events
-	rn := int(b.Config.Timer.FHSpam)
+	var rn int
+	rn = int(b.Config.Timer.FHSpam)
 	rn, err = crypto.RandNum(int(b.Config.Timer.FHSpam))
 	if err != nil {
 		ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
