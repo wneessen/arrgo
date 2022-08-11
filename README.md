@@ -145,3 +145,32 @@ traderoutes_update = "12h"
 userstats_update = "30m"
 ratcookie_check = "5m"
 ```
+
+## Sea of Thieves specific commands
+Any Sea of Thieves related bot command is only available to registered users, as it requires the bot to access 
+the private SoT API with a user specific remote access token (`RAT`). This token has to be stored in the bot's 
+database and has to be renewed approx. every 14 days (the bot will DM you when your cookie expired).
+
+### Getting access to the API
+Unfortunately the SoT API does not offer any kind of OAuth2 for authentication - at least not publicly available.
+Hence we have to use a kind of hackish way to get your access cookie from the Microsoft Live login.
+
+You can either use the [SoTBot-RAT-Chrome-Extension](https://github.com/wneessen/sotbot-rat-extension/tree/main/Chrome)
+or the [SoTBot-Token-Extractor](https://github.com/wneessen/sotbot-token-extrator) (please read the notes in the 
+project before using it) to get a current cookie and store it in the database of the bot. Unfortunately the cookie 
+is only valid for approx. 14 days, so you'll have to renew it every now and then.
+
+### The `RAT` cookie
+The RAT cookie grants full access to your account on the Sea of Thieves website. Therefore, even though the cookie 
+is encrypted at rest, before storing your cookie in the bot's DB, please make sure that you know what you 
+are doing. Maybe at some time, RARE decides to offer a apublic API, which offers OAuth2, so we can allow the 
+bot having access to the API data without having to store/renew the cookie.
+
+## Automatic user balance tracking
+The bot is able to track the users presence state. If a registered user with a valid RAT cookie has their 
+"currently playing" feature activated with Discord and starts playing "Sea of Thieves", the bot will 
+automagically fetch the users current balance and once the user stops playing, repeat the process. 
+The before and after values are then compared and announced in either the guild's official system channel 
+or alternatively in a channel that has been overriden by the guild administrator using the
+`/override announce-channel` slash command. By default the summary announcing is disable per guild and has
+to enabled by the guild administrator using the `/config announce-sot-summary enable` slash command.
