@@ -34,22 +34,30 @@ var (
 
 	// ErrUserStatNotExistent should be used in case a requested user stat was not found in the database
 	ErrUserStatNotExistent = errors.New("requested user stat not existent in database")
+
+	// ErrDeedNotExistent should be used in case a requested deed was not found in the database
+	ErrDeedNotExistent = errors.New("requested deed not existent in database")
+
+	// ErrDeedDuplicate should be used in case a deed to be inserted into the database already exists
+	ErrDeedDuplicate = errors.New("deed already existent in database")
 )
 
 // Model is a collection of all available models
 type Model struct {
+	Deed       *DeedModel
 	Guild      *GuildModel
+	TradeRoute *TradeRouteModel
 	User       *UserModel
 	UserStats  *UserStatModel
-	TradeRoute *TradeRouteModel
 }
 
 // New returns the collection of all available models
 func New(db *sql.DB, c *config.Config) Model {
 	return Model{
+		Deed:       &DeedModel{DB: db},
 		Guild:      &GuildModel{DB: db, Config: c},
+		TradeRoute: &TradeRouteModel{DB: db},
 		User:       &UserModel{DB: db, Config: c},
 		UserStats:  &UserStatModel{DB: db},
-		TradeRoute: &TradeRouteModel{DB: db},
 	}
 }

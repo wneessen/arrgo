@@ -20,6 +20,7 @@ const (
 	ApiURLSoTSeasons      = "https://www.seaofthieves.com/api/profilev2/seasons-progress"
 	ApiURLSoTUserBalance  = "https://www.seaofthieves.com/api/profilev2/balance"
 	ApiURLSoTUserOverview = "https://www.seaofthieves.com/api/profilev2/overview"
+	ApiURLSoTEventHub     = "https://www.seaofthieves.com/event-hub"
 	ApiURLRTTradeRoutes   = "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
 )
 
@@ -130,6 +131,21 @@ func (b *Bot) Run() error {
 	defer ust.Stop()
 	rct := time.NewTicker(b.Config.Timer.RCCheck)
 	defer rct.Stop()
+	ddt := time.NewTicker(b.Config.Timer.DDUpdate)
+	defer ddt.Stop()
+
+	// Perform an update for all scheduled update tasks once
+	go func() {
+		if err := b.ScheduledEventUpdateTradeRoutes(); err != nil {
+			b.Log.Error().Msgf("failed to update trade routes: %s", err)
+		}
+		if err := b.ScheduledEventUpdateUserStats(); err != nil {
+			b.Log.Error().Msgf("failed to update user stats: %s", err)
+		}
+		if err := b.ScheduledEventUpdateDailyDeeds(); err != nil {
+			b.Log.Error().Msgf("failed to update daily deeds: %s", err)
+		}
+	}()
 
 	// Wait here until CTRL-C or other term signal is received.
 	ll.Info().Msg("bot successfully initialized and connected. Press CTRL-C to exit.")
@@ -171,6 +187,10 @@ func (b *Bot) Run() error {
 		case <-rct.C:
 			if err := b.ScheduledEventCheckRATCookies(); err != nil {
 				ll.Error().Msgf("failed to process scheuled RAT cookie check event: %s", err)
+			}
+		case <-ddt.C:
+			if err := b.ScheduledEventUpdateDailyDeeds(); err != nil {
+				ll.Error().Msgf("failed to process scheuled daily deeds update event: %s", err)
 			}
 		}
 	}

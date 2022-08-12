@@ -153,6 +153,12 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 				},
 			},
 		},
+
+		// dailydeeds get the currently active daily deeds in Sea of Thieves
+		{
+			Name:        "dailydeeds",
+			Description: "Returns the currently active Sea of Thieves daily deeds",
+		},
 	}
 }
 
@@ -292,6 +298,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"traderoutes": b.SlashCmdSoTTradeRoutes,
 		"overview":    b.SlashCmdSoTOverview,
 		"compare":     b.SlashCmdSoTCompare,
+		"dailydeeds":  b.SlashCmdSoTDailyDeeds,
 	}
 
 	// Define list of slash commands that should use ephemeral messages

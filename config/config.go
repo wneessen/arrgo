@@ -48,6 +48,7 @@ type Config struct {
 		TRUpdate time.Duration `fig:"traderoutes_update" default:"12h"`
 		USUpdate time.Duration `fig:"userstats_update" default:"30m"`
 		RCCheck  time.Duration `fig:"ratcookie_check" default:"5m"`
+		DDUpdate time.Duration `fig:"dailydeed_update" default:"12h"`
 	}
 	confPath string
 	confFile string
