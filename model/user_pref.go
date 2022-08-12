@@ -23,43 +23,43 @@ const (
 )
 
 // GetPrefString fetches a client-specific setting from the database as string type
-func (m UserModel) GetPrefString(g *User, k UserPrefKey) (string, error) {
-	return getUserPref[string](m, g, k)
+func (m UserModel) GetPrefString(u *User, k UserPrefKey) (string, error) {
+	return getUserPref[string](m, u, k)
 }
 
 // GetPrefStringEnc fetches an encrypted client-specific setting from the database as string type
-func (m UserModel) GetPrefStringEnc(g *User, k UserPrefKey) (string, error) {
-	return getUserPrefEnc[string](m, g, k)
+func (m UserModel) GetPrefStringEnc(u *User, k UserPrefKey) (string, error) {
+	return getUserPrefEnc[string](m, u, k)
 }
 
 // GetPrefInt fetches a client-specific setting from the database as string type
-func (m UserModel) GetPrefInt(g *User, k UserPrefKey) (int, error) {
-	return getUserPref[int](m, g, k)
+func (m UserModel) GetPrefInt(u *User, k UserPrefKey) (int, error) {
+	return getUserPref[int](m, u, k)
 }
 
 // GetPrefIntEnc fetches an encrypted client-specific setting from the database as string type
-func (m UserModel) GetPrefIntEnc(g *User, k UserPrefKey) (int, error) {
-	return getUserPrefEnc[int](m, g, k)
+func (m UserModel) GetPrefIntEnc(u *User, k UserPrefKey) (int, error) {
+	return getUserPrefEnc[int](m, u, k)
 }
 
 // GetPrefInt64 fetches a client-specific setting from the database as string type
-func (m UserModel) GetPrefInt64(g *User, k UserPrefKey) (int64, error) {
-	return getUserPref[int64](m, g, k)
+func (m UserModel) GetPrefInt64(u *User, k UserPrefKey) (int64, error) {
+	return getUserPref[int64](m, u, k)
 }
 
 // GetPrefInt64Enc fetches an encrypted client-specific setting from the database as string type
-func (m UserModel) GetPrefInt64Enc(g *User, k UserPrefKey) (int64, error) {
-	return getUserPrefEnc[int64](m, g, k)
+func (m UserModel) GetPrefInt64Enc(u *User, k UserPrefKey) (int64, error) {
+	return getUserPrefEnc[int64](m, u, k)
 }
 
 // GetPrefBool fetches a client-specific setting from the database as string type
-func (m UserModel) GetPrefBool(g *User, k UserPrefKey) (bool, error) {
-	return getUserPref[bool](m, g, k)
+func (m UserModel) GetPrefBool(u *User, k UserPrefKey) (bool, error) {
+	return getUserPref[bool](m, u, k)
 }
 
 // GetPrefBoolEnc fetches an encrypted client-specific setting from the database as string type
-func (m UserModel) GetPrefBoolEnc(g *User, k UserPrefKey) (bool, error) {
-	return getUserPrefEnc[bool](m, g, k)
+func (m UserModel) GetPrefBoolEnc(u *User, k UserPrefKey) (bool, error) {
+	return getUserPrefEnc[bool](m, u, k)
 }
 
 // PrefExists checks if a user preference is already present in the DB

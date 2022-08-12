@@ -39,6 +39,9 @@ const (
 // APIIntString represents a API response string that is actually a Integer
 type APIIntString int64
 
+// APITimeRFC3339 is a wrapper type for time.Time
+type APITimeRFC3339 time.Time
+
 // SOTReferer is the referer that apparently is needed for the SoT API to accept requests
 const SOTReferer = "https://www.seaofthieves.com/profile/achievements"
 
@@ -146,5 +149,22 @@ func (s *APIIntString) UnmarshalJSON(ib []byte) error {
 	}
 	*(*int64)(s) = realInt
 
+	return nil
+}
+
+// UnmarshalJSON converts a API RFC3339 formated date strings into a
+// time.Time object
+func (t *APITimeRFC3339) UnmarshalJSON(s []byte) error {
+	dateString := string(s)
+	dateString = strings.ReplaceAll(dateString, `"`, "")
+	if dateString == "null" {
+		return nil
+	}
+	dateParse, err := time.Parse(time.RFC3339, dateString)
+	if err != nil {
+		return fmt.Errorf("failed to parse string as RFC3339 time string: %v", err)
+	}
+
+	*(*time.Time)(t) = dateParse
 	return nil
 }
