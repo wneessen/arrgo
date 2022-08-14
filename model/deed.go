@@ -8,9 +8,10 @@ import (
 
 // Different deed types
 const (
-	DeedTypeStandard   DeedType = "standard"
-	DeedTypeDailySwift DeedType = "daily_swift"
-	DeedTypeUnknown    DeedType = "unknown"
+	DeedTypeStandard      DeedType = "standard"
+	DeedTypeDailyStandard DeedType = "daily_standard"
+	DeedTypeDailySwift    DeedType = "daily_swift"
+	DeedTypeUnknown       DeedType = "unknown"
 )
 
 // Different reward types

@@ -56,6 +56,8 @@ func (b *Bot) SlashCmdSoTDailyDeeds(s *discordgo.Session, i *discordgo.Interacti
 		var t string
 		switch d.DeedType {
 		case model.DeedTypeStandard:
+			t = "Standard Deed"
+		case model.DeedTypeDailyStandard:
 			t = "Standard Daily Deed"
 		case model.DeedTypeDailySwift:
 			t = "Daily Swift Deed"
@@ -99,6 +101,8 @@ func (b *Bot) ScheduledEventUpdateDailyDeeds() error {
 		switch d.Title {
 		case "Standard Deed":
 			dbd.DeedType = model.DeedTypeStandard
+		case "Standard Daily Deed":
+			dbd.DeedType = model.DeedTypeDailyStandard
 		case "Swift Daily Deed":
 			dbd.DeedType = model.DeedTypeDailySwift
 		default:
