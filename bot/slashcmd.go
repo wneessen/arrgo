@@ -159,6 +159,27 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 			Name:        "dailydeeds",
 			Description: "Returns the currently active Sea of Thieves daily deeds",
 		},
+
+		// ledger provides the current leaderboard position in the different emissary ledgers
+		{
+			Name:        "ledger",
+			Description: "Returns your current leaderboard position in the different emissary ledgers",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "emissary-faction",
+					Description: "Name of the emissary faction",
+					Required:    true,
+					Choices: []*discordgo.ApplicationCommandOptionChoice{
+						{Name: "Athena's Fortune", Value: "athena"},
+						{Name: "Gold Hoarder", Value: "hoarder"},
+						{Name: "Merchant Alliance", Value: "merchant"},
+						{Name: "Order of Souls", Value: "order"},
+						{Name: "Reaper's Bone", Value: "reaper"},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -299,6 +320,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"overview":    b.SlashCmdSoTOverview,
 		"compare":     b.SlashCmdSoTCompare,
 		"dailydeeds":  b.SlashCmdSoTDailyDeeds,
+		"ledger":      b.SlashCmdSoTDailyDeeds,
 	}
 
 	// Define list of slash commands that should use ephemeral messages
