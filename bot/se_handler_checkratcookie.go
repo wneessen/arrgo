@@ -1,9 +1,10 @@
 package bot
 
 import (
+	"errors"
 	"fmt"
-	"github.com/pkg/errors"
 	"github.com/wneessen/arrgo/model"
+	"net/http"
 	"time"
 )
 
@@ -16,6 +17,7 @@ func (b *Bot) ScheduledEventCheckRATCookies() error {
 	}
 
 	for _, u := range ul {
+		ie := false
 		te, err := b.Model.User.GetPrefInt64Enc(u, model.UserPrefSoTAuthTokenExpiration)
 		if err != nil {
 			if !errors.Is(err, model.ErrUserPrefNotExistent) {
@@ -26,8 +28,41 @@ func (b *Bot) ScheduledEventCheckRATCookies() error {
 			continue
 		}
 
-		// Token is expired
+		// Token is expired (timestamp wise)
 		if time.Now().Unix() > te {
+			ie = true
+		}
+
+		// In some cases the token might be expired on the server end... let's test with a HTTP request
+		if !ie {
+			rq := &Requester{nil, b.Model.User, u}
+			hc, err := NewHTTPClient()
+			if err != nil {
+				ll.Error().Msgf(ErrFailedHTTPClient, err)
+				continue
+			}
+			c, err := rq.GetSoTRATCookie()
+			if err != nil {
+				ll.Error().Err(err)
+				continue
+			}
+			r, err := hc.HttpReq(ApiURLSoTUserOverview, ReqMethodGet, nil)
+			if err != nil {
+				ll.Error().Err(err)
+				continue
+			}
+			r.SetSOTRequest(c)
+			_, ho, err := hc.Fetch(r)
+			if err != nil {
+				ll.Error().Err(err)
+				continue
+			}
+			if ho.StatusCode == http.StatusUnauthorized {
+				ie = true
+			}
+		}
+
+		if ie {
 			na, err := b.Model.User.GetPrefBool(u, model.UserPrefSoTAuthTokenNotified)
 			if err != nil && !errors.Is(err, model.ErrUserPrefNotExistent) {
 				ll.Error().Msgf("failed to retrieve RAT cookie already notified status from DB: %s", err)

@@ -3,6 +3,7 @@ package bot
 import (
 	"bytes"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"github.com/wneessen/arrgo/crypto"
 	"io"
@@ -44,6 +45,13 @@ type APITimeRFC3339 time.Time
 
 // SOTReferer is the referer that apparently is needed for the SoT API to accept requests
 const SOTReferer = "https://www.seaofthieves.com/profile/achievements"
+
+// HTTP client related errors
+var (
+	// ErrSOTUnauth should be used when requrests to the SoT API were not successful due to expired
+	// tokens
+	ErrSOTUnauth = errors.New("failed to fetch Sea of Thieves content, due to being unauthorized")
+)
 
 // NewHTTPClient returns a HTTPClient object
 func NewHTTPClient() (*HTTPClient, error) {
