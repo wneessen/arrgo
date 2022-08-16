@@ -28,8 +28,12 @@ func (b *Bot) ScheduledEventCheckRATCookies() error {
 			continue
 		}
 
-		// Token is expired (timestamp wise)
-		if time.Now().Unix() > te {
+		// Token is expired/will expire in 6h
+		ad, err := time.ParseDuration("-6h")
+		if err != nil {
+			return err
+		}
+		if time.Now().Unix() > time.Unix(te, 0).Add(ad).Unix() {
 			ie = true
 		}
 
@@ -74,8 +78,8 @@ func (b *Bot) ScheduledEventCheckRATCookies() error {
 					ll.Error().Msgf("failed to create DM channel with user: %s", err)
 					continue
 				}
-				_, err = b.Session.ChannelMessageSend(st.ID, "Your SoT RAT cookie has expired. Please use "+
-					"the `/setrat` command to set a new one.")
+				_, err = b.Session.ChannelMessageSend(st.ID, "Your SoT RAT cookie either will expire in "+
+					"6 hours or has already expired. Please use the `/setrat` command to set a new one.")
 				if err != nil {
 					ll.Error().Msgf("failed to send DM: %s", err)
 					continue
