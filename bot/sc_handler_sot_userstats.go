@@ -2,11 +2,13 @@ package bot
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
+	"net/http"
 )
 
 // SoTUserOverview represents the JSON structure of the Sea of Thieves user overview API response
@@ -173,9 +175,12 @@ func (b *Bot) SoTGetUserBalance(rq *Requester) (SoTUserBalance, error) {
 		return ub, err
 	}
 	r.SetSOTRequest(c)
-	rd, _, err := hc.Fetch(r)
+	rd, ho, err := hc.Fetch(r)
 	if err != nil {
 		return ub, err
+	}
+	if ho.StatusCode == http.StatusUnauthorized {
+		return ub, ErrSOTUnauth
 	}
 	if err := json.Unmarshal(rd, &ub); err != nil {
 		return ub, err
@@ -230,7 +235,13 @@ func (b *Bot) StoreSoTUserStats(u *model.User) error {
 	r := &Requester{nil, b.Model.User, u}
 	ub, err := b.SoTGetUserBalance(r)
 	if err != nil {
-		return fmt.Errorf("failed to fetch user balance for user %q: %s", u.UserID, err)
+		switch {
+		case errors.Is(err, ErrSOTUnauth):
+			b.Log.Warn().Msgf("failed to fetch user balance - RAT token is expired")
+			return nil
+		default:
+			return fmt.Errorf("failed to fetch user balance for user %s: %s", u.UserID, err)
+		}
 	}
 	us, err := b.SoTGetUserOverview(r)
 	if err != nil {

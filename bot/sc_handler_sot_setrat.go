@@ -3,9 +3,9 @@ package bot
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
-	"github.com/pkg/errors"
 	"github.com/wneessen/arrgo/model"
 )
 

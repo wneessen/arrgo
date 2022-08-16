@@ -2,9 +2,9 @@ package bot
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
-	"github.com/pkg/errors"
 	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
