@@ -111,8 +111,7 @@ func (b *Bot) SlashCmdSoTSeasonProgress(s *discordgo.Session, i *discordgo.Inter
 		{
 			Title: fmt.Sprintf("Your progress in Sea of Thieves %s", sp.SeasonTitle),
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
-				URL: fmt.Sprintf("https://github.com/wneessen/arrgo/raw/main/assets/numerals/%s.png",
-					rn[sp.Tier]),
+				URL: fmt.Sprintf("%s/numerals/%s.png", AssetsBaseURL, rn[sp.Tier]),
 			},
 			Type:   discordgo.EmbedTypeRich,
 			Fields: ef,
@@ -182,19 +181,19 @@ func buildSoTRewardEmbed(t string, r *SoTSeasonReward, cp string) *discordgo.Mes
 	if strings.HasPrefix(r.CurrencyType, "gold-") {
 		e.Description = "A nice stack of Gold!"
 		e.Thumbnail = &discordgo.MessageEmbedThumbnail{
-			URL: fmt.Sprintf("https://github.com/wneessen/arrgo/raw/main/assets/season/%s.png", r.CurrencyType),
+			URL: fmt.Sprintf("%s/season/%s.png", AssetsBaseURL, r.CurrencyType),
 		}
 	}
 	if strings.HasPrefix(r.CurrencyType, "doubloons-") {
 		e.Description = "A nice stack of Doubloons!"
 		e.Thumbnail = &discordgo.MessageEmbedThumbnail{
-			URL: fmt.Sprintf("https://github.com/wneessen/arrgo/raw/main/assets/season/%s.png", r.CurrencyType),
+			URL: fmt.Sprintf("%s/season/%s.png", AssetsBaseURL, r.CurrencyType),
 		}
 	}
 	if strings.HasPrefix(r.CurrencyType, "coins-") {
 		e.Description = "A nice stack of Ancient Coins!"
 		e.Thumbnail = &discordgo.MessageEmbedThumbnail{
-			URL: fmt.Sprintf("https://github.com/wneessen/arrgo/raw/main/assets/season/%s.png", r.CurrencyType),
+			URL: fmt.Sprintf("%s/season/%s.png", AssetsBaseURL, r.CurrencyType),
 		}
 	}
 

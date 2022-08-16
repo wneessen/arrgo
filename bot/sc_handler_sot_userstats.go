@@ -143,7 +143,7 @@ func (b *Bot) SlashCmdSoTBalance(s *discordgo.Session, i *discordgo.InteractionC
 		{
 			Title: "Your current balance in Sea of Thieves:",
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
-				URL: "https://github.com/wneessen/arrgo/raw/main/assets/season/gold-s.png",
+				URL: fmt.Sprintf("%s/season/gold-s.png", AssetsBaseURL),
 			},
 			Type:   discordgo.EmbedTypeRich,
 			Fields: ef,

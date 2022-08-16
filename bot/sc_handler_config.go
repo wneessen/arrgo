@@ -54,7 +54,7 @@ func (b *Bot) configFlameheart(s *discordgo.Session, i *discordgo.InteractionCre
 
 	g, err := b.Model.Guild.GetByGuildID(i.GuildID)
 	if err != nil {
-		return fmt.Errorf("failed to look up guild in database: %w", err)
+		return fmt.Errorf(ErrFailedGuildLookupDB, err)
 	}
 	if err = b.Model.Guild.SetPref(g, model.GuildPrefScheduledFlameheart, nv); err != nil {
 		return fmt.Errorf("failed to set flameheart preference in database: %w", err)
@@ -101,7 +101,7 @@ func (b *Bot) overrideAnnounceChannel(s *discordgo.Session, i *discordgo.Interac
 	ch := cha[1]
 	g, err := b.Model.Guild.GetByGuildID(i.GuildID)
 	if err != nil {
-		return fmt.Errorf("failed to look up guild in database: %w", err)
+		return fmt.Errorf(ErrFailedGuildLookupDB, err)
 	}
 	if err := b.Model.Guild.SetPref(g, model.GuildPrefAnnounceChannel, ch); err != nil {
 		return err
@@ -131,7 +131,7 @@ func (b *Bot) configAnnounceSoTPlaySummary(s *discordgo.Session, i *discordgo.In
 
 	g, err := b.Model.Guild.GetByGuildID(i.GuildID)
 	if err != nil {
-		return fmt.Errorf("failed to look up guild in database: %w", err)
+		return fmt.Errorf(ErrFailedGuildLookupDB, err)
 	}
 	if err = b.Model.Guild.SetPref(g, model.GuildPrefAnnounceSoTSummary, nv); err != nil {
 		return fmt.Errorf("failed to set announce-sot-summary preference in database: %w", err)

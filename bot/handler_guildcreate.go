@@ -2,6 +2,7 @@ package bot
 
 import (
 	"errors"
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/config"
 	"github.com/wneessen/arrgo/crypto"
@@ -62,7 +63,7 @@ func (b *Bot) GuildCreate(s *discordgo.Session, ev *discordgo.GuildCreate) {
 		e := &discordgo.MessageEmbed{
 			Type: discordgo.EmbedTypeRich,
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
-				URL: `https://github.com/wneessen/arrgo/raw/main/assets/piratelord_small.png`,
+				URL: fmt.Sprintf(`%s/piratelord_small.png`, AssetsBaseURL),
 			},
 			Title:  "Avast ye!",
 			Fields: ef,

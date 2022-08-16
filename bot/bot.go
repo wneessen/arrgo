@@ -22,10 +22,13 @@ const (
 	ApiURLSoTUserOverview = "https://www.seaofthieves.com/api/profilev2/overview"
 	ApiURLSoTEventHub     = "https://www.seaofthieves.com/event-hub"
 	ApiURLRTTradeRoutes   = "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
+	AssetsBaseURL         = "https://github.com/wneessen/arrgo/raw/main/assets"
 )
 
 const (
-	ErrFailedHTTPClient = "failed to generate new HTTP client: %w"
+	ErrFailedHTTPClient          = "failed to generate new HTTP client: %w"
+	ErrFailedRetrieveUserStatsDB = "failed retrieve user status from DB: %s"
+	ErrFailedGuildLookupDB       = "failed to look up guild in database: %w"
 )
 
 // Bot represents the bot instance

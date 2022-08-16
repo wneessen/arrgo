@@ -36,7 +36,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 	if ig {
 		wp, err := b.Model.User.GetPrefBool(u, model.UserPrefPlaysSoT)
 		if err != nil && !errors.Is(err, model.ErrUserPrefNotExistent) {
-			ll.Warn().Msgf("failed retrieve user status from DB: %s", err)
+			ll.Warn().Msgf(ErrFailedRetrieveUserStatsDB, err)
 			return
 		}
 
@@ -68,7 +68,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 	if !ig {
 		wp, err := b.Model.User.GetPrefBool(u, model.UserPrefPlaysSoT)
 		if err != nil && !errors.Is(err, model.ErrUserPrefNotExistent) {
-			ll.Warn().Msgf("failed retrieve user status from DB: %s", err)
+			ll.Warn().Msgf(ErrFailedRetrieveUserStatsDB, err)
 			return
 		}
 
@@ -93,7 +93,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 			time.Sleep(time.Minute * 1)
 			wp, err := b.Model.User.GetPrefBool(rq.User, model.UserPrefPlaysSoT)
 			if err != nil && !errors.Is(err, model.ErrUserPrefNotExistent) {
-				ll.Warn().Msgf("failed retrieve user status from DB: %s", err)
+				ll.Warn().Msgf(ErrFailedRetrieveUserStatsDB, err)
 				return
 			}
 			if wp {

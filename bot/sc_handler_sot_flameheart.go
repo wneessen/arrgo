@@ -103,7 +103,7 @@ func (b *Bot) getFlameheartEmbed() ([]*discordgo.MessageEmbed, error) {
 			Title:       "Captain Flameheart yells at you:",
 			Description: fmt.Sprintf(`«*%s*»`, strings.ToUpper(q[rn])),
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
-				URL: `https://github.com/wneessen/arrgo/raw/main/assets/flameheart.png`,
+				URL: fmt.Sprintf(`%s/flameheart.png`, AssetsBaseURL),
 			},
 		},
 	}
