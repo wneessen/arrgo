@@ -53,7 +53,7 @@ func (b *Bot) SlashCmdSoTDailyDeeds(s *discordgo.Session, i *discordgo.Interacti
 	var e []*discordgo.MessageEmbed
 	c := cases.Title(language.English)
 	for _, d := range dl {
-		var t string
+		var t, rg string
 		switch d.DeedType {
 		case model.DeedTypeStandard:
 			t = "Standard Deed"
@@ -62,9 +62,16 @@ func (b *Bot) SlashCmdSoTDailyDeeds(s *discordgo.Session, i *discordgo.Interacti
 		case model.DeedTypeDailySwift:
 			t = "Daily Swift Deed"
 		}
-		de := fmt.Sprintf("%s\n\n**Valid from:** <t:%d>\n**Valid thru:** <t:%d>\n**Reward:** %d %s",
+		switch d.RewardIcon {
+		case "s":
+			rg = "Small renown"
+		case "m":
+			rg = "Medium renown"
+		}
+		de := fmt.Sprintf("%s\n\n**Valid from:** <t:%d>\n**Valid thru:** <t:%d>\n**Reward:** %d %s\n"+
+			"**Renown gain:** %s",
 			d.Description, d.ValidFrom.Unix(), d.ValidThru.Unix(), d.RewardAmount,
-			c.String(string(d.RewardType)))
+			c.String(string(d.RewardType)), rg)
 		if t != "" {
 			ce := &discordgo.MessageEmbed{
 				Title:       t,
