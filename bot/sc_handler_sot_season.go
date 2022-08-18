@@ -138,7 +138,7 @@ func (b *Bot) SlashCmdSoTSeasonProgress(s *discordgo.Session, i *discordgo.Inter
 		}
 	}
 
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return err
 	}
 	return nil

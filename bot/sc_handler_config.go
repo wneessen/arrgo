@@ -72,7 +72,7 @@ func (b *Bot) configFlameheart(s *discordgo.Session, i *discordgo.InteractionCre
 	}
 
 	// Edit the deferred message
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return fmt.Errorf("failed to edit /config flameheart-spam request: %w", err)
 	}
 
@@ -115,7 +115,7 @@ func (b *Bot) overrideAnnounceChannel(s *discordgo.Session, i *discordgo.Interac
 			Description: fmt.Sprintf("The annoucment channel for this server has been set to: <#%s>", ch),
 		},
 	}
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return fmt.Errorf("failed to edit /override annouce-channel request: %w", err)
 	}
 
@@ -149,7 +149,7 @@ func (b *Bot) configAnnounceSoTPlaySummary(s *discordgo.Session, i *discordgo.In
 	}
 
 	// Edit the deferred message
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return fmt.Errorf("failed to edit /config announce-sot-summary request: %w", err)
 	}
 

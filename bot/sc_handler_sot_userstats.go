@@ -98,7 +98,7 @@ func (b *Bot) SlashCmdSoTOverview(s *discordgo.Session, i *discordgo.Interaction
 		},
 	}
 
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return err
 	}
 	return nil
@@ -153,7 +153,7 @@ func (b *Bot) SlashCmdSoTBalance(s *discordgo.Session, i *discordgo.InteractionC
 		e[0].Description = fmt.Sprintf("**Current Title:** %s", ub.Title)
 	}
 
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return err
 	}
 	return nil

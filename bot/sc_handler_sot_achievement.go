@@ -49,7 +49,7 @@ func (b *Bot) SlashCmdSoTAchievement(s *discordgo.Session, i *discordgo.Interact
 			Type: discordgo.EmbedTypeImage,
 		},
 	}
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return err
 	}
 	return nil

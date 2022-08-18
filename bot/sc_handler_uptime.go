@@ -21,7 +21,7 @@ func (b *Bot) SlashCmdUptime(s *discordgo.Session, i *discordgo.InteractionCreat
 				"which means I've been running for %s now!", b.StartTimeUnix(), td.String()),
 		},
 	}
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return err
 	}
 	return nil

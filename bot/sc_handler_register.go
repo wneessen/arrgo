@@ -23,7 +23,7 @@ func (b *Bot) SlashCmdRegister(s *discordgo.Session, i *discordgo.InteractionCre
 				Description: "You are already registered with ArrGo. Thanks for double checking...",
 			},
 		}
-		if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+		if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 			return fmt.Errorf("failed to edit /register request: %w", err)
 		}
 		return nil
@@ -52,7 +52,7 @@ func (b *Bot) SlashCmdRegister(s *discordgo.Session, i *discordgo.InteractionCre
 			Description: "You have successfully registered your account and are now able to use the full feature set",
 		},
 	}
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return fmt.Errorf("failed to edit /register request: %w", err)
 	}
 

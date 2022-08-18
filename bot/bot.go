@@ -137,18 +137,20 @@ func (b *Bot) Run() error {
 	ddt := time.NewTicker(b.Config.Timer.DDUpdate)
 	defer ddt.Stop()
 
-	// Perform an update for all scheduled update tasks once
-	go func() {
-		if err := b.ScheduledEventUpdateTradeRoutes(); err != nil {
-			b.Log.Error().Msgf("failed to update trade routes: %s", err)
-		}
-		if err := b.ScheduledEventUpdateUserStats(); err != nil {
-			b.Log.Error().Msgf("failed to update user stats: %s", err)
-		}
-		if err := b.ScheduledEventUpdateDailyDeeds(); err != nil {
-			b.Log.Error().Msgf("failed to update daily deeds: %s", err)
-		}
-	}()
+	// Perform an update for all scheduled update tasks once if first-run flag is set
+	if b.Config.GetFirstRun() {
+		go func() {
+			if err := b.ScheduledEventUpdateTradeRoutes(); err != nil {
+				b.Log.Error().Msgf("failed to update trade routes: %s", err)
+			}
+			if err := b.ScheduledEventUpdateUserStats(); err != nil {
+				b.Log.Error().Msgf("failed to update user stats: %s", err)
+			}
+			if err := b.ScheduledEventUpdateDailyDeeds(); err != nil {
+				b.Log.Error().Msgf("failed to update daily deeds: %s", err)
+			}
+		}()
+	}
 
 	// Wait here until CTRL-C or other term signal is received.
 	ll.Info().Msg("bot successfully initialized and connected. Press CTRL-C to exit.")

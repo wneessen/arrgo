@@ -15,7 +15,7 @@ func (b *Bot) SlashCmdVersion(s *discordgo.Session, i *discordgo.InteractionCrea
 				"Nice to meet you!", Version),
 		},
 	}
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return err
 	}
 	return nil

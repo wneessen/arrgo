@@ -339,7 +339,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 			Data: &discordgo.InteractionResponseData{Content: ""},
 		}
 		if _, ok := el[i.ApplicationCommandData().Name]; ok {
-			r.Data.Flags = uint64(discordgo.MessageFlagsEphemeral)
+			r.Data.Flags = discordgo.MessageFlagsEphemeral
 		}
 		err := s.InteractionRespond(i.Interaction, r)
 		if err != nil {
@@ -357,7 +357,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 					Title: "Oh no! Something went wrong!",
 				},
 			}
-			_, _ = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e})
+			_, _ = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e})
 		}
 	}
 }

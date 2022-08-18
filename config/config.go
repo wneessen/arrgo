@@ -52,6 +52,7 @@ type Config struct {
 	}
 	confPath string
 	confFile string
+	firstRun bool
 }
 
 // WithConfFile overrides the default config file path/name
@@ -93,4 +94,14 @@ func New(ol ...CfgOpt) (Config, error) {
 // ConfFilePath returns the internal path the config file for reference
 func (c *Config) ConfFilePath() string {
 	return c.confFile
+}
+
+// SetFirstRun sets the fristRun flag in the config to true
+func (c *Config) SetFirstRun() {
+	c.firstRun = true
+}
+
+// GetFirstRun returns the state of the firstRun flag in the config
+func (c *Config) GetFirstRun() bool {
+	return c.firstRun
 }

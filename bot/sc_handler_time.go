@@ -15,7 +15,7 @@ func (b *Bot) SlashCmdTime(s *discordgo.Session, i *discordgo.InteractionCreate)
 			Description: fmt.Sprintf("The current bot time is: <t:%d>", time.Now().Unix()),
 		},
 	}
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return err
 	}
 	return nil

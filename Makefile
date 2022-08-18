@@ -20,6 +20,9 @@ test:
 dev:
 	@/usr/bin/env CGO_ENABLED=0 go run -ldflags="-s -w $(BUILDVER)" $(MODNAME)/cmd/arrgo -c ./arrgo.toml
 
+dev-firstrun:
+	@/usr/bin/env CGO_ENABLED=0 go run -ldflags="-s -w $(BUILDVER)" $(MODNAME)/cmd/arrgo -c ./arrgo.toml -firstrun
+
 dev-migrate:
 	@/usr/bin/env CGO_ENABLED=0 go run -ldflags="-s -w $(BUILDVER)" $(MODNAME)/cmd/arrgo -c ./arrgo.toml -migrate
 
