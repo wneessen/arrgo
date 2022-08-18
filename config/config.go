@@ -46,9 +46,9 @@ type Config struct {
 	Timer struct {
 		FHSpam   int64         `fig:"flameheart_spam" default:"60"`
 		TRUpdate time.Duration `fig:"traderoutes_update" default:"12h"`
-		USUpdate time.Duration `fig:"userstats_update" default:"30m"`
-		RCCheck  time.Duration `fig:"ratcookie_check" default:"5m"`
-		DDUpdate time.Duration `fig:"dailydeed_update" default:"12h"`
+		USUpdate time.Duration `fig:"userstats_update" default:"6h"`
+		RCCheck  time.Duration `fig:"ratcookie_check" default:"6h"`
+		DDUpdate time.Duration `fig:"dailydeed_update" default:"24h"`
 	}
 	confPath string
 	confFile string
