@@ -3,7 +3,7 @@ module github.com/wneessen/arrgo
 go 1.18
 
 require (
-	github.com/bwmarrin/discordgo v0.25.0
+	github.com/bwmarrin/discordgo v0.26.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/kkyr/fig v0.3.0
 	github.com/lib/pq v1.10.6
