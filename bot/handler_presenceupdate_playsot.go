@@ -209,32 +209,34 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 				})
 			}
 
-			du, err := b.Session.User(u.UserID)
-			if err != nil {
-				ll.Warn().Msgf("failed to retrieve user information from Discord: %s", err)
-				return
-			}
-			eb := []*discordgo.MessageEmbed{
-				{
-					Title:  fmt.Sprintf("Sea of Thieves voyage summary for @%s", du.Username),
-					Type:   discordgo.EmbedTypeRich,
-					Fields: ef,
-				},
-			}
+			if len(ef) > 0 {
+				du, err := b.Session.User(u.UserID)
+				if err != nil {
+					ll.Warn().Msgf("failed to retrieve user information from Discord: %s", err)
+					return
+				}
+				eb := []*discordgo.MessageEmbed{
+					{
+						Title:  fmt.Sprintf("Sea of Thieves voyage summary for @%s", du.Username),
+						Type:   discordgo.EmbedTypeRich,
+						Fields: ef,
+					},
+				}
 
-			g, err := b.Model.Guild.GetByGuildID(pu.GuildID)
-			if err != nil {
-				ll.Error().Msgf("failed to retrieve guild information from DB: %s", err)
-				return
-			}
-			ag, err := b.Model.Guild.GetPrefBool(g, model.GuildPrefAnnounceSoTSummary)
-			if err != nil && !errors.Is(err, model.ErrGuildPrefNotExistent) {
-				ll.Error().Msgf("failed to fetch guild preference from DB: %s", err)
-				return
-			}
-			if ag {
-				if _, err := b.Session.ChannelMessageSendEmbed(b.Model.Guild.AnnouceChannel(g), eb[0]); err != nil {
-					ll.Error().Msgf("failed to send voyage summary message: %s", err)
+				g, err := b.Model.Guild.GetByGuildID(pu.GuildID)
+				if err != nil {
+					ll.Error().Msgf("failed to retrieve guild information from DB: %s", err)
+					return
+				}
+				ag, err := b.Model.Guild.GetPrefBool(g, model.GuildPrefAnnounceSoTSummary)
+				if err != nil && !errors.Is(err, model.ErrGuildPrefNotExistent) {
+					ll.Error().Msgf("failed to fetch guild preference from DB: %s", err)
+					return
+				}
+				if ag {
+					if _, err := b.Session.ChannelMessageSendEmbed(b.Model.Guild.AnnouceChannel(g), eb[0]); err != nil {
+						ll.Error().Msgf("failed to send voyage summary message: %s", err)
+					}
 				}
 			}
 		}(st, et, &r, ev)
