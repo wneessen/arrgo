@@ -119,14 +119,12 @@ func (b *Bot) Run() error {
 	signal.Notify(sc)
 
 	// Timer events
-	var rn int
-	rn = int(b.Config.Timer.FHSpam)
-	rn, err = crypto.RandNum(int(b.Config.Timer.FHSpam))
+	rd, err := crypto.RandDuration(b.Config.Timer.FHSpam, "m")
 	if err != nil {
 		ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
-		rn = int(b.Config.Timer.FHSpam)
+		rd = time.Minute * time.Duration(b.Config.Timer.FHSpam)
 	}
-	fht := time.NewTicker(time.Duration(int64(rn)+b.Config.Timer.FHSpam) * time.Minute)
+	fht := time.NewTicker(rd)
 	defer fht.Stop()
 	trt := time.NewTicker(b.Config.Timer.TRUpdate)
 	defer trt.Stop()
@@ -170,33 +168,43 @@ func (b *Bot) Run() error {
 				return nil
 			}
 		case <-fht.C:
-			if err := b.ScheduledEventSoTFlameheart(); err != nil {
-				ll.Error().Msgf("failed to process scheuled flameheart event: %s", err)
-			}
+			go func() {
+				if err := b.ScheduledEventSoTFlameheart(); err != nil {
+					ll.Error().Msgf("failed to process scheuled flameheart event: %s", err)
+				}
+			}()
 
 			// Reset the duration
-			rn, err = crypto.RandNum(int(b.Config.Timer.FHSpam))
+			rd, err := crypto.RandDuration(b.Config.Timer.FHSpam, "m")
 			if err != nil {
 				ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
-				rn = int(b.Config.Timer.FHSpam)
+				rd = time.Minute * time.Duration(b.Config.Timer.FHSpam)
 			}
-			fht.Reset(time.Duration(int64(rn)+b.Config.Timer.FHSpam) * time.Minute)
+			fht.Reset(rd)
 		case <-trt.C:
-			if err := b.ScheduledEventUpdateTradeRoutes(); err != nil {
-				ll.Error().Msgf("failed to process scheuled traderoute update event: %s", err)
-			}
+			go func() {
+				if err := b.ScheduledEventUpdateTradeRoutes(); err != nil {
+					ll.Error().Msgf("failed to process scheuled traderoute update event: %s", err)
+				}
+			}()
 		case <-ust.C:
-			if err := b.ScheduledEventUpdateUserStats(); err != nil {
-				ll.Error().Msgf("failed to process scheuled traderoute update event: %s", err)
-			}
+			go func() {
+				if err := b.ScheduledEventUpdateUserStats(); err != nil {
+					ll.Error().Msgf("failed to process scheuled traderoute update event: %s", err)
+				}
+			}()
 		case <-rct.C:
-			if err := b.ScheduledEventCheckRATCookies(); err != nil {
-				ll.Error().Msgf("failed to process scheuled RAT cookie check event: %s", err)
-			}
+			go func() {
+				if err := b.ScheduledEventCheckRATCookies(); err != nil {
+					ll.Error().Msgf("failed to process scheuled RAT cookie check event: %s", err)
+				}
+			}()
 		case <-ddt.C:
-			if err := b.ScheduledEventUpdateDailyDeeds(); err != nil {
-				ll.Error().Msgf("failed to process scheuled daily deeds update event: %s", err)
-			}
+			go func() {
+				if err := b.ScheduledEventUpdateDailyDeeds(); err != nil {
+					ll.Error().Msgf("failed to process scheuled daily deeds update event: %s", err)
+				}
+			}()
 		}
 	}
 }

@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/wneessen/arrgo/crypto"
 	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"net/http"
+	"time"
 )
 
 // SoTUserOverview represents the JSON structure of the Sea of Thieves user overview API response
@@ -226,6 +228,11 @@ func (b *Bot) ScheduledEventUpdateUserStats() error {
 			ll.Error().Msgf("failed to store user stats in DB: %s", err)
 			continue
 		}
+		rd, err := crypto.RandDuration(10, "s")
+		if err != nil {
+			rd = time.Second * 10
+		}
+		time.Sleep(rd)
 	}
 	return nil
 }

@@ -3,6 +3,7 @@ package bot
 import (
 	"errors"
 	"fmt"
+	"github.com/wneessen/arrgo/crypto"
 	"github.com/wneessen/arrgo/model"
 	"net/http"
 	"time"
@@ -89,6 +90,11 @@ func (b *Bot) ScheduledEventCheckRATCookies() error {
 				}
 			}
 		}
+		rd, err := crypto.RandDuration(10, "s")
+		if err != nil {
+			rd = time.Second * 10
+		}
+		time.Sleep(rd)
 	}
 	return nil
 }
