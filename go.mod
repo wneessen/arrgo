@@ -7,7 +7,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/kkyr/fig v0.3.0
 	github.com/lib/pq v1.10.6
-	github.com/rs/zerolog v1.27.0
+	github.com/rs/zerolog v1.28.0
 	golang.org/x/text v0.3.7
 )
 
