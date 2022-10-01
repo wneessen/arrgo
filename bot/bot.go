@@ -22,6 +22,7 @@ const (
 	ApiURLSoTUserOverview = "https://www.seaofthieves.com/api/profilev2/overview"
 	ApiURLSoTEventHub     = "https://www.seaofthieves.com/event-hub"
 	ApiURLRTTradeRoutes   = "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
+	ApiURLSoTLedger       = "https://www.seaofthieves.com/api/ledger/friends"
 	AssetsBaseURL         = "https://github.com/wneessen/arrgo/raw/main/assets"
 )
 

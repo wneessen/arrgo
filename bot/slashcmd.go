@@ -320,7 +320,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"overview":    b.SlashCmdSoTOverview,
 		"compare":     b.SlashCmdSoTCompare,
 		"dailydeeds":  b.SlashCmdSoTDailyDeeds,
-		"ledger":      b.SlashCmdSoTDailyDeeds,
+		"ledger":      b.SlashCmdSoTLedger,
 	}
 
 	// Define list of slash commands that should use ephemeral messages
