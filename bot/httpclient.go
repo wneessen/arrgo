@@ -67,7 +67,7 @@ func NewHTTPClient() (*HTTPClient, error) {
 	}
 	hc := &http.Client{
 		Transport: t,
-		Timeout:   10 * time.Second,
+		Timeout:   20 * time.Second,
 		Jar:       cj,
 	}
 

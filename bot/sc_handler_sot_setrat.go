@@ -39,7 +39,7 @@ func (b *Bot) SlashCmdSetRAT(s *discordgo.Session, i *discordgo.InteractionCreat
 					"command to register your user with the bot",
 			},
 		}
-		if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+		if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 			return err
 		}
 		return nil
@@ -87,7 +87,7 @@ func (b *Bot) SlashCmdSetRAT(s *discordgo.Session, i *discordgo.InteractionCreat
 			Description: "Thank you for storing/updating your Sea of Thieves authentication cookie.",
 		},
 	}
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return err
 	}
 	return nil

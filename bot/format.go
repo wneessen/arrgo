@@ -15,6 +15,7 @@ const (
 	IconShip        = "⛵"
 	IconVomit       = "🤮"
 	IconDistance    = "📐"
+	IconGauge       = "🌡️"
 )
 
 // changeIcon returns either an increase or decrease icon based on the provided value

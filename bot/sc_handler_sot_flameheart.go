@@ -17,7 +17,7 @@ func (b *Bot) SlashCmdSoTFlameheart(s *discordgo.Session, i *discordgo.Interacti
 	}
 
 	// Edit the deferred message
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return err
 	}
 

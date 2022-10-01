@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/big"
 	"strings"
+	"time"
 )
 
 // Range of characters for the different types of string generations
@@ -87,6 +88,20 @@ func RandNum(n int) (int, error) {
 		return 0, fmt.Errorf("generated random number does not fit as int64: %d", rn64)
 	}
 	return rn, nil
+}
+
+// RandDuration returns a random time.Duration in u with a maximum value of the given n
+func RandDuration(n int, u string) (time.Duration, error) {
+	var d time.Duration
+	rn, err := RandNum(n)
+	if err != nil {
+		return d, err
+	}
+	d, err = time.ParseDuration(fmt.Sprintf("%d%s", rn, u))
+	if err != nil {
+		return d, err
+	}
+	return d, nil
 }
 
 // getCharRange returns the range of characters as controlled by the s and h bools

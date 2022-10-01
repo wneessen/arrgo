@@ -143,7 +143,7 @@ func (b *Bot) SlashCmdSoTCompare(s *discordgo.Session, i *discordgo.InteractionC
 		}
 	}
 
-	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: e}); err != nil {
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
 		return err
 	}
 	return nil

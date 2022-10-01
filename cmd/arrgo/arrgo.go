@@ -17,6 +17,7 @@ type CLIFlags struct {
 	r bool   // Remove slash commands
 	m bool   // Run in SQL migration mode
 	d bool   // Run in SQL downgrade mode
+	f bool   // First run
 }
 
 func main() {
@@ -29,7 +30,9 @@ func main() {
 	flag.StringVar(&cf.c, "c", cf.c, "Path to config file")
 	flag.BoolVar(&cf.r, "r", cf.r, "Remove slash commands")
 	flag.BoolVar(&cf.m, "migrate", false, "Execute SQL migrations before starting the bot")
-	flag.BoolVar(&cf.d, "downgrade", false, "Execute SQL downgrade migrations before starting the bot")
+	flag.BoolVar(&cf.d, "downgrade", false, "Execute SQL downgrade migrations before "+
+		"starting the bot")
+	flag.BoolVar(&cf.f, "firstrun", false, "Execute first-run tasks during startup")
 	flag.Parse()
 
 	// Read/Parse config
@@ -41,6 +44,9 @@ func main() {
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "could not read config: %s. Aborting", err)
 		os.Exit(1)
+	}
+	if cf.f {
+		c.SetFirstRun()
 	}
 
 	// Initialize zerolog
