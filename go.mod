@@ -8,7 +8,7 @@ require (
 	github.com/kkyr/fig v0.3.0
 	github.com/lib/pq v1.10.7
 	github.com/rs/zerolog v1.28.0
-	golang.org/x/text v0.3.7
+	golang.org/x/text v0.3.8
 )
 
 require (
@@ -23,6 +23,6 @@ require (
 	github.com/pelletier/go-toml v1.9.3 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
