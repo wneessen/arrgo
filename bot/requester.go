@@ -2,9 +2,10 @@ package bot
 
 import (
 	"errors"
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/model"
-	"time"
 )
 
 // Requester wraps the discordgo.Member object to extend its functionality

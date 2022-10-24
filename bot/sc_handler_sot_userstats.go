@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/crypto"
 	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
-	"net/http"
-	"time"
 )
 
 // SoTUserOverview represents the JSON structure of the Sea of Thieves user overview API response
@@ -172,7 +173,7 @@ func (b *Bot) SoTGetUserBalance(rq *Requester) (SoTUserBalance, error) {
 	if err != nil {
 		return ub, err
 	}
-	r, err := hc.HttpReq(ApiURLSoTUserBalance, ReqMethodGet, nil)
+	r, err := hc.HTTPReq(APIURLSoTUserBalance, ReqMethodGet, nil)
 	if err != nil {
 		return ub, err
 	}
@@ -201,7 +202,7 @@ func (b *Bot) SoTGetUserOverview(rq *Requester) (SoTUserStats, error) {
 	if err != nil {
 		return SoTUserStats{}, err
 	}
-	r, err := hc.HttpReq(ApiURLSoTUserOverview, ReqMethodGet, nil)
+	r, err := hc.HTTPReq(APIURLSoTUserOverview, ReqMethodGet, nil)
 	if err != nil {
 		return SoTUserStats{}, err
 	}
@@ -247,12 +248,12 @@ func (b *Bot) StoreSoTUserStats(u *model.User) error {
 			b.Log.Warn().Msgf("failed to fetch user balance - RAT token is expired")
 			return nil
 		default:
-			return fmt.Errorf("failed to fetch user balance for user %s: %s", u.UserID, err)
+			return fmt.Errorf("failed to fetch user balance for user %s: %w", u.UserID, err)
 		}
 	}
 	us, err := b.SoTGetUserOverview(r)
 	if err != nil {
-		return fmt.Errorf("failed to fetch user stats for user %q: %s", u.UserID, err)
+		return fmt.Errorf("failed to fetch user stats for user %q: %w", u.UserID, err)
 	}
 	dus := &model.UserStat{
 		UserID:            u.ID,
@@ -268,7 +269,7 @@ func (b *Bot) StoreSoTUserStats(u *model.User) error {
 		DistanceSailed:    int64(us.MetresSailed),
 	}
 	if err := b.Model.UserStats.Insert(dus); err != nil {
-		return fmt.Errorf("failed to store user stats for user %q in DB: %s", u.UserID, err)
+		return fmt.Errorf("failed to store user stats for user %q in DB: %w", u.UserID, err)
 	}
 	return nil
 }

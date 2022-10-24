@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/model"
 )

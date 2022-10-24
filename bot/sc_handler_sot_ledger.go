@@ -3,9 +3,10 @@ package bot
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bwmarrin/discordgo"
 	"regexp"
 	"strings"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // SoTLedger represents the JSON structure of the Sea of Thieves leder positions within a season API response
@@ -125,20 +126,20 @@ func (b *Bot) SoTGetLedger(rq *Requester, em string) (SoTEmissaryLedger, error) 
 	var url string
 	switch strings.ToLower(em) {
 	case "athena":
-		url = fmt.Sprintf(urlfmt, ApiURLSoTLedger, "AthenasFortune")
+		url = fmt.Sprintf(urlfmt, APIURLSoTLedger, "AthenasFortune")
 	case "hoarder":
-		url = fmt.Sprintf(urlfmt, ApiURLSoTLedger, "GoldHoarders")
+		url = fmt.Sprintf(urlfmt, APIURLSoTLedger, "GoldHoarders")
 	case "merchant":
-		url = fmt.Sprintf(urlfmt, ApiURLSoTLedger, "MerchantAlliance")
+		url = fmt.Sprintf(urlfmt, APIURLSoTLedger, "MerchantAlliance")
 	case "order":
-		url = fmt.Sprintf(urlfmt, ApiURLSoTLedger, "OrderOfSouls")
+		url = fmt.Sprintf(urlfmt, APIURLSoTLedger, "OrderOfSouls")
 	case "reaper":
-		url = fmt.Sprintf(urlfmt, ApiURLSoTLedger, "ReapersBones")
+		url = fmt.Sprintf(urlfmt, APIURLSoTLedger, "ReapersBones")
 	default:
 		return l, fmt.Errorf("unknown emissary given")
 	}
 
-	r, err := hc.HttpReq(url, ReqMethodGet, nil)
+	r, err := hc.HTTPReq(url, ReqMethodGet, nil)
 	if err != nil {
 		return l, err
 	}

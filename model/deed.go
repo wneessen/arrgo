@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -61,8 +62,8 @@ func (m DeedModel) GetByDeedID(i int64) (*Deed, error) {
 	err := row.Scan(&d.ID, &d.DeedType, &d.Description, &d.ValidFrom, &d.ValidThru, &d.RewardType,
 		&d.RewardAmount, &d.RewardIcon, &d.ImageURL, &d.CreateTime)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
 			return &d, ErrDeedNotExistent
 		default:
 			return &d, err
@@ -112,8 +113,10 @@ func (m DeedModel) Insert(d *Deed) error {
                    reward_icon, image_url)
                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id, ctime`
-	v := []interface{}{d.DeedType, d.Description, d.ValidFrom, d.ValidThru, d.RewardType, d.RewardAmount,
-		d.RewardIcon, d.ImageURL}
+	v := []interface{}{
+		d.DeedType, d.Description, d.ValidFrom, d.ValidThru, d.RewardType, d.RewardAmount,
+		d.RewardIcon, d.ImageURL,
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
 	defer cancel()

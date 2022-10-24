@@ -2,8 +2,9 @@ package bot
 
 import (
 	"fmt"
-	"github.com/bwmarrin/discordgo"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // SlashCmdUptime handles the /uptime slash command

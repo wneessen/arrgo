@@ -3,9 +3,10 @@ package bot
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bwmarrin/discordgo"
 	"math"
 	"strings"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // SoTSeasonList represents the JSON structure of the Sea of Thieves seasons API response
@@ -155,7 +156,7 @@ func (b *Bot) SoTGetSeasonProgress(rq *Requester) (SoTSeasonList, error) {
 	if err != nil {
 		return s, err
 	}
-	r, err := hc.HttpReq(ApiURLSoTSeasons, ReqMethodGet, nil)
+	r, err := hc.HTTPReq(APIURLSoTSeasons, ReqMethodGet, nil)
 	if err != nil {
 		return s, err
 	}

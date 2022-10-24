@@ -5,7 +5,9 @@ import (
 	"context"
 	"database/sql"
 	"encoding/gob"
+	"errors"
 	"fmt"
+
 	"github.com/wneessen/arrgo/crypto"
 )
 
@@ -215,7 +217,7 @@ func getUserPrefEnc[V string | bool | int | int64](m UserModel, u *User, k UserP
 	err := row.Scan(&bv)
 	if err != nil {
 		switch {
-		case err == sql.ErrNoRows:
+		case errors.Is(err, sql.ErrNoRows):
 			return v, ErrUserPrefNotExistent
 		default:
 			return v, err

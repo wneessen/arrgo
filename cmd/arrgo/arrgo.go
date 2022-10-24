@@ -3,12 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/rs/zerolog"
-	"github.com/wneessen/arrgo/bot"
-	"github.com/wneessen/arrgo/config"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/wneessen/arrgo/bot"
+	"github.com/wneessen/arrgo/config"
 )
 
 // CLIFlags represents the struct that is used to handle CLI flags

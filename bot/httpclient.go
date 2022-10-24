@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"github.com/wneessen/arrgo/crypto"
 	"io"
 	"net/http"
 	"net/http/cookiejar"
@@ -13,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/wneessen/arrgo/crypto"
 )
 
 // HTTPClient is an object wrapper for the Go http.Client
@@ -74,8 +75,8 @@ func NewHTTPClient() (*HTTPClient, error) {
 	return &HTTPClient{hc}, nil
 }
 
-// HttpReq generates a HTTPRequest based on the Request method and request URI
-func (h *HTTPClient) HttpReq(p string, m HTTPReqMethod, q map[string]string) (*HTTPRequest, error) {
+// HTTPReq generates a HTTPRequest based on the Request method and request URI
+func (h *HTTPClient) HTTPReq(p string, m HTTPReqMethod, q map[string]string) (*HTTPRequest, error) {
 	u, err := url.Parse(p)
 	if err != nil {
 		return nil, err
@@ -153,7 +154,7 @@ func (s *APIIntString) UnmarshalJSON(ib []byte) error {
 	is = strings.ReplaceAll(is, `"`, ``)
 	realInt, err := strconv.ParseInt(is, 10, 64)
 	if err != nil {
-		return fmt.Errorf("string to int conversion failed: %v", err)
+		return fmt.Errorf("string to int conversion failed: %w", err)
 	}
 	*(*int64)(s) = realInt
 
@@ -170,7 +171,7 @@ func (t *APITimeRFC3339) UnmarshalJSON(s []byte) error {
 	}
 	dateParse, err := time.Parse(time.RFC3339, dateString)
 	if err != nil {
-		return fmt.Errorf("failed to parse string as RFC3339 time string: %v", err)
+		return fmt.Errorf("failed to parse string as RFC3339 time string: %w", err)
 	}
 
 	*(*time.Time)(t) = dateParse

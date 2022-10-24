@@ -5,7 +5,9 @@ import (
 	"context"
 	"database/sql"
 	"encoding/gob"
+	"errors"
 	"fmt"
+
 	"github.com/wneessen/arrgo/crypto"
 )
 
@@ -202,7 +204,7 @@ func getGuildPrefEnc[V string | bool | int | int64](m GuildModel, g *Guild, k Gu
 	err := row.Scan(&bv)
 	if err != nil {
 		switch {
-		case err == sql.ErrNoRows:
+		case errors.Is(err, sql.ErrNoRows):
 			return v, ErrGuildPrefNotExistent
 		default:
 			return v, err

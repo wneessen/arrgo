@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-	"regexp"
-	"time"
 )
 
 // SoTEventHubJSON is the nested struct from the Sea of Thieves event hub response
@@ -28,8 +29,8 @@ type SoTDeed struct {
 	Type         string          `json:"#Type"`
 	Title        string          `json:"Title"`
 	BodyText     string          `json:"BodyText"`
-	StartDateApi *APITimeRFC3339 `json:"StartDate,omitempty"`
-	EndDateApi   *APITimeRFC3339 `json:"EndDate,omitempty"`
+	StartDateAPI *APITimeRFC3339 `json:"StartDate,omitempty"`
+	EndDateAPI   *APITimeRFC3339 `json:"EndDate,omitempty"`
 	Image        struct {
 		Desktop string `json:"desktop"`
 	} `json:"Image"`
@@ -123,11 +124,11 @@ func (b *Bot) ScheduledEventUpdateDailyDeeds() error {
 			dbd.RewardType = model.RewardDoubloons
 			dbd.RewardAmount = d.RewardDetails.Doubloons
 		}
-		if d.StartDateApi != nil {
-			dbd.ValidFrom = time.Time(*d.StartDateApi)
+		if d.StartDateAPI != nil {
+			dbd.ValidFrom = time.Time(*d.StartDateAPI)
 		}
-		if d.EndDateApi != nil {
-			dbd.ValidThru = time.Time(*d.EndDateApi)
+		if d.EndDateAPI != nil {
+			dbd.ValidThru = time.Time(*d.EndDateAPI)
 		}
 		if err := b.Model.Deed.Insert(dbd); err != nil && !errors.Is(err, model.ErrDeedDuplicate) {
 			ll.Error().Msgf("failed to insert deed into database: %s", err)
@@ -162,7 +163,7 @@ func (b *Bot) SoTGetDailyDeeds() ([]SoTDeed, error) {
 			break
 		}
 	}
-	r, err := hc.HttpReq(ApiURLSoTEventHub, ReqMethodGet, nil)
+	r, err := hc.HTTPReq(APIURLSoTEventHub, ReqMethodGet, nil)
 	if err != nil {
 		return dl, err
 	}

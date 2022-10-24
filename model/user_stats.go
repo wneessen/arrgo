@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -45,8 +46,8 @@ func (m UserStatModel) GetByUserID(i int64) (*UserStat, error) {
 		&us.MegalodonEnounter, &us.ChestsHandedIn, &us.ShipsSunk, &us.VomittedTimes, &us.DistanceSailed,
 		&us.CreateTime)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
 			return &us, ErrUserStatNotExistent
 		default:
 			return &us, err
@@ -74,8 +75,8 @@ func (m UserStatModel) GetByUserIDAtTime(i int64, t time.Time) (*UserStat, error
 		&us.MegalodonEnounter, &us.ChestsHandedIn, &us.ShipsSunk, &us.VomittedTimes, &us.DistanceSailed,
 		&us.CreateTime)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
 			return &us, ErrUserStatNotExistent
 		default:
 			return &us, err
@@ -90,8 +91,10 @@ func (m UserStatModel) Insert(us *UserStat) error {
                         chests, ships, vomit, distance)
                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             RETURNING id, ctime`
-	v := []interface{}{us.UserID, us.Title, us.Gold, us.Doubloons, us.AncientCoins, us.KrakenDefeated,
-		us.MegalodonEnounter, us.ChestsHandedIn, us.ShipsSunk, us.VomittedTimes, us.DistanceSailed}
+	v := []interface{}{
+		us.UserID, us.Title, us.Gold, us.Doubloons, us.AncientCoins, us.KrakenDefeated,
+		us.MegalodonEnounter, us.ChestsHandedIn, us.ShipsSunk, us.VomittedTimes, us.DistanceSailed,
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
 	defer cancel()

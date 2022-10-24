@@ -3,6 +3,7 @@ package bot
 import (
 	"errors"
 	"fmt"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/config"
 	"github.com/wneessen/arrgo/crypto"

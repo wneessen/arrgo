@@ -3,10 +3,11 @@ package bot
 import (
 	"errors"
 	"fmt"
-	"github.com/wneessen/arrgo/crypto"
-	"github.com/wneessen/arrgo/model"
 	"net/http"
 	"time"
+
+	"github.com/wneessen/arrgo/crypto"
+	"github.com/wneessen/arrgo/model"
 )
 
 // ScheduledEventCheckRATCookies performs scheuled checks if the provided RAT cookies are still valid
@@ -14,7 +15,7 @@ func (b *Bot) ScheduledEventCheckRATCookies() error {
 	ll := b.Log.With().Str("context", "bot.ScheduledEventCheckRATCookies").Logger()
 	ul, err := b.Model.User.GetUsers()
 	if err != nil {
-		return fmt.Errorf("failed to retrieve user list from DB: %s", err)
+		return fmt.Errorf("failed to retrieve user list from DB: %w", err)
 	}
 
 	for _, u := range ul {
@@ -51,7 +52,7 @@ func (b *Bot) ScheduledEventCheckRATCookies() error {
 				ll.Error().Err(err)
 				continue
 			}
-			r, err := hc.HttpReq(ApiURLSoTUserOverview, ReqMethodGet, nil)
+			r, err := hc.HTTPReq(APIURLSoTUserOverview, ReqMethodGet, nil)
 			if err != nil {
 				ll.Error().Err(err)
 				continue

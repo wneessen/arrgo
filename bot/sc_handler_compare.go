@@ -2,10 +2,11 @@ package bot
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
-	"time"
 )
 
 // SlashCmdSoTCompare handles the /compare slash command
