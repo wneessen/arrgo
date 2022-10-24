@@ -3,6 +3,7 @@ package bot
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -21,7 +22,7 @@ type SoTAchievement struct {
 	Sort        int    `json:"Sort"`
 	Name        string `json:"Name"`
 	Description string `json:"Description"`
-	MediaUrl    string `json:"MediaUrl"`
+	MediaURL    string `json:"MediaUrl"`
 }
 
 // SlashCmdSoTAchievement handles the /achievement slash command
@@ -44,7 +45,7 @@ func (b *Bot) SlashCmdSoTAchievement(s *discordgo.Session, i *discordgo.Interact
 			Title:       fmt.Sprintf("Your latest Sea of Thieves achievement: %s", a.Name),
 			Description: a.Description,
 			Image: &discordgo.MessageEmbedImage{
-				URL: a.MediaUrl,
+				URL: a.MediaURL,
 			},
 			Type: discordgo.EmbedTypeImage,
 		},
@@ -66,7 +67,7 @@ func (b *Bot) SoTGetAchievements(rq *Requester) (SoTAchievementList, error) {
 	if err != nil {
 		return a, err
 	}
-	r, err := hc.HttpReq(ApiURLSoTAchievements, ReqMethodGet, nil)
+	r, err := hc.HTTPReq(APIURLSoTAchievements, ReqMethodGet, nil)
 	if err != nil {
 		return a, err
 	}

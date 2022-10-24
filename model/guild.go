@@ -3,10 +3,12 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	"time"
+
 	"github.com/wneessen/arrgo/config"
 	"github.com/wneessen/arrgo/crypto"
-	"time"
 )
 
 // GuildModel wraps the connection pool.
@@ -44,8 +46,8 @@ func (m GuildModel) GetByGuildID(i string) (*Guild, error) {
 	err := row.Scan(&g.ID, &g.GuildID, &g.GuildName, &g.OwnerID, &g.JoinedAt, &g.SystemChannelID, &g.EncryptionKey,
 		&g.Version, &g.CreateTime, &g.ModTime)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
 			return &g, ErrGuildNotExistent
 		default:
 			return &g, err

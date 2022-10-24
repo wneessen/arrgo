@@ -3,33 +3,34 @@ package bot
 import (
 	"errors"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/rs/zerolog"
 	"github.com/wneessen/arrgo/config"
 	"github.com/wneessen/arrgo/crypto"
 	"github.com/wneessen/arrgo/model"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 // List of Sea of Thieves API endpoints
 const (
-	ApiURLSoTAchievements = "https://www.seaofthieves.com/api/profilev2/achievements"
-	ApiURLSoTSeasons      = "https://www.seaofthieves.com/api/profilev2/seasons-progress"
-	ApiURLSoTUserBalance  = "https://www.seaofthieves.com/api/profilev2/balance"
-	ApiURLSoTUserOverview = "https://www.seaofthieves.com/api/profilev2/overview"
-	ApiURLSoTEventHub     = "https://www.seaofthieves.com/event-hub"
-	ApiURLRTTradeRoutes   = "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
-	ApiURLSoTLedger       = "https://www.seaofthieves.com/api/ledger/friends"
+	APIURLSoTAchievements = "https://www.seaofthieves.com/api/profilev2/achievements"
+	APIURLSoTSeasons      = "https://www.seaofthieves.com/api/profilev2/seasons-progress"
+	APIURLSoTUserBalance  = "https://www.seaofthieves.com/api/profilev2/balance"
+	APIURLSoTUserOverview = "https://www.seaofthieves.com/api/profilev2/overview"
+	APIURLSoTEventHub     = "https://www.seaofthieves.com/event-hub"
+	APIURLRTTradeRoutes   = "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
+	APIURLSoTLedger       = "https://www.seaofthieves.com/api/ledger/friends"
 	AssetsBaseURL         = "https://github.com/wneessen/arrgo/raw/main/assets"
 )
 
 const (
-	ErrFailedHTTPClient          = "failed to generate new HTTP client: %w"
+	ErrFailedHTTPClient          = "failed to generate new HTTP client: %s"
 	ErrFailedRetrieveUserStatsDB = "failed retrieve user status from DB: %s"
-	ErrFailedGuildLookupDB       = "failed to look up guild in database: %w"
+	ErrFailedGuildLookupDB       = "failed to look up guild in database: %s"
 )
 
 // Bot represents the bot instance

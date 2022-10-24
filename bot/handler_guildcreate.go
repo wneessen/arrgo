@@ -3,6 +3,7 @@ package bot
 import (
 	"errors"
 	"fmt"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/config"
 	"github.com/wneessen/arrgo/crypto"
@@ -16,7 +17,7 @@ func (b *Bot) GuildCreate(s *discordgo.Session, ev *discordgo.GuildCreate) {
 	// Check if guild is already present in database
 	var g *model.Guild
 	var err error
-	g, err = b.Model.Guild.GetByGuildID(ev.Guild.ID)
+	_, err = b.Model.Guild.GetByGuildID(ev.Guild.ID)
 	if err != nil {
 		if !errors.Is(err, model.ErrGuildNotExistent) {
 			ll.Error().Msgf("failed to fetch guild from DB: %s", err)

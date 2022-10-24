@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
+	"strings"
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-	"regexp"
-	"strings"
-	"time"
 )
 
 // RTTraderoute represents the JSON structure of the rarethief.com traderoute API response
@@ -53,7 +54,6 @@ func (b *Bot) SlashCmdSoTTradeRoutes(s *discordgo.Session, i *discordgo.Interact
 				IconArrowDown, c.String(tr.SoughtAfter)),
 			Inline: true,
 		})
-
 	}
 
 	e := []*discordgo.MessageEmbed{
@@ -123,7 +123,7 @@ func (b *Bot) RTGetTradeRoutes() (RTTraderoute, error) {
 	if err != nil {
 		return tr, fmt.Errorf(ErrFailedHTTPClient, err)
 	}
-	r, err := hc.HttpReq(ApiURLRTTradeRoutes, ReqMethodGet, nil)
+	r, err := hc.HTTPReq(APIURLRTTradeRoutes, ReqMethodGet, nil)
 	if err != nil {
 		return tr, err
 	}

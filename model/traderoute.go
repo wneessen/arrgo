@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -38,8 +39,8 @@ func (m TradeRouteModel) GetByOutpost(o string) (*TradeRoute, error) {
 	err := row.Scan(&t.ID, &t.Outpost, &t.SoughtAfter, &t.Surplus, &t.ValidThru,
 		&t.Version, &t.CreateTime, &t.ModTime)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
 			return &t, ErrTradeRouteNotExistent
 		default:
 			return &t, err
@@ -106,8 +107,10 @@ func (m TradeRouteModel) Update(t *TradeRoute) error {
            WHERE id = $5 AND version = $6
        RETURNING version`
 
-	v := []interface{}{t.Outpost, t.SoughtAfter, t.Surplus, t.ValidThru,
-		t.ID, t.Version}
+	v := []interface{}{
+		t.Outpost, t.SoughtAfter, t.Surplus, t.ValidThru,
+		t.ID, t.Version,
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
 	defer cancel()

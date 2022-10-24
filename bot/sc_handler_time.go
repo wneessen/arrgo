@@ -2,8 +2,9 @@ package bot
 
 import (
 	"fmt"
-	"github.com/bwmarrin/discordgo"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // SlashCmdTime handles the /time slash command

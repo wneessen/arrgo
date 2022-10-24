@@ -3,10 +3,12 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	"time"
+
 	"github.com/wneessen/arrgo/config"
 	"github.com/wneessen/arrgo/crypto"
-	"time"
 )
 
 // UserModel wraps the connection pool.
@@ -38,8 +40,8 @@ func (m UserModel) GetByUserID(i string) (*User, error) {
 	row := m.DB.QueryRowContext(ctx, q, i)
 	err := row.Scan(&u.ID, &u.UserID, &u.EncryptionKey, &u.Version, &u.CreateTime, &u.ModTime)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
 			return &u, ErrUserNotExistent
 		default:
 			return &u, err

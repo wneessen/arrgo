@@ -3,11 +3,12 @@ package bot
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
-	"time"
 )
 
 // UserPlaySoT receives PRESENCE_UPDATE from each server and handles if the user starts playing SoT

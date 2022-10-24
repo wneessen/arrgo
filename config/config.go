@@ -2,10 +2,11 @@ package config
 
 import (
 	"fmt"
-	"github.com/kkyr/fig"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/kkyr/fig"
 )
 
 // CfgOpt is a overloading function for the New() method

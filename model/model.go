@@ -3,8 +3,9 @@ package model
 import (
 	"database/sql"
 	"errors"
-	"github.com/wneessen/arrgo/config"
 	"time"
+
+	"github.com/wneessen/arrgo/config"
 )
 
 // SQLTimeout is the default timeout for SQL queries

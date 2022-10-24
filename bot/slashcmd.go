@@ -2,9 +2,10 @@ package bot
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/wneessen/arrgo/crypto"
-	"time"
 )
 
 // getSlashCommands returns a list of slash commands that will be registered for the bot

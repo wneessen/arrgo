@@ -3,16 +3,18 @@ package bot
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	"io/fs"
+	"os"
+	"strings"
+
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"github.com/wneessen/arrgo/config"
 	"github.com/wneessen/arrgo/model"
-	"io/fs"
-	"os"
-	"strings"
 )
 
 // MigrationsPath defines the path where to find the sql_migrations
@@ -27,7 +29,7 @@ const (
 
 // OpenDB tries to connect to the SQLite file and returns the sql.DB pointer
 func (b *Bot) OpenDB(c *config.Config) (*sql.DB, error) {
-	dsn := getDbDSN(c)
+	dsn := getDBDSN(c)
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
@@ -44,13 +46,13 @@ func (b *Bot) OpenDB(c *config.Config) (*sql.DB, error) {
 // CheckDBVersion compares the DB version with the SQL migrations
 func (b *Bot) CheckDBVersion(c *config.Config) (uint, error) {
 	ll := b.Log.With().Str("context", "bot.CheckDBVersion").Logger()
-	dsn := getDbDSN(c)
+	dsn := getDBDSN(c)
 	m, err := migrate.New(MigrationsPath, dsn)
 	if err != nil {
 		return 0, err
 	}
 	cv, _, err := m.Version()
-	if err != nil && err != migrate.ErrNilVersion {
+	if err != nil && !errors.Is(err, migrate.ErrNilVersion) {
 		return 0, err
 	}
 	defer func() {
@@ -86,7 +88,7 @@ func (b *Bot) CheckDBVersion(c *config.Config) (uint, error) {
 // SQLMigrate migrates the database to the latest SQL set
 func (b *Bot) SQLMigrate(c *config.Config) error {
 	ll := b.Log.With().Str("context", "bot.SQLMigrate").Logger()
-	dsn := getDbDSN(c)
+	dsn := getDBDSN(c)
 	m, err := migrate.New(MigrationsPath, dsn)
 	if err != nil {
 		return err
@@ -102,12 +104,12 @@ func (b *Bot) SQLMigrate(c *config.Config) error {
 		}
 	}()
 	cv, _, err := m.Version()
-	if err != nil && err != migrate.ErrNilVersion {
+	if err != nil && !errors.Is(err, migrate.ErrNilVersion) {
 		return err
 	}
 	if err := m.Up(); err != nil {
-		switch err {
-		case migrate.ErrNoChange:
+		switch {
+		case errors.Is(err, migrate.ErrNoChange):
 			ll.Info().Msg("database is already on the latest version")
 			return nil
 		default:
@@ -125,7 +127,7 @@ func (b *Bot) SQLMigrate(c *config.Config) error {
 // SQLDowngrade migrates the database to the latest SQL set
 func (b *Bot) SQLDowngrade(c *config.Config) error {
 	ll := b.Log.With().Str("context", "bot.SQLDowngrade").Logger()
-	dsn := getDbDSN(c)
+	dsn := getDBDSN(c)
 	m, err := migrate.New(MigrationsPath, dsn)
 	if err != nil {
 		return err
@@ -141,8 +143,8 @@ func (b *Bot) SQLDowngrade(c *config.Config) error {
 		}
 	}()
 	if err := m.Steps(-1); err != nil {
-		switch err {
-		case migrate.ErrNoChange:
+		switch {
+		case errors.Is(err, migrate.ErrNoChange):
 			ll.Info().Msg("database is already on the latest version")
 			return nil
 		default:
@@ -150,15 +152,15 @@ func (b *Bot) SQLDowngrade(c *config.Config) error {
 		}
 	}
 	cv, _, err := m.Version()
-	if err != nil && err != migrate.ErrNilVersion {
+	if err != nil && !errors.Is(err, migrate.ErrNilVersion) {
 		return err
 	}
 	ll.Info().Msgf("successfully downgraded database to v%d", cv)
 	return nil
 }
 
-// getDbDSN returns the DB connection string based on the given config
-func getDbDSN(c *config.Config) string {
+// getDBDSN returns the DB connection string based on the given config
+func getDBDSN(c *config.Config) string {
 	var dp string
 	if c.DB.UseTLS {
 		dp += "sslmode=verify-full"
