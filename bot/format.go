@@ -16,6 +16,7 @@ const (
 	IconVomit       = "🤮"
 	IconDistance    = "📐"
 	IconGauge       = "🌡️"
+	IconDuration    = "⏱️"
 )
 
 // changeIcon returns either an increase or decrease icon based on the provided value

@@ -104,6 +104,11 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 			sto := time.Unix(s, 0)
 			eto := time.Unix(e, 0)
 			pt := e - s
+			pd, err := time.ParseDuration(fmt.Sprintf("%ds", pt))
+			if err != nil {
+				ll.Error().Msgf("failed to parse play time duration: %s", err)
+				return
+			}
 			if pt < 180 {
 				ll.Debug().Msgf("user played less then 3 minutes (%d seconds). There is no chance of "+
 					"any changes to the stats", pt)
@@ -202,6 +207,11 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 					Inline: true,
 				})
 			}
+			ef = append(ef, &discordgo.MessageEmbedField{
+				Name:   fmt.Sprintf("%s Duration", IconDuration),
+				Value:  fmt.Sprintf("**%s** played", pd.String()),
+				Inline: true,
+			})
 			for len(ef)%3 != 0 {
 				ef = append(ef, &discordgo.MessageEmbedField{
 					Value:  "\U0000FEFF",
