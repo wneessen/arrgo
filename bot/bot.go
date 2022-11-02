@@ -126,6 +126,9 @@ func (b *Bot) Run() error {
 		ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
 		rd = time.Minute * time.Duration(b.Config.Timer.FHSpam)
 	}
+	if rd.Seconds() <= 0 {
+		rd = time.Minute * time.Duration(b.Config.Timer.FHSpam)
+	}
 	fht := time.NewTicker(rd)
 	defer fht.Stop()
 	trt := time.NewTicker(b.Config.Timer.TRUpdate)
@@ -180,6 +183,9 @@ func (b *Bot) Run() error {
 			rd, err := crypto.RandDuration(b.Config.Timer.FHSpam, "m")
 			if err != nil {
 				ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
+				rd = time.Minute * time.Duration(b.Config.Timer.FHSpam)
+			}
+			if rd.Seconds() <= 0 {
 				rd = time.Minute * time.Duration(b.Config.Timer.FHSpam)
 			}
 			fht.Reset(rd)
