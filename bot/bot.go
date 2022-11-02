@@ -182,6 +182,9 @@ func (b *Bot) Run() error {
 				ll.Warn().Msgf("failed to generate random number for FH timer: %s", err)
 				rd = time.Minute * time.Duration(b.Config.Timer.FHSpam)
 			}
+			if rd.Seconds() <= 0 {
+				rd = time.Minute * time.Duration(b.Config.Timer.FHSpam)
+			}
 			fht.Reset(rd)
 		case <-trt.C:
 			go func() {
