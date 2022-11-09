@@ -25,18 +25,18 @@ func (b *Bot) SlashCmdSoTCompare(s *discordgo.Session, i *discordgo.InteractionC
 	}
 	ots := time.Now().Add(d)
 
-	u, err := b.Model.User.GetByUserID(i.Member.User.ID)
-	if err != nil {
-		return fmt.Errorf("failed to retrieve user from DB: %w", err)
-	}
-	if err := b.StoreSoTUserStats(u); err != nil {
-		return fmt.Errorf("failed to update user stats in DB: %w", err)
-	}
-	cus, err := b.Model.UserStats.GetByUserID(u.ID)
+	r, err := b.NewRequester(i.Interaction)
 	if err != nil {
 		return err
 	}
-	ous, err := b.Model.UserStats.GetByUserIDAtTime(u.ID, ots)
+	if err := b.StoreSoTUserStats(r.User); err != nil {
+		return fmt.Errorf("failed to update user stats in DB: %w", err)
+	}
+	cus, err := b.Model.UserStats.GetByUserID(r.User.ID)
+	if err != nil {
+		return err
+	}
+	ous, err := b.Model.UserStats.GetByUserIDAtTime(r.User.ID, ots)
 	if err != nil {
 		return err
 	}
