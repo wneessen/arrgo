@@ -41,6 +41,9 @@ var (
 
 	// ErrDeedDuplicate should be used in case a deed to be inserted into the database already exists
 	ErrDeedDuplicate = errors.New("deed already existent in database")
+
+	// ErrUserNil should be returned if the check for the *User returns nil
+	ErrUserNil = errors.New("user pointer must not be nil:w")
 )
 
 // Model is a collection of all available models

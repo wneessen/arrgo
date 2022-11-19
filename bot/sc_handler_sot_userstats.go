@@ -240,7 +240,11 @@ func (b *Bot) ScheduledEventUpdateUserStats() error {
 
 // StoreSoTUserStats will retrieve the latest user stats from the API and store them in the DB
 func (b *Bot) StoreSoTUserStats(u *model.User) error {
-	r := &Requester{nil, b.Model.User, u}
+	r, err := NewRequesterFromUser(u, b.Model.User)
+	if err != nil {
+		b.Log.Warn().Msgf("failed to create new requester: %s", err)
+		return err
+	}
 	ub, err := b.SoTGetUserBalance(r)
 	if err != nil {
 		switch {

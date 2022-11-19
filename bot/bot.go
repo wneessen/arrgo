@@ -229,21 +229,20 @@ func (b *Bot) StartTimeUnix() int64 {
 
 // NewRequester returns a Requester based on if it's a channel interaction or DM
 func (b *Bot) NewRequester(i *discordgo.Interaction) (*Requester, error) {
-	r := &Requester{nil, b.Model.User, nil}
 	if i.User != nil {
 		u, err := b.Model.User.GetByUserID(i.User.ID)
 		if err != nil {
 			switch {
 			case errors.Is(err, model.ErrUserNotExistent):
-				return r, fmt.Errorf("user is not registered")
+				return nil, fmt.Errorf("user is not registered")
 			default:
-				return r, err
+				return nil, err
 			}
 		}
-		r.User = u
+		return NewRequesterFromUser(u, b.Model.User)
 	}
 	if i.Member != nil {
-		r.Member = i.Member
+		return NewRequesterFromMember(i.Member, b.Model.User)
 	}
-	return r, nil
+	return nil, fmt.Errorf("neither interaction user nor member found")
 }
