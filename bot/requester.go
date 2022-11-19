@@ -23,7 +23,32 @@ var (
 		"Please store your cookie with the **/setrat** command first")
 	ErrRATCookieExpired = errors.New("your Sea of Thieves authentication token is expired. " +
 		"Please use the **/setrat** command to update your token")
+	ErrMemberNil = errors.New("provided Member pointer must not be nil")
+	ErrUserNil   = errors.New("provided User pointer must not be nil")
 )
+
+// NewRequesterFromMember returns a new *Requester pointer from a given *discordgo.Member
+func NewRequesterFromMember(m *discordgo.Member, um *model.UserModel) (*Requester, error) {
+	r := &Requester{UserModel: um}
+	if m == nil {
+		return r, ErrMemberNil
+	}
+	u, err := r.UserModel.GetByUserID(m.User.ID)
+	if err != nil {
+		return r, ErrUserNotRegistered
+	}
+	r.User = u
+	return r, nil
+}
+
+// NewRequesterFromUser returns a new *Requester pointer from a given *model.User
+func NewRequesterFromUser(u *model.User, um *model.UserModel) (*Requester, error) {
+	r := &Requester{UserModel: um, User: u}
+	if u == nil {
+		return r, ErrUserNil
+	}
+	return r, nil
+}
 
 // IsAdmin returns true if the Requester has administrative permissions on the guild
 func (r *Requester) IsAdmin() bool {
@@ -38,11 +63,7 @@ func (r *Requester) CanModerateMembers() bool {
 // GetSoTRATCookie checks if the Requester has a SoT RAT cookie and reads it from the DB
 func (r *Requester) GetSoTRATCookie() (string, error) {
 	if r.User == nil {
-		u, err := r.UserModel.GetByUserID(r.Member.User.ID)
-		if err != nil {
-			return "", ErrUserNotRegistered
-		}
-		r.User = u
+		return "", ErrUserNil
 	}
 	c, err := r.UserModel.GetPrefStringEnc(r.User, model.UserPrefSoTAuthToken)
 	if err != nil {

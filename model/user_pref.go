@@ -205,6 +205,10 @@ func getUserPrefEnc[V string | bool | int | int64](m UserModel, u *User, k UserP
 	var bv []byte
 	var ob bytes.Buffer
 
+	if u == nil {
+		return v, ErrUserNil
+	}
+
 	q := `SELECT pref_val
             FROM user_prefs u
            WHERE u.user_id = $1 AND u.pref_key = $2 AND u.is_enc = true`
