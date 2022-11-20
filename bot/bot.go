@@ -239,7 +239,12 @@ func (b *Bot) NewRequester(i *discordgo.Interaction) (*Requester, error) {
 				return nil, err
 			}
 		}
-		return NewRequesterFromUser(u, b.Model.User)
+		r, err := NewRequesterFromUser(u, b.Model.User)
+		if err != nil {
+			return r, err
+		}
+		r.Member = i.Member
+		return r, nil
 	}
 	if i.Member != nil {
 		return NewRequesterFromMember(i.Member, b.Model.User)

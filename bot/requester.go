@@ -29,7 +29,7 @@ var (
 
 // NewRequesterFromMember returns a new *Requester pointer from a given *discordgo.Member
 func NewRequesterFromMember(m *discordgo.Member, um *model.UserModel) (*Requester, error) {
-	r := &Requester{UserModel: um}
+	r := &Requester{UserModel: um, Member: m}
 	if m == nil {
 		return r, ErrMemberNil
 	}
