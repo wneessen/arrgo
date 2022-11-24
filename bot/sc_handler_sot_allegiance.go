@@ -80,7 +80,7 @@ func (b *Bot) SlashCmdSoTAllegiance(s *discordgo.Session, i *discordgo.Interacti
 		{
 			Title: fmt.Sprintf("Your current allegiance values for the **%s**:", a.Allegiance),
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
-				URL: fmt.Sprintf("%s/allegiance/%s.svg", AssetsBaseURL, al),
+				URL: fmt.Sprintf("%s/allegiance/%s.png", AssetsBaseURL, al),
 			},
 			Type:   discordgo.EmbedTypeRich,
 			Fields: ef,
