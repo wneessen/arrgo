@@ -18,6 +18,7 @@ import (
 // List of Sea of Thieves API endpoints
 const (
 	APIURLSoTAchievements = "https://www.seaofthieves.com/api/profilev2/achievements"
+	APIURLSoTAllegiance   = "https://www.seaofthieves.com/api/profilev2"
 	APIURLSoTSeasons      = "https://www.seaofthieves.com/api/profilev2/seasons-progress"
 	APIURLSoTUserBalance  = "https://www.seaofthieves.com/api/profilev2/balance"
 	APIURLSoTUserOverview = "https://www.seaofthieves.com/api/profilev2/overview"
@@ -31,6 +32,7 @@ const (
 	ErrFailedHTTPClient          = "failed to generate new HTTP client: %s"
 	ErrFailedRetrieveUserStatsDB = "failed retrieve user status from DB: %s"
 	ErrFailedGuildLookupDB       = "failed to look up guild in database: %s"
+	ErrFailedStringConvert       = "failed to convert string to int: %s"
 )
 
 // Bot represents the bot instance

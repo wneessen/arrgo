@@ -181,6 +181,47 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 				},
 			},
 		},
+
+		/*
+			// reputation provides the current emissary reputation value in the different factions
+			{
+				Name:        "reputation",
+				Description: "Returns your current reputation value in the different emissary factions",
+				Options: []*discordgo.ApplicationCommandOption{
+					{
+						Type:        discordgo.ApplicationCommandOptionString,
+						Name:        "emissary-faction",
+						Description: "Name of the emissary faction",
+						Required:    true,
+						Choices: []*discordgo.ApplicationCommandOptionChoice{
+							{Name: "Athena's Fortune", Value: "athena"},
+							{Name: "Gold Hoarder", Value: "hoarder"},
+							{Name: "Merchant Alliance", Value: "merchant"},
+							{Name: "Order of Souls", Value: "order"},
+							{Name: "Reaper's Bone", Value: "reaper"},
+						},
+					},
+				},
+			},
+		*/
+
+		// allegiance provides the current allegiance values in the different factions
+		{
+			Name:        "allegiance",
+			Description: "Returns your current allegiance values in the different allegiance factions",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "allegiance-faction",
+					Description: "Name of the allegiance faction",
+					Required:    true,
+					Choices: []*discordgo.ApplicationCommandOptionChoice{
+						{Name: "Servants of the Flame", Value: "servants"},
+						{Name: "Guardians of Fortune", Value: "guardians"},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -322,6 +363,7 @@ func (b *Bot) SlashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 		"compare":     b.SlashCmdSoTCompare,
 		"dailydeeds":  b.SlashCmdSoTDailyDeeds,
 		"ledger":      b.SlashCmdSoTLedger,
+		"allegiance":  b.SlashCmdSoTAllegiance,
 	}
 
 	// Define list of slash commands that should use ephemeral messages
