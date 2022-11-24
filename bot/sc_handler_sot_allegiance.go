@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 	"regexp"
 	"strconv"
 	"strings"
@@ -56,33 +58,29 @@ func (b *Bot) SlashCmdSoTAllegiance(s *discordgo.Session, i *discordgo.Interacti
 		return err
 	}
 
+	p := message.NewPrinter(language.German)
 	var ef []*discordgo.MessageEmbedField
 	ef = append(ef, &discordgo.MessageEmbedField{
-		Name:   "Allegiance",
-		Value:  a.Allegiance,
-		Inline: false,
-	})
-	ef = append(ef, &discordgo.MessageEmbedField{
-		Name:   "Rival Faction Ships Sunk",
-		Value:  fmt.Sprintf("%s **%d**", IconShip, a.ShipsSunk),
+		Name:   "Ships Sunk",
+		Value:  fmt.Sprintf("%s **%d** Total", IconShip, a.ShipsSunk),
 		Inline: true,
 	})
 	ef = append(ef, &discordgo.MessageEmbedField{
-		Name:   "Highest Faction Streak",
-		Value:  fmt.Sprintf("%s **%d**", IconGauge, a.MaxStreak),
+		Name:   "Highest Streak",
+		Value:  fmt.Sprintf("%s **%d** Ships", IconGauge, a.MaxStreak),
 		Inline: true,
 	})
 	ef = append(ef, &discordgo.MessageEmbedField{
-		Name:   "Highest Single Hourglass Value Earned",
-		Value:  fmt.Sprintf("%s **%d**", IconGauge, a.TotalGold),
+		Name:   "Highest Hourglass Value",
+		Value:  fmt.Sprintf("%s **%s** Gold", IconGold, p.Sprintf("%d", a.TotalGold)),
 		Inline: true,
 	})
 
 	e := []*discordgo.MessageEmbed{
 		{
-			Title: "Your current allegiance values in Sea of Thieves:",
+			Title: fmt.Sprintf("Your current allegiance values for the **%s**:", a.Allegiance),
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
-				URL: fmt.Sprintf("%s/allegiance/%s%d.png", AssetsBaseURL, em, 4-l.Band),
+				URL: fmt.Sprintf("%s/allegiance/%s.svg", AssetsBaseURL, al),
 			},
 			Type:   discordgo.EmbedTypeRich,
 			Fields: ef,
@@ -152,6 +150,9 @@ func (b *Bot) SoTGetAllegiance(rq *Requester, at string) (SoTAllegiance, error) 
 		}
 	case "servants":
 		for _, d := range al.Stats {
+			if d.Value == "" {
+				d.Value = "0"
+			}
 			v, err := strconv.ParseInt(d.Value, 10, 64)
 			if err != nil {
 				return a, fmt.Errorf(ErrFailedStringConvert, d.Value)
