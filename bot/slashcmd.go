@@ -230,6 +230,11 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 func (b *Bot) RegisterSlashCommands() error {
 	ll := b.Log.With().Str("context", "bot.RegisterSlashCommands").Logger()
 
+	// We need a valid state and user
+	if b.Session.State == nil || b.Session.State.User == nil {
+		return fmt.Errorf("no valid session state or user. Required itents might be missing from discord token")
+	}
+
 	// Get a list of currently registered slash commands
 	rcl, err := b.Session.ApplicationCommands(b.Session.State.User.ID, "")
 	if err != nil {
