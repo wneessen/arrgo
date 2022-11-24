@@ -3,12 +3,13 @@ package bot
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bwmarrin/discordgo"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/bwmarrin/discordgo"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 // SoTAllegianceJSON is the nested struct from the Sea of Thieves event hub response
