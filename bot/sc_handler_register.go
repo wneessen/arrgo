@@ -12,6 +12,9 @@ import (
 
 // SlashCmdRegister handles the /register slash command
 func (b *Bot) SlashCmdRegister(s *discordgo.Session, i *discordgo.InteractionCreate) error {
+	if i.Member == nil || i.Member.User == nil {
+		return ErrUserNil
+	}
 	u, err := b.Model.User.GetByUserID(i.Member.User.ID)
 	if err != nil && !errors.Is(err, model.ErrUserNotExistent) {
 		return err
