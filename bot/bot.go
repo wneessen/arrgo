@@ -21,6 +21,7 @@ const (
 	APIURLSoTAllegiance   = "https://www.seaofthieves.com/api/profilev2"
 	APIURLSoTSeasons      = "https://www.seaofthieves.com/api/profilev2/seasons-progress"
 	APIURLSoTUserBalance  = "https://www.seaofthieves.com/api/profilev2/balance"
+	APIURLSoTReputation   = "https://www.seaofthieves.com/api/profilev2/reputation"
 	APIURLSoTUserOverview = "https://www.seaofthieves.com/api/profilev2/overview"
 	APIURLSoTEventHub     = "https://www.seaofthieves.com/event-hub"
 	APIURLRTTradeRoutes   = "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
