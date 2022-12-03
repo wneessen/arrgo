@@ -48,6 +48,7 @@ type Config struct {
 		FHSpam   int           `fig:"flameheart_spam" default:"60"`
 		TRUpdate time.Duration `fig:"traderoutes_update" default:"12h"`
 		USUpdate time.Duration `fig:"userstats_update" default:"6h"`
+		URUpdate time.Duration `fig:"userrep_update" default:"24h"`
 		RCCheck  time.Duration `fig:"ratcookie_check" default:"6h"`
 		DDUpdate time.Duration `fig:"dailydeed_update" default:"24h"`
 		ULUpdate time.Duration `fig:"userledger_update" default:"6h"`

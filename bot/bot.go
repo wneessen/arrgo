@@ -142,6 +142,8 @@ func (b *Bot) Run() error {
 	defer rct.Stop()
 	ddt := time.NewTicker(b.Config.Timer.DDUpdate)
 	defer ddt.Stop()
+	urt := time.NewTicker(b.Config.Timer.URUpdate)
+	defer urt.Stop()
 
 	// Perform an update for all scheduled update tasks once if first-run flag is set
 	if b.Config.GetFirstRun() {
@@ -151,6 +153,9 @@ func (b *Bot) Run() error {
 			}
 			if err := b.ScheduledEventUpdateUserStats(); err != nil {
 				b.Log.Error().Msgf("failed to update user stats: %s", err)
+			}
+			if err := b.ScheduledEventUpdateUserReputation(); err != nil {
+				b.Log.Error().Msgf("failed to update user reputation: %s", err)
 			}
 			if err := b.ScheduledEventUpdateDailyDeeds(); err != nil {
 				b.Log.Error().Msgf("failed to update daily deeds: %s", err)
@@ -201,7 +206,13 @@ func (b *Bot) Run() error {
 		case <-ust.C:
 			go func() {
 				if err := b.ScheduledEventUpdateUserStats(); err != nil {
-					ll.Error().Msgf("failed to process scheuled traderoute update event: %s", err)
+					ll.Error().Msgf("failed to process scheuled user stats update event: %s", err)
+				}
+			}()
+		case <-urt.C:
+			go func() {
+				if err := b.ScheduledEventUpdateUserReputation(); err != nil {
+					ll.Error().Msgf("failed to process scheuled user reputation update event: %s", err)
 				}
 			}()
 		case <-rct.C:
