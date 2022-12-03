@@ -53,7 +53,8 @@ func (b *Bot) SlashCmdSoTReputation(s *discordgo.Session, i *discordgo.Interacti
 		return fmt.Errorf("provided option value is not a string")
 	}
 
-	re, err := regexp.Compile(`^(?i:athena|hoarder|merchant|order|reaper|hunter|servants|guardians)$`)
+	re, err := regexp.Compile(`^(?i:factiong|hunterscall|merchantalliance|bilgerats|talltales|athenasfortune|` +
+		`goldhoarders|orderofsouls|reapersbones)$`)
 	if err != nil {
 		return err
 	}
@@ -69,11 +70,18 @@ func (b *Bot) SlashCmdSoTReputation(s *discordgo.Session, i *discordgo.Interacti
 		return err
 	}
 
-	rp, err := b.SoTGetReputation(r)
+	/*
+		rp, err := b.SoTGetReputation(r)
+		if err != nil {
+			return err
+		}
+	*/
+	b.Log.Debug().Msgf("UID: %d, Emi: %s", r.User.ID, fa)
+	ur, err := b.Model.UserReputation.GetByUserIDAtTime(r.User.ID, fa, time.Now().Add(time.Minute*-40))
 	if err != nil {
 		return err
 	}
-	b.Log.Debug().Msgf("FACTIONS: %+v\n", rp)
+	b.Log.Debug().Msgf("FACTIONS: %+v\n", ur)
 
 	/*
 		var ef []*discordgo.MessageEmbedField

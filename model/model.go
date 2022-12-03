@@ -44,6 +44,9 @@ var (
 
 	// ErrUserNil should be returned if the check for the *User returns nil
 	ErrUserNil = errors.New("user pointer must not be nil:w")
+
+	// ErrUserRepNotExistent should be used in case a requested user reputation was not found in the database
+	ErrUserRepNotExistent = errors.New("requested user reputation not existent in database")
 )
 
 // Model is a collection of all available models

@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -58,37 +59,38 @@ func (m UserStatModel) GetByUserID(i int64) (*UserStat, error) {
 	}
 	return &us, nil
 }
+*/
 
 // GetByUserIDAtTime retrieves the User details from the database based on the given User ID at a specific
 // point of time
-func (m UserStatModel) GetByUserIDAtTime(i int64, t time.Time) (*UserStat, error) {
-	q := `SELECT id, user_id, title, gold, doubloons, ancient_coins, kraken, megalodon, chests, ships, vomit, distance, ctime
-            FROM user_stats s
-           WHERE s.user_id = $1
-             AND s.ctime >= $2
+func (m UserReputationModel) GetByUserIDAtTime(i int64, e string, t time.Time) (*UserReputation, error) {
+	q := `SELECT id, user_id, emissary, motto, rank, lvl, xp, next_lvl, xp_next_lvl, titlestotal, titlesunlocked, 
+       emblemstotal, emblemsunlocked, itemstotal, itemsunlocked, ctime
+            FROM user_reputation r
+           WHERE r.user_id = $1
+             AND r.ctime >= $3
+             AND LOWER(r.emissary) = LOWER($2)
            ORDER BY id
            LIMIT 1`
 
-	var us UserStat
+	var ur UserReputation
 	ctx, cancel := context.WithTimeout(context.Background(), SQLTimeout)
 	defer cancel()
 
-	row := m.DB.QueryRowContext(ctx, q, i, t)
-	err := row.Scan(&us.ID, &us.UserID, &us.Title, &us.Gold, &us.Doubloons, &us.AncientCoins, &us.KrakenDefeated,
-		&us.MegalodonEnounter, &us.ChestsHandedIn, &us.ShipsSunk, &us.VomittedTimes, &us.DistanceSailed,
-		&us.CreateTime)
+	row := m.DB.QueryRowContext(ctx, q, i, e, t)
+	err := row.Scan(&ur.ID, &ur.UserID, &ur.Emissary, &ur.Motto, &ur.Rank, &ur.Level, &ur.Experience,
+		&ur.NextLevel, &ur.ExperienceNextLevel, &ur.TitlesTotal, &ur.TitlesUnlocked, &ur.EmblemsTotal,
+		&ur.EmblemsUnlocked, &ur.ItemsTotal, &ur.ItemsUnlocked, &ur.CreateTime)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return &us, ErrUserStatNotExistent
+			return &ur, ErrUserRepNotExistent
 		default:
-			return &us, err
+			return &ur, err
 		}
 	}
-	return &us, nil
+	return &ur, nil
 }
-
-*/
 
 // Insert adds a new User into the database
 func (m UserReputationModel) Insert(ur *UserReputation) error {

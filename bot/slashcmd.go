@@ -185,7 +185,7 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 		// reputation provides the current emissary reputation value in the different factions
 		{
 			Name:        "reputation",
-			Description: "Returns your current reputation value in the different emissary/allegiance factions",
+			Description: "Returns your current reputation value in the different emissary/allegiance faction",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
@@ -193,14 +193,14 @@ func (b *Bot) getSlashCommands() []*discordgo.ApplicationCommand {
 					Description: "Name of the emissary/allegiance faction",
 					Required:    true,
 					Choices: []*discordgo.ApplicationCommandOptionChoice{
-						{Name: "Athena's Fortune", Value: "athena"},
-						{Name: "Gold Hoarder", Value: "hoarder"},
-						{Name: "Merchant Alliance", Value: "merchant"},
-						{Name: "Order of Souls", Value: "order"},
-						{Name: "Reaper's Bone", Value: "reaper"},
-						{Name: "Hunter's Call", Value: "hunter"},
-						{Name: "Servants of the Flame", Value: "servants"},
-						{Name: "Guardians of Fortune", Value: "guardians"},
+						{Name: "Athena's Fortune", Value: "athenasfortune"},
+						{Name: "Gold Hoarder", Value: "goldhoarders"},
+						{Name: "Merchant Alliance", Value: "merchantalliance"},
+						{Name: "Order of Souls", Value: "orderofsouls"},
+						{Name: "Reaper's Bone", Value: "reapersbones"},
+						{Name: "Hunter's Call", Value: "hunterscall"},
+						{Name: "Servants of the Flame", Value: "factionb"},
+						{Name: "Guardians of Fortune", Value: "factiong"},
 					},
 				},
 			},
