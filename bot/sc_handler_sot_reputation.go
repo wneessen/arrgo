@@ -70,12 +70,18 @@ func (b *Bot) SlashCmdSoTReputation(s *discordgo.Session, i *discordgo.Interacti
 		return err
 	}
 
-	if err := b.StoreSoTUserReputation(r.User); err != nil {
-		b.Log.Warn().Msgf("failed to store user reputation data to database")
-	}
 	ur, err := b.Model.UserReputation.GetByUserID(r.User.ID, fa)
 	if err != nil {
 		return err
+	}
+	if ur.CreateTime.Unix() < time.Now().Add(time.Minute*-30).Unix() {
+		if err := b.StoreSoTUserReputation(r.User); err != nil {
+			b.Log.Warn().Msgf("failed to store user reputation data to database")
+		}
+		ur, err = b.Model.UserReputation.GetByUserID(r.User.ID, fa)
+		if err != nil {
+			return err
+		}
 	}
 
 	var ef []*discordgo.MessageEmbedField
