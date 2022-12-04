@@ -53,8 +53,8 @@ func (b *Bot) SlashCmdSoTReputation(s *discordgo.Session, i *discordgo.Interacti
 		return fmt.Errorf("provided option value is not a string")
 	}
 
-	re, err := regexp.Compile(`^(?i:factiong|hunterscall|merchantalliance|bilgerats|talltales|athenasfortune|` +
-		`goldhoarders|orderofsouls|reapersbones)$`)
+	re, err := regexp.Compile(`^(?i:factiong|hunterscall|merchantalliance|bilgerats|athenasfortune|` +
+		`goldhoarders|orderofsouls|reapersbones|factionb)$`)
 	if err != nil {
 		return err
 	}
@@ -70,62 +70,52 @@ func (b *Bot) SlashCmdSoTReputation(s *discordgo.Session, i *discordgo.Interacti
 		return err
 	}
 
-	/*
-		rp, err := b.SoTGetReputation(r)
-		if err != nil {
-			return err
-		}
-	*/
-	b.Log.Debug().Msgf("UID: %d, Emi: %s", r.User.ID, fa)
-	ur, err := b.Model.UserReputation.GetByUserIDAtTime(r.User.ID, fa, time.Now().Add(time.Minute*-40))
+	if err := b.StoreSoTUserReputation(r.User); err != nil {
+		b.Log.Warn().Msgf("failed to store user reputation data to database")
+	}
+	ur, err := b.Model.UserReputation.GetByUserID(r.User.ID, fa)
 	if err != nil {
 		return err
 	}
-	b.Log.Debug().Msgf("FACTIONS: %+v\n", ur)
 
-	/*
-		var ef []*discordgo.MessageEmbedField
+	var ef []*discordgo.MessageEmbedField
+	ef = append(ef, &discordgo.MessageEmbedField{
+		Name:   "Motto",
+		Value:  ur.Motto,
+		Inline: false,
+	})
+	if ur.Rank != "" {
 		ef = append(ef, &discordgo.MessageEmbedField{
-			Name:   "Faction/Company",
-			Value:  l.Name,
+			Name:   "Rank",
+			Value:  ur.Rank,
 			Inline: false,
 		})
-		ef = append(ef, &discordgo.MessageEmbedField{
-			Name:   "Current Title",
-			Value:  l.BandTitle,
-			Inline: false,
-		})
-		ef = append(ef, &discordgo.MessageEmbedField{
-			Name:   "Emissary value",
-			Value:  fmt.Sprintf("%s **%d**", IconAncientCoin, l.Score),
-			Inline: true,
-		})
-		ef = append(ef, &discordgo.MessageEmbedField{
-			Name:   "Ledger position",
-			Value:  fmt.Sprintf("%s **%d**", IconGauge, l.Rank),
-			Inline: true,
-		})
-		ef = append(ef, &discordgo.MessageEmbedField{
-			Name:   "Next level in",
-			Value:  fmt.Sprintf("%s **%d** points", IconIncrease, l.ToNextRank),
-			Inline: true,
-		})
+	}
+	ef = append(ef, &discordgo.MessageEmbedField{
+		Name:   "Level",
+		Value:  fmt.Sprintf("%s **%d**", IconGauge, ur.Level),
+		Inline: true,
+	})
+	ef = append(ef, &discordgo.MessageEmbedField{
+		Name:   "XP in current level",
+		Value:  fmt.Sprintf("%s **%d/%d**", IconIncrease, ur.Experience, ur.ExperienceNextLevel),
+		Inline: true,
+	})
 
-		e := []*discordgo.MessageEmbed{
-			{
-				Title: "Your global ledger in Sea of Thieves:",
-				Thumbnail: &discordgo.MessageEmbedThumbnail{
-					URL: fmt.Sprintf("%s/ledger/%s%d.png", AssetsBaseURL, fa, 4-l.Band),
-				},
-				Type:   discordgo.EmbedTypeRich,
-				Fields: ef,
+	e := []*discordgo.MessageEmbed{
+		{
+			Title: fmt.Sprintf("Your user reputation with **%s**", dbEmissaryToName(ur.Emissary)),
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL: fmt.Sprintf("%s/factions/%s.png", AssetsBaseURL, fa),
 			},
-		}
-		if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
-			return err
-		}
+			Type:   discordgo.EmbedTypeRich,
+			Fields: ef,
+		},
+	}
+	if _, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Embeds: &e}); err != nil {
+		return err
+	}
 
-	*/
 	return nil
 }
 
