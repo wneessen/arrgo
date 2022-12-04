@@ -44,24 +44,29 @@ var (
 
 	// ErrUserNil should be returned if the check for the *User returns nil
 	ErrUserNil = errors.New("user pointer must not be nil:w")
+
+	// ErrUserRepNotExistent should be used in case a requested user reputation was not found in the database
+	ErrUserRepNotExistent = errors.New("requested user reputation not existent in database")
 )
 
 // Model is a collection of all available models
 type Model struct {
-	Deed       *DeedModel
-	Guild      *GuildModel
-	TradeRoute *TradeRouteModel
-	User       *UserModel
-	UserStats  *UserStatModel
+	Deed           *DeedModel
+	Guild          *GuildModel
+	TradeRoute     *TradeRouteModel
+	User           *UserModel
+	UserReputation *UserReputationModel
+	UserStats      *UserStatModel
 }
 
 // New returns the collection of all available models
 func New(db *sql.DB, c *config.Config) Model {
 	return Model{
-		Deed:       &DeedModel{DB: db},
-		Guild:      &GuildModel{DB: db, Config: c},
-		TradeRoute: &TradeRouteModel{DB: db},
-		User:       &UserModel{DB: db, Config: c},
-		UserStats:  &UserStatModel{DB: db},
+		Deed:           &DeedModel{DB: db},
+		Guild:          &GuildModel{DB: db, Config: c},
+		TradeRoute:     &TradeRouteModel{DB: db},
+		User:           &UserModel{DB: db, Config: c},
+		UserReputation: &UserReputationModel{DB: db},
+		UserStats:      &UserStatModel{DB: db},
 	}
 }

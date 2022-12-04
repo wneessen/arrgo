@@ -26,6 +26,7 @@ type SoTAllegiance struct {
 	ShipsSunk  int64
 	MaxStreak  int64
 	TotalGold  int64
+	Icon       string
 }
 
 // SlashCmdSoTAllegiance handles the /allegiance slash command
@@ -81,7 +82,7 @@ func (b *Bot) SlashCmdSoTAllegiance(s *discordgo.Session, i *discordgo.Interacti
 		{
 			Title: fmt.Sprintf("Your current allegiance values for the **%s**:", a.Allegiance),
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
-				URL: fmt.Sprintf("%s/allegiance/%s.png", AssetsBaseURL, al),
+				URL: fmt.Sprintf("%s/factions/%s.png", AssetsBaseURL, a.Icon),
 			},
 			Type:   discordgo.EmbedTypeRich,
 			Fields: ef,
@@ -148,6 +149,7 @@ func (b *Bot) SoTGetAllegiance(rq *Requester, at string) (SoTAllegiance, error) 
 				a.TotalGold = v
 			}
 			a.Allegiance = "Guardians of Fortune"
+			a.Icon = "factiong"
 		}
 	case "servants":
 		for _, d := range al.Stats {
@@ -168,6 +170,7 @@ func (b *Bot) SoTGetAllegiance(rq *Requester, at string) (SoTAllegiance, error) 
 			}
 		}
 		a.Allegiance = "Servants of the Flame"
+		a.Icon = "factionb"
 	}
 
 	return a, nil
