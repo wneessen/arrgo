@@ -59,7 +59,12 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 			ll.Warn().Msgf("failed to set user's start time in database: %s", err)
 			return
 		}
-		if err := b.StoreSoTUserStats(u); err != nil {
+		r, err := NewRequesterFromUser(u, b.Model.User)
+		if err != nil {
+			ll.Warn().Msgf("failed to create new requester for user: %s", err)
+			return
+		}
+		if err := b.StoreSoTUserStats(r); err != nil {
 			ll.Warn().Msgf("failed to store current user stats in DB: %s", err)
 			return
 		}
@@ -118,7 +123,12 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 				ll.Warn().Msgf("unable to retrieve user's RAT cookie: %s", err)
 				return
 			}
-			if err := b.StoreSoTUserStats(u); err != nil {
+			r, err := NewRequesterFromUser(u, b.Model.User)
+			if err != nil {
+				ll.Warn().Msgf("failed to create new requester: %s", err)
+				return
+			}
+			if err := b.StoreSoTUserStats(r); err != nil {
 				ll.Warn().Msgf("failed to store current user stats in DB: %s", err)
 				return
 			}

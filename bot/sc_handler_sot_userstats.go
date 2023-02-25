@@ -44,7 +44,11 @@ func (b *Bot) SlashCmdSoTOverview(s *discordgo.Session, i *discordgo.Interaction
 	if err != nil {
 		return fmt.Errorf("failed to retrieve user from DB: %w", err)
 	}
-	if err := b.StoreSoTUserStats(u); err != nil {
+	r, err := NewRequesterFromUser(u, b.Model.User)
+	if err != nil {
+		return fmt.Errorf("failed to create new requester: %w", err)
+	}
+	if err := b.StoreSoTUserStats(r); err != nil {
 		return fmt.Errorf("failed to update user stats in DB: %w", err)
 	}
 	us, err := b.Model.UserStats.GetByUserID(u.ID)
@@ -109,14 +113,14 @@ func (b *Bot) SlashCmdSoTOverview(s *discordgo.Session, i *discordgo.Interaction
 
 // SlashCmdSoTBalance handles the /balance slash command
 func (b *Bot) SlashCmdSoTBalance(s *discordgo.Session, i *discordgo.InteractionCreate) error {
-	u, err := b.Model.User.GetByUserID(i.Member.User.ID)
+	r, err := b.NewRequester(i.Interaction)
 	if err != nil {
-		return fmt.Errorf("failed to retrieve user from DB: %w", err)
+		return err
 	}
-	if err := b.StoreSoTUserStats(u); err != nil {
+	if err := b.StoreSoTUserStats(r); err != nil {
 		return fmt.Errorf("failed to update user stats in DB: %w", err)
 	}
-	ub, err := b.Model.UserStats.GetByUserID(u.ID)
+	ub, err := b.Model.UserStats.GetByUserID(r.ID)
 	if err != nil {
 		return err
 	}
@@ -225,7 +229,12 @@ func (b *Bot) ScheduledEventUpdateUserStats() error {
 		return fmt.Errorf("failed to retrieve user list from DB: %w", err)
 	}
 	for _, u := range ul {
-		if err := b.StoreSoTUserStats(u); err != nil {
+		r, err := NewRequesterFromUser(u, b.Model.User)
+		if err != nil {
+			ll.Error().Msgf("failed to create new requester: %s", err)
+			continue
+		}
+		if err := b.StoreSoTUserStats(r); err != nil {
 			ll.Error().Msgf("failed to store user stats in DB: %s", err)
 			continue
 		}
@@ -239,28 +248,23 @@ func (b *Bot) ScheduledEventUpdateUserStats() error {
 }
 
 // StoreSoTUserStats will retrieve the latest user stats from the API and store them in the DB
-func (b *Bot) StoreSoTUserStats(u *model.User) error {
-	r, err := NewRequesterFromUser(u, b.Model.User)
-	if err != nil {
-		b.Log.Warn().Msgf("failed to create new requester: %s", err)
-		return err
-	}
-	ub, err := b.SoTGetUserBalance(r)
+func (b *Bot) StoreSoTUserStats(rq *Requester) error {
+	ub, err := b.SoTGetUserBalance(rq)
 	if err != nil {
 		switch {
 		case errors.Is(err, ErrSOTUnauth):
 			b.Log.Warn().Msgf("failed to fetch user balance - RAT token is expired")
 			return nil
 		default:
-			return fmt.Errorf("failed to fetch user balance for user %s: %w", u.UserID, err)
+			return fmt.Errorf("failed to fetch user balance for user %s: %w", rq.UserID, err)
 		}
 	}
-	us, err := b.SoTGetUserOverview(r)
+	us, err := b.SoTGetUserOverview(rq)
 	if err != nil {
-		return fmt.Errorf("failed to fetch user stats for user %q: %w", u.UserID, err)
+		return fmt.Errorf("failed to fetch user stats for user %q: %w", rq.UserID, err)
 	}
 	dus := &model.UserStat{
-		UserID:            u.ID,
+		UserID:            rq.ID,
 		Title:             ub.Title,
 		Gold:              ub.Gold,
 		Doubloons:         ub.Doubloons,
@@ -273,7 +277,7 @@ func (b *Bot) StoreSoTUserStats(u *model.User) error {
 		DistanceSailed:    int64(us.MetresSailed),
 	}
 	if err := b.Model.UserStats.Insert(dus); err != nil {
-		return fmt.Errorf("failed to store user stats for user %q in DB: %w", u.UserID, err)
+		return fmt.Errorf("failed to store user stats for user %q in DB: %w", rq.UserID, err)
 	}
 	return nil
 }

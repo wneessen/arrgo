@@ -29,7 +29,7 @@ func (b *Bot) SlashCmdSoTCompare(s *discordgo.Session, i *discordgo.InteractionC
 	if err != nil {
 		return err
 	}
-	if err := b.StoreSoTUserStats(r.User); err != nil {
+	if err := b.StoreSoTUserStats(r); err != nil {
 		return fmt.Errorf("failed to update user stats in DB: %w", err)
 	}
 	cus, err := b.Model.UserStats.GetByUserID(r.User.ID)
