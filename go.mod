@@ -6,7 +6,7 @@ require (
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/kkyr/fig v0.3.1
-	github.com/lib/pq v1.10.7
+	github.com/lib/pq v1.10.8
 	github.com/rs/zerolog v1.29.1
 	golang.org/x/text v0.9.0
 )
