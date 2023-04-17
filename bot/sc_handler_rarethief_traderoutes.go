@@ -9,9 +9,10 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	"github.com/wneessen/arrgo/model"
 )
 
 // RTTraderoute represents the JSON structure of the rarethief.com traderoute API response

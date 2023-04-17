@@ -8,9 +8,10 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	"github.com/wneessen/arrgo/model"
 )
 
 // SoTEventHubJSON is the nested struct from the Sea of Thieves event hub response

@@ -10,6 +10,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/rs/zerolog"
+
 	"github.com/wneessen/arrgo/config"
 	"github.com/wneessen/arrgo/crypto"
 	"github.com/wneessen/arrgo/model"

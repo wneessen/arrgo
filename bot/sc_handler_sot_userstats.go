@@ -8,10 +8,11 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/wneessen/arrgo/crypto"
-	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
+
+	"github.com/wneessen/arrgo/crypto"
+	"github.com/wneessen/arrgo/model"
 )
 
 // SoTUserOverview represents the JSON structure of the Sea of Thieves user overview API response

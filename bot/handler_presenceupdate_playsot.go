@@ -6,9 +6,10 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/wneessen/arrgo/model"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
+
+	"github.com/wneessen/arrgo/model"
 )
 
 // UserPlaySoT receives PRESENCE_UPDATE from each server and handles if the user starts playing SoT
@@ -230,7 +231,7 @@ func (b *Bot) UserPlaySoT(_ *discordgo.Session, ev *discordgo.PresenceUpdate) {
 				})
 			}
 
-			if len(ef) > 0 {
+			if len(ef) > 1 {
 				du, err := b.Session.User(u.UserID)
 				if err != nil {
 					ll.Warn().Msgf("failed to retrieve user information from Discord: %s", err)
