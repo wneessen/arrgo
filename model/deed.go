@@ -19,7 +19,7 @@ const (
 const (
 	RewardGold      RewardType = "gold"
 	RewardDoubloons RewardType = "doubloons"
-	RewardUnknown   RewardType = "unknown"
+	// RewardUnknown   RewardType = "unknown"
 )
 
 // DeedModel wraps the connection pool.

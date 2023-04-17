@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
+
 	"github.com/wneessen/arrgo/bot"
 	"github.com/wneessen/arrgo/config"
 )
