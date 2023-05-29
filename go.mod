@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/bwmarrin/discordgo v0.27.1
-	github.com/golang-migrate/migrate/v4 v4.15.2
+	github.com/golang-migrate/migrate/v4 v4.16.0
 	github.com/kkyr/fig v0.3.1
 	github.com/lib/pq v1.10.9
 	github.com/rs/zerolog v1.29.1
@@ -12,7 +12,6 @@ require (
 )
 
 require (
-	github.com/containerd/containerd v1.6.18 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
@@ -22,8 +21,7 @@ require (
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
-	golang.org/x/crypto v0.6.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/crypto v0.7.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
