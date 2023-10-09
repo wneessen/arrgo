@@ -1,3 +1,3 @@
 package bot
 
-const Version = "0.3.1"
+const Version = "0.3.2"
