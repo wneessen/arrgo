@@ -8,7 +8,7 @@ require (
 	github.com/kkyr/fig v0.4.0
 	github.com/lib/pq v1.10.9
 	github.com/rs/zerolog v1.32.0
-	golang.org/x/text v0.14.0
+	golang.org/x/text v0.15.0
 )
 
 require (
